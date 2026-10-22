@@ -1,0 +1,1632 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>02 JavaScript | Web開発入門</title>
+    <style>
+      :root {
+        --blue: #0878c9;
+        --deep-blue: #07518d;
+        --aqua: #7ce8f2;
+        --glass: rgba(255, 255, 255, 0.72);
+        --line: rgba(255, 255, 255, 0.92);
+        --ink: #124a77;
+        --muted: #376c8f;
+        --green: #1d9b78;
+        --shadow: 0 12px 32px rgba(0, 91, 155, 0.16);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        margin: 0;
+        color: var(--ink);
+        font-family: 'Segoe UI', 'Yu Gothic UI', 'Meiryo', sans-serif;
+        line-height: 1.75;
+        background:
+          radial-gradient(ellipse at 78% 8%, rgba(255, 255, 255, 0.95) 0 3%, transparent 18%),
+          radial-gradient(ellipse at 8% 24%, rgba(255, 255, 255, 0.65) 0 2%, transparent 21%),
+          linear-gradient(180deg, #58c8f4 0%, #b9efff 35%, #e4fbff 68%, #6bd7ee 100%);
+        min-height: 100vh;
+      }
+
+      body::before {
+        content: '';
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: -1;
+        opacity: 0.5;
+        background:
+          radial-gradient(ellipse at 14% 82%, #ffffff 0 2%, transparent 15%),
+          radial-gradient(ellipse at 90% 65%, #ffffff 0 2%, transparent 16%),
+          repeating-linear-gradient(
+            115deg,
+            transparent 0 90px,
+            rgba(255, 255, 255, 0.09) 91px 93px,
+            transparent 94px 180px
+          );
+      }
+
+      a {
+        color: inherit;
+      }
+      button,
+      input {
+        font: inherit;
+      }
+      button {
+        cursor: pointer;
+      }
+      .topbar {
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+        padding: 12px clamp(18px, 4vw, 58px);
+        background: rgba(235, 251, 255, 0.77);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.95);
+        box-shadow: 0 4px 20px rgba(0, 93, 151, 0.1);
+        backdrop-filter: blur(18px);
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-weight: 800;
+        color: #075eaa;
+        line-height: 1.25;
+      }
+      .brand-orb {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        background: radial-gradient(circle at 28% 23%, #fff 0 8%, #a4f8ff 10%, #38bce8 35%, #0879be 62%, #07518d 100%);
+        border: 2px solid rgba(255, 255, 255, 0.95);
+        box-shadow:
+          inset -5px -6px 10px rgba(0, 45, 100, 0.22),
+          0 2px 10px #7bdff4;
+        position: relative;
+      }
+      .brand-orb::after {
+        content: '';
+        position: absolute;
+        width: 14px;
+        height: 7px;
+        left: 7px;
+        top: 7px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.9);
+        transform: rotate(-35deg);
+      }
+      .brand small {
+        display: block;
+        font-weight: 500;
+        font-size: 0.75rem;
+        letter-spacing: 0.08em;
+      }
+      nav {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+      nav a {
+        text-decoration: none;
+        font-size: 0.9rem;
+        font-weight: 700;
+        color: #145a8c;
+        padding: 8px 15px;
+        border-radius: 999px;
+        transition: 0.2s;
+      }
+      nav a:hover,
+      nav a.active {
+        color: white;
+        background: linear-gradient(#25b6f5, #0874d1);
+        box-shadow:
+          inset 0 1px rgba(255, 255, 255, 0.7),
+          0 4px 12px rgba(0, 107, 195, 0.25);
+      }
+
+      .hero {
+        min-height: 250px;
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        padding: 42px clamp(22px, 7vw, 100px);
+        color: white;
+        background:
+          radial-gradient(
+            circle at 78% 52%,
+            rgba(255, 255, 255, 0.9) 0 1%,
+            rgba(171, 248, 255, 0.8) 1.5% 2%,
+            transparent 2.4%
+          ),
+          radial-gradient(circle at 76% 56%, rgba(255, 255, 255, 0.35) 0 10%, transparent 25%),
+          linear-gradient(135deg, #087ac8 0%, #31bde9 46%, #a6f3f5 100%);
+        border-bottom: 3px solid rgba(255, 255, 255, 0.75);
+      }
+      .hero::before {
+        content: '';
+        position: absolute;
+        inset: auto -5% -60px -5%;
+        height: 150px;
+        background:
+          linear-gradient(180deg, rgba(255, 255, 255, 0.18), rgba(0, 140, 199, 0.35)),
+          repeating-linear-gradient(175deg, rgba(255, 255, 255, 0.25) 0 2px, transparent 2px 16px);
+        border-radius: 50% 50% 0 0;
+        transform: rotate(-2deg);
+      }
+      .hero::after {
+        content: '';
+        position: absolute;
+        right: 12%;
+        top: 16px;
+        width: 155px;
+        height: 155px;
+        border-radius: 50%;
+        background: radial-gradient(
+          circle at 30% 24%,
+          white 0 3%,
+          rgba(255, 255, 255, 0.7) 4% 7%,
+          rgba(255, 255, 255, 0.15) 8% 42%,
+          rgba(8, 126, 198, 0.22) 70%,
+          rgba(255, 255, 255, 0.65) 74% 77%,
+          rgba(255, 255, 255, 0.12) 80%
+        );
+        border: 2px solid rgba(255, 255, 255, 0.78);
+        box-shadow:
+          inset -12px -12px 24px rgba(0, 90, 160, 0.17),
+          0 10px 30px rgba(0, 73, 143, 0.2);
+      }
+      .hero-content {
+        position: relative;
+        z-index: 1;
+        max-width: 760px;
+        text-shadow: 0 2px 12px rgba(0, 65, 120, 0.22);
+      }
+      .eyebrow {
+        font-size: 0.82rem;
+        letter-spacing: 0.2em;
+        font-weight: 800;
+      }
+      h1 {
+        margin: 2px 0 0;
+        font-size: clamp(2.5rem, 6vw, 4.8rem);
+        line-height: 1.08;
+        letter-spacing: -0.04em;
+      }
+      h1 span {
+        color: #e4ffff;
+        font-size: 0.72em;
+        margin-right: 0.15em;
+      }
+      .hero p {
+        margin: 12px 0 0;
+        font-size: 1.1rem;
+        font-weight: 700;
+      }
+      .bubble {
+        position: absolute;
+        border: 1px solid rgba(255, 255, 255, 0.75);
+        border-radius: 50%;
+        background: radial-gradient(
+          circle at 28% 20%,
+          rgba(255, 255, 255, 0.8),
+          rgba(255, 255, 255, 0.1) 55%,
+          rgba(21, 158, 222, 0.2)
+        );
+        box-shadow:
+          inset -7px -8px 14px rgba(0, 85, 155, 0.13),
+          0 0 18px rgba(255, 255, 255, 0.25);
+      }
+      .bubble.one {
+        width: 30px;
+        height: 30px;
+        right: 34%;
+        top: 35px;
+      }
+      .bubble.two {
+        width: 18px;
+        height: 18px;
+        right: 7%;
+        bottom: 55px;
+      }
+      .bubble.three {
+        width: 11px;
+        height: 11px;
+        right: 27%;
+        bottom: 35px;
+      }
+
+      .layout {
+        width: min(1240px, calc(100% - 36px));
+        margin: 20px auto 30px;
+        display: grid;
+        grid-template-columns: 220px minmax(0, 1fr);
+        gap: 14px;
+        align-items: start;
+      }
+      .sidebar,
+      .panel {
+        background: var(--glass);
+        border: 1px solid var(--line);
+        border-radius: 20px;
+        box-shadow:
+          var(--shadow),
+          inset 0 1px 0 white;
+        backdrop-filter: blur(14px);
+      }
+      .sidebar {
+        padding: 12px;
+        position: sticky;
+        top: 86px;
+      }
+      .sidebar h2 {
+        font-size: 0.82rem;
+        letter-spacing: 0.12em;
+        margin: 5px 10px 10px;
+        color: #2783b8;
+      }
+      .sidebar a {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 9px 11px;
+        border-radius: 11px;
+        color: #1b6395;
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 0.91rem;
+      }
+      .sidebar a:hover {
+        background: rgba(76, 196, 245, 0.2);
+      }
+      .side-icon {
+        display: inline-grid;
+        place-items: center;
+        width: 27px;
+        height: 27px;
+        border-radius: 9px;
+        color: white;
+        background: linear-gradient(#58c9f4, #0875c7);
+        box-shadow: inset 0 1px rgba(255, 255, 255, 0.8);
+        font-size: 0.9rem;
+      }
+      main {
+        min-width: 0;
+      }
+      .panel {
+        margin-bottom: 14px;
+        padding: 15px 18px 19px;
+        scroll-margin-top: 90px;
+      }
+      .section-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: -2px -4px 12px;
+        padding: 7px 12px;
+        border-radius: 12px;
+        color: #fff;
+        font-size: 1.18rem;
+        line-height: 1.4;
+        background: linear-gradient(100deg, #0783d1, #61d1f4 70%, rgba(145, 232, 255, 0.25));
+        box-shadow:
+          inset 0 1px 0 rgba(255, 255, 255, 0.75),
+          0 3px 8px rgba(0, 116, 184, 0.1);
+        text-shadow: 0 1px 3px rgba(0, 68, 120, 0.3);
+      }
+      .section-title .badge-icon {
+        width: 33px;
+        height: 33px;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        background: linear-gradient(#a3f5ff, #0780d2);
+        border: 2px solid white;
+        box-shadow: 0 2px 7px rgba(0, 72, 140, 0.25);
+      }
+      h3 {
+        color: #0877bd;
+        font-size: 1.05rem;
+        margin: 20px 0 7px;
+      }
+      p {
+        margin: 8px 0 12px;
+      }
+      .lead {
+        color: #1c5b83;
+      }
+      .pill-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin: 16px 0 6px;
+      }
+      .pill {
+        flex: 1 1 150px;
+        padding: 12px 14px;
+        border: 1px solid #a7e6fa;
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.6);
+      }
+      .pill strong {
+        color: #0874bb;
+        display: block;
+      }
+      .callout {
+        margin: 14px 0 2px;
+        padding: 12px 15px;
+        border: 1px solid #a5e6d4;
+        border-radius: 13px;
+        background: linear-gradient(135deg, rgba(224, 255, 244, 0.92), rgba(255, 255, 255, 0.65));
+      }
+      .callout strong {
+        color: #16866d;
+      }
+      .code-demo {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(220px, 0.85fr);
+        gap: 13px;
+        align-items: stretch;
+        margin: 12px 0;
+      }
+      .codebox {
+        overflow: hidden;
+        border-radius: 11px;
+        background: #102c3e;
+        color: #e7f6ff;
+        border: 1px solid rgba(255, 255, 255, 0.75);
+        box-shadow: 0 4px 12px rgba(0, 61, 101, 0.13);
+      }
+      .code-label {
+        padding: 5px 11px;
+        font-size: 0.78rem;
+        font-weight: 800;
+        background: #315d77;
+        color: #f5fcff;
+      }
+      pre {
+        margin: 0;
+        padding: 13px;
+        overflow-x: auto;
+        font:
+          0.88rem/1.7 Consolas,
+          'Cascadia Code',
+          monospace;
+        tab-size: 2;
+      }
+      code {
+        font-family: Consolas, 'Cascadia Code', monospace;
+      }
+      .kw {
+        color: #80d8ff;
+      }
+      .str {
+        color: #ffe18a;
+      }
+      .fn {
+        color: #8cf0cb;
+      }
+      .comment {
+        color: #9ab7c8;
+      }
+      .resultbox {
+        border: 1px solid #a4def5;
+        border-radius: 12px;
+        padding: 12px 14px;
+        background: rgba(255, 255, 255, 0.56);
+        min-width: 0;
+      }
+      .resultbox h4 {
+        margin: 0 0 6px;
+        color: #0874b8;
+        font-size: 0.92rem;
+      }
+      .console {
+        border: 1px solid #a8cce1;
+        background: #f4fbff;
+        border-radius: 5px;
+        font:
+          0.85rem/1.6 Consolas,
+          monospace;
+        color: #1e5b81;
+        padding: 7px 10px;
+        overflow-wrap: anywhere;
+        min-height: 36px;
+      }
+      .demo-button,
+      .action-button {
+        border: 1px solid rgba(255, 255, 255, 0.95);
+        border-radius: 9px;
+        padding: 8px 16px;
+        color: white;
+        font-weight: 800;
+        background: linear-gradient(#55d1ff 0%, #1299e8 48%, #0872c7 100%);
+        box-shadow:
+          inset 0 1px 0 rgba(255, 255, 255, 0.8),
+          0 3px 8px rgba(0, 103, 177, 0.2);
+        text-shadow: 0 1px 2px rgba(0, 70, 120, 0.35);
+        transition:
+          transform 0.15s,
+          filter 0.15s;
+      }
+      .demo-button:hover,
+      .action-button:hover {
+        filter: brightness(1.06);
+        transform: translateY(-1px);
+      }
+      .demo-button:active,
+      .action-button:active {
+        transform: translateY(1px);
+      }
+      .demo-input {
+        min-width: 0;
+        width: 100%;
+        border: 1px solid #9bcde7;
+        border-radius: 9px;
+        padding: 8px 10px;
+        background: rgba(255, 255, 255, 0.88);
+        color: #164d75;
+      }
+      .demo-input:focus {
+        outline: 3px solid rgba(53, 184, 239, 0.25);
+        border-color: #148ed0;
+      }
+      .interactive-demo {
+        display: grid;
+        gap: 10px;
+      }
+      .inline-fields {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      .inline-fields label {
+        flex: 1 1 110px;
+        font-size: 0.86rem;
+        font-weight: 700;
+      }
+      .inline-fields input {
+        display: block;
+        margin-top: 4px;
+      }
+      .output {
+        min-height: 35px;
+        padding: 7px 10px;
+        border-radius: 9px;
+        background: rgba(224, 248, 255, 0.8);
+        border: 1px dashed #8fcfe9;
+        overflow-wrap: anywhere;
+      }
+      .exercise-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px;
+      }
+      .exercise {
+        border: 1px solid #a8e2f5;
+        background: linear-gradient(145deg, rgba(255, 255, 255, 0.86), rgba(218, 248, 255, 0.62));
+        border-radius: 15px;
+        padding: 13px;
+        box-shadow: inset 0 1px white;
+      }
+      .exercise-head {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        margin-bottom: 5px;
+      }
+      .number {
+        display: grid;
+        place-items: center;
+        flex: 0 0 29px;
+        height: 29px;
+        border-radius: 50%;
+        color: white;
+        font-weight: 900;
+        background: linear-gradient(#39bdff, #0877ce);
+        box-shadow: inset 0 1px white;
+      }
+      .exercise h3 {
+        margin: 0;
+        font-size: 0.98rem;
+      }
+      .exercise p {
+        font-size: 0.9rem;
+        margin: 7px 0 10px;
+      }
+      .exercise details {
+        border-top: 1px solid #c3e9f6;
+        padding-top: 9px;
+      }
+      summary {
+        cursor: pointer;
+        font-weight: 800;
+        color: #0874b7;
+        font-size: 0.88rem;
+      }
+      .exercise pre {
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+        padding: 9px;
+        margin-top: 8px;
+        background: #14394c;
+        border-radius: 8px;
+        font-size: 0.79rem;
+      }
+      .blank {
+        color: #ffe18a;
+        font-weight: 900;
+        text-decoration: underline;
+      }
+      .hint {
+        font-size: 0.82rem;
+        color: #477795;
+      }
+      .footer {
+        text-align: center;
+        color: white;
+        text-shadow: 0 2px 5px #0878a7;
+        padding: 14px 15px 26px;
+        font-weight: 800;
+      }
+      .backtop {
+        position: fixed;
+        right: 20px;
+        bottom: 20px;
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        border: 1px solid white;
+        color: white;
+        background: linear-gradient(#4acaff, #0878ce);
+        box-shadow: 0 4px 15px rgba(0, 83, 140, 0.3);
+        font-size: 1.3rem;
+      }
+      .small-note {
+        color: #4b7892;
+        font-size: 0.88rem;
+      }
+      @media (max-width: 850px) {
+        .layout {
+          grid-template-columns: 1fr;
+          width: min(100% - 22px, 760px);
+        }
+        .sidebar {
+          position: static;
+        }
+        .sidebar nav {
+          display: grid;
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+        .sidebar h2 {
+          margin-left: 5px;
+        }
+        .hero::after {
+          right: 5%;
+          width: 120px;
+          height: 120px;
+          opacity: 0.75;
+        }
+        .code-demo {
+          grid-template-columns: 1fr;
+        }
+        .exercise-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+      @media (max-width: 560px) {
+        .topbar {
+          align-items: flex-start;
+          flex-direction: column;
+          gap: 8px;
+        }
+        nav {
+          width: 100%;
+        }
+        nav a {
+          flex: 1;
+          text-align: center;
+          padding: 6px 8px;
+          font-size: 0.8rem;
+        }
+        .hero {
+          min-height: 220px;
+          padding: 30px 22px;
+        }
+        .hero::after {
+          right: -22px;
+          top: 25px;
+          width: 95px;
+          height: 95px;
+        }
+        .hero p {
+          max-width: 75%;
+          font-size: 0.95rem;
+        }
+        .layout {
+          width: calc(100% - 16px);
+          margin-top: 10px;
+        }
+        .sidebar nav {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+        .panel {
+          padding: 12px;
+          border-radius: 15px;
+        }
+        .section-title {
+          font-size: 1.02rem;
+        }
+        .exercise-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-orb" aria-hidden="true"></span>
+        <span>Web Programming<small>〜 JavaScript Lesson 〜</small></span>
+      </div>
+      <nav aria-label="メインナビゲーション">
+        <a href="#top">はじめに</a>
+        <a href="#basics">基本文法</a>
+        <a href="#events">イベント</a>
+        <a href="#dom">DOM操作</a>
+        <a href="#exercises" class="active">演習問題</a>
+      </nav>
+    </header>
+
+    <section class="hero" id="top">
+      <span class="bubble one" aria-hidden="true"></span><span class="bubble two" aria-hidden="true"></span
+      ><span class="bubble three" aria-hidden="true"></span>
+      <div class="hero-content">
+        <div class="eyebrow">WEB DEVELOPMENT / LESSON 02</div>
+        <h1><span>02</span> JavaScript</h1>
+        <p>Webサイトに動きをつけるプログラミング言語</p>
+      </div>
+    </section>
+
+    <div class="layout">
+      <aside class="sidebar">
+        <h2>CONTENTS</h2>
+        <nav aria-label="ページ内目次">
+          <a href="#intro"><span class="side-icon">⌂</span>はじめに</a>
+          <a href="#basics"><span class="side-icon">JS</span>基本文法</a>
+          <a href="#events"><span class="side-icon">↗</span>イベントと入力</a>
+          <a href="#functions"><span class="side-icon">ƒ</span>関数</a>
+          <a href="#dom"><span class="side-icon">▣</span>DOM操作</a>
+          <a href="#exercises"><span class="side-icon">✎</span>演習問題</a>
+        </nav>
+      </aside>
+
+      <main>
+        <section class="panel" id="intro">
+          <h2 class="section-title"><span class="badge-icon">◉</span>JavaScriptとは</h2>
+          <p class="lead">JavaScriptは、Webページに処理や動きを加えるためのプログラミング言語です。</p>
+          <div class="pill-row">
+            <div class="pill"><strong>HTML</strong>ページの構造・内容を記述する</div>
+            <div class="pill"><strong>CSS</strong>色・大きさ・配置など見た目を指定する</div>
+            <div class="pill"><strong>JavaScript</strong>操作に応じて処理し、ページを書き換える</div>
+          </div>
+          <p>
+            HTMLは<strong>マークアップ言語</strong>、CSSは<strong>スタイルシート言語</strong>、JavaScriptは<strong>プログラミング言語</strong>です。名前は似ていますが、JavaとJavaScriptは別の言語です。JavaScriptを「Java」と略したり、同じ言語として扱ったりしないようにしましょう。
+          </p>
+        </section>
+
+        <section class="panel" id="basics">
+          <h2 class="section-title">
+            <span class="badge-icon">▤</span>
+            JavaScriptを書いてみよう
+          </h2>
+
+          <p>
+            JavaScriptは、HTMLの中にある
+            <code>&lt;script&gt;</code> タグを使って実行できます。 まずは、メッセージをコンソールに表示してみましょう。
+          </p>
+
+          <div class="code-demo">
+            <div class="codebox">
+              <div class="code-label">index.html</div>
+              <pre><code>&lt;script&gt;
+  console.log("Hello world!!");
+&lt;/script&gt;</code></pre>
+            </div>
+
+            <div class="resultbox">
+              <h4>コードの意味</h4>
+              <ul>
+                <li><code>&lt;script&gt;</code>：JavaScriptを書く場所を示すタグ</li>
+                <li><code>console.log()</code>：値やメッセージをコンソールに出力する命令</li>
+                <li><code>"Hello world!!"</code>：出力する文字列</li>
+              </ul>
+            </div>
+          </div>
+
+          <h3>コンソールで実行結果を確認しよう</h3>
+
+          <p>
+            <code>console.log()</code> の出力は、Webページ上には直接表示されません。
+            ブラウザに用意されている「開発者ツール」を使って確認します。
+          </p>
+
+          <ol>
+            <li>作成した <code>index.html</code> をブラウザで開きます。</li>
+            <li>ページ上で右クリックし、「検証」を選択します。</li>
+            <li>開発者ツールの「Console（コンソール）」タブを開きます。</li>
+            <li><code>Hello world!!</code> と表示されていることを確認します。</li>
+          </ol>
+
+          <p>
+            Windowsでは、<kbd>F12</kbd> または <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>J</kbd>
+            でもコンソールを開けます。 ブラウザによって操作方法が異なる場合があります。
+          </p>
+
+          <div class="code-demo">
+            <div class="codebox">
+              <div class="code-label">index.html</div>
+              <pre><code>&lt;script&gt;
+  console.log("Hello world!!");
+  console.log(123);
+  console.log(10 + 20);
+&lt;/script&gt;</code></pre>
+            </div>
+
+            <div class="resultbox">
+              <h4>Console の表示例</h4>
+              <div class="console">
+                &gt; Hello world!!<br />
+                &gt; 123<br />
+                &gt; 30
+              </div>
+              <p class="small-note">
+                文字列だけでなく、数値や計算結果も出力できます。 プログラムが正しく動いているか調べるときにも便利です。
+              </p>
+            </div>
+          </div>
+
+          <h3>補足：scriptタグはどこに書く？</h3>
+
+          <p>
+            <code>&lt;script&gt;</code> タグはHTMLの中に記述できます。 今回は、ページの内容を書いたあとに実行する形で、
+            <code>&lt;/body&gt;</code> の直前に置いてみましょう。
+          </p>
+
+          <div class="codebox">
+            <div class="code-label">index.html</div>
+            <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang="ja"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;title&gt;JavaScript入門&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;h1&gt;はじめてのJavaScript&lt;/h1&gt;
+
+  &lt;script&gt;
+    console.log("JavaScriptが実行されました！");
+  &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+          </div>
+
+          <p>
+            HTMLがページの構造を作り、<code>&lt;script&gt;</code> の中の JavaScriptが処理を実行します。
+            次は、変数や条件分岐を使って、さまざまな処理を書いてみましょう。
+          </p>
+        </section>
+        <section class="panel" id="programming-basics">
+          <h2 class="section-title">
+            <span class="badge-icon">∑</span>
+            変数と基本的なプログラミング
+          </h2>
+
+          <p>
+            JavaScriptでは、数値の計算や条件による処理の分岐、繰り返し処理など、
+            ほかのプログラミング言語と同じような処理を書くことができます。
+            まずは、基本的な書き方を確認していきましょう。
+          </p>
+
+          <h3>1. 変数を使ってみよう</h3>
+
+          <p>
+            プログラムでは、数値や文字列などのデータを「変数」に保存できます。 JavaScriptでは、主に
+            <code>const</code> と <code>let</code> を使って変数を宣言します。
+          </p>
+
+          <div class="code-demo">
+            <div class="codebox">
+              <div class="code-label">JavaScript</div>
+              <pre><code>let score = 80;
+const name = "Alice";
+
+console.log(score);
+console.log(name);
+
+score = 95;
+console.log(score);</code></pre>
+            </div>
+
+            <div class="resultbox">
+              <h4>実行結果</h4>
+              <div class="console">
+                &gt; 80<br />
+                &gt; Alice<br />
+                &gt; 95
+              </div>
+            </div>
+          </div>
+
+          <ul>
+            <li><code>let</code>：あとから値を変更できる変数を宣言します。</li>
+            <li><code>const</code>：変数への再代入ができないように宣言します。</li>
+            <li><code>=</code>：右辺の値を左辺の変数に代入します。</li>
+          </ul>
+
+          <p>
+            今回は、基本的に値を変更しない場合は <code>const</code>、 値を変更する場合は
+            <code>let</code> を使いましょう。 なお、<code>const</code>
+            で宣言した変数は、あとから別の値を代入できません。
+          </p>
+
+          <h3>2. 基本的な計算をしてみよう</h3>
+
+          <p>
+            JavaScriptでは、算数で使う四則演算をそのままプログラムで扱えます。
+            変数に保存した数値を使って計算することもできます。
+          </p>
+
+          <div class="code-demo">
+            <div class="codebox">
+              <div class="code-label">JavaScript</div>
+              <pre><code>let a = 5;
+let b = 3;
+
+console.log(a + b); // 足し算
+console.log(a - b); // 引き算
+console.log(a * b); // 掛け算
+console.log(a / b); // 割り算
+console.log(a % b); // 余り
+
+a++;
+console.log(a);     // 1増やす</code></pre>
+            </div>
+
+            <div class="resultbox">
+              <h4>実行結果</h4>
+              <div class="console">
+                &gt; 8<br />
+                &gt; 2<br />
+                &gt; 15<br />
+                &gt; 1.6666666666666667<br />
+                &gt; 2<br />
+                &gt; 6
+              </div>
+            </div>
+          </div>
+
+          <p>
+            <code>+</code>、<code>-</code>、<code>*</code>、<code>/</code> は
+            それぞれ足し算、引き算、掛け算、割り算を表します。 <code>%</code> は割り算の余りを求める演算子です。
+            また、<code>a++</code> は変数 <code>a</code> の値を1増やします。
+          </p>
+
+          <p>
+            このほか、<code>a += 2</code> は <code>a = a + 2</code> と同じ意味です。
+            このような省略した書き方も、プログラムではよく使われます。
+          </p>
+
+          <h3>3. 条件によって処理を変えよう</h3>
+
+          <p>
+            <code>if</code> 文を使うと、条件に応じて実行する処理を変えられます。
+            条件が成立したときだけ処理を実行したり、複数の条件を順番に判定したりできます。
+          </p>
+
+          <div class="code-demo">
+            <div class="codebox">
+              <div class="code-label">JavaScript</div>
+              <pre><code>const score = 75;
+
+if (score >= 80) {
+  console.log("Great!");
+} else if (score >= 60) {
+  console.log("Pass!");
+} else {
+  console.log("Try again!");
+}</code></pre>
+            </div>
+
+            <div class="resultbox">
+              <h4>実行結果</h4>
+              <div class="console">&gt; Pass!</div>
+            </div>
+          </div>
+
+          <ul>
+            <li><code>if</code>：最初の条件を判定します。</li>
+            <li><code>else if</code>：前の条件が成立しなかった場合に、別の条件を判定します。</li>
+            <li><code>else</code>：どの条件も成立しなかった場合に実行します。</li>
+          </ul>
+
+          <p>
+            条件には、<code>&gt;</code>、<code>&lt;</code>、<code>&gt;=</code>、
+            <code>&lt;=</code> などの比較演算子を使えます。 また、等しいかどうかを比較する場合は
+            <code>===</code> を使います。
+          </p>
+
+          <div class="note">
+            <strong>JavaScriptでの注意点</strong>
+            <p>
+              JavaScriptには <code>==</code> と <code>===</code> があります。
+              <code>==</code> は比較の際に型変換が行われることがありますが、 <code>===</code> は型も含めて比較します。
+              例えば、<code>5 == "5"</code> は <code>true</code> ですが、 <code>5 === "5"</code> は
+              <code>false</code> です。 基本的には <code>===</code> を使うようにしましょう。
+            </p>
+          </div>
+
+          <h3>4. 繰り返し処理を使おう</h3>
+
+          <p>
+            同じような処理を何度も実行したいときは、繰り返し処理を使います。
+            <code>for</code> 文では、回数を数えながら処理を繰り返せます。
+          </p>
+
+          <div class="code-demo">
+            <div class="codebox">
+              <div class="code-label">JavaScript</div>
+              <pre><code>for (let i = 1; i <= 5; i++) {
+  console.log(i);
+}</code></pre>
+            </div>
+
+            <div class="resultbox">
+              <h4>実行結果</h4>
+              <div class="console">
+                &gt; 1<br />
+                &gt; 2<br />
+                &gt; 3<br />
+                &gt; 4<br />
+                &gt; 5
+              </div>
+            </div>
+          </div>
+
+          <p><code>for</code> 文の括弧の中には、初期化、繰り返し条件、更新処理を記述します。</p>
+
+          <ul>
+            <li><code>let i = 1</code>：変数 <code>i</code> を1で初期化します。</li>
+            <li><code>i &lt;= 5</code>：この条件が成立している間、繰り返します。</li>
+            <li><code>i++</code>：1回処理するごとに <code>i</code> を1増やします。</li>
+          </ul>
+
+          <h3>5. 配列と拡張for文</h3>
+
+          <p>
+            複数のデータをまとめて扱うには、配列を使います。 JavaScriptでは、配列の要素を順番に取り出すために
+            <code>for...of</code> という書き方も利用できます。
+          </p>
+
+          <div class="code-demo">
+            <div class="codebox">
+              <div class="code-label">JavaScript</div>
+              <pre><code>const fruits = ["Apple", "Orange", "Grape"];
+
+for (const fruit of fruits) {
+  console.log(fruit);
+}</code></pre>
+            </div>
+
+            <div class="resultbox">
+              <h4>実行結果</h4>
+              <div class="console">
+                &gt; Apple<br />
+                &gt; Orange<br />
+                &gt; Grape
+              </div>
+            </div>
+          </div>
+
+          <p>
+            <code>for...of</code> は、配列などから要素を1つずつ取り出して処理します。
+            要素の番号を自分で管理しなくてもよいため、単純にすべての要素を処理したい場合に便利です。
+          </p>
+
+          <p>
+            通常の <code>for</code> 文は繰り返す回数や添字を制御したい場合に、
+            <code>for...of</code> は要素そのものを順番に処理したい場合に使い分けましょう。
+          </p>
+        </section>
+        <section class="panel" id="functions">
+          <h2 class="section-title">
+            <span class="badge-icon">ƒ</span>
+            関数を使ってみよう
+          </h2>
+
+          <p>
+            JavaScriptの関数は、C言語の関数と同じように使うことができます。また、JavsScript固有の書き方があるので、いくつかの方法を紹介します。
+          </p>
+
+          <h3>1. 関数を定義する</h3>
+
+          <p>
+            JavaScriptでは、<code>function</code> を使って関数を定義できます。
+            例えば、時・分・秒を合計の秒数に変換する関数は、次のように書けます。
+          </p>
+
+          <div class="codebox">
+            <div class="code-label">index.html</div>
+            <pre><code>&lt;script&gt;
+  function toSeconds(hour, min, sec) {
+    const answer = hour * 3600 + min * 60 + sec;
+    return answer;
+  }
+&lt;/script&gt;</code></pre>
+          </div>
+
+          <ul>
+            <li><code>function toSeconds(...)</code>：<code>toSeconds</code> という名前の関数を定義します。</li>
+            <li><code>hour, min, sec</code>：関数に渡す値を受け取るための引数です。</li>
+            <li><code>return answer</code>：計算結果を関数の呼び出し元に返します。</li>
+          </ul>
+
+          <p>ただし、関数を定義しただけでは、計算は実行されません。 実際に使うには、関数を呼び出す必要があります。</p>
+
+          <h3>2. 関数を呼び出す</h3>
+
+          <p>
+            関数名の後ろに括弧を書き、引数を渡すことで関数を呼び出せます。 戻り値を
+            <code>console.log()</code> に渡せば、計算結果をコンソールで確認できます。
+          </p>
+
+          <div class="code-demo">
+            <div class="codebox">
+              <div class="code-label">index.html</div>
+              <pre><code>&lt;script&gt;
+  let hour = 23;
+  let minute = 59;
+  let second = 59;
+
+  function toSeconds(hour, min, sec) {
+    const answer = hour * 3600 + min * 60 + sec;
+    return answer;
+  }
+
+  console.log(toSeconds(hour, minute, second));
+&lt;/script&gt;</code></pre>
+            </div>
+            <div class="resultbox">
+              <h4>実行結果</h4>
+              <div class="console">&gt; 86399</div>
+            </div>
+          </div>
+
+          <p>
+            例えば、<code>toSeconds(1, 30, 0)</code> は1時間30分0秒を表し、 戻り値として <code>5400</code> を返します。
+            このように、同じ関数に異なる引数を渡して、何度でも利用できます。
+          </p>
+
+          <h3>3. console.log() と return の違い</h3>
+
+          <p>
+            <code>console.log()</code> は値をコンソールに表示し、 <code>return</code> は値を関数の呼び出し元に返します。
+            この2つは役割が異なります。
+          </p>
+
+          <div class="code-demo">
+            <div class="codebox">
+              <div class="code-label">JavaScript</div>
+              <pre><code>function add(a, b) {
+  console.log(a + b);
+}
+
+const result = add(10, 20);
+console.log(result);</code></pre>
+            </div>
+            <div class="resultbox">
+              <h4>実行結果</h4>
+              <div class="console">&gt; 30<br />&gt; undefined</div>
+            </div>
+          </div>
+
+          <p>
+            関数内で <code>30</code> を表示しても、戻り値は自動的には設定されません。
+            <code>return</code> を書いていない関数は、通常 <code>undefined</code> を返します。
+          </p>
+
+          <h3>4. 関数には複数の書き方がある</h3>
+
+          <p>
+            JavaScriptでは、<code>function</code> による定義以外にも、 関数式やアロー関数を使って関数を定義できます。
+          </p>
+
+          <div class="codebox">
+            <div class="code-label">関数式</div>
+            <pre><code>const toSeconds = function(hour, min, sec) {
+  return hour * 3600 + min * 60 + sec;
+};
+
+console.log(toSeconds(1, 30, 0)); // 5400</code></pre>
+          </div>
+
+          <p>
+            関数式では、関数を変数に代入しています。 次に紹介するアロー関数も、同じように変数へ代入して利用できます。
+          </p>
+
+          <h3>5. アロー関数</h3>
+
+          <p>
+            アロー関数は、<code>=&gt;</code> を使って関数を定義する書き方です。
+            Web開発では、イベント処理やコールバック関数などでよく使われます。
+          </p>
+
+          <h4>① 通常のアロー関数</h4>
+
+          <div class="code-demo">
+            <div class="codebox">
+              <div class="code-label">JavaScript</div>
+              <pre><code>const add = (a, b) =&gt; {
+  return a + b;
+};
+
+console.log(add(3, 5));</code></pre>
+            </div>
+            <div class="resultbox">
+              <h4>実行結果</h4>
+              <div class="console">&gt; 8</div>
+            </div>
+          </div>
+
+          <p><code>return</code> で計算結果を返します。 複数の処理を実行したい場合にも、この書き方を使えます。</p>
+
+          <h4>② 式を返す場合</h4>
+
+          <div class="code-demo">
+            <div class="codebox">
+              <div class="code-label">JavaScript</div>
+              <pre><code>const add = (a, b) =&gt; a + b;
+
+console.log(add(3, 5));</code></pre>
+            </div>
+            <div class="resultbox">
+              <h4>実行結果</h4>
+              <div class="console">&gt; 8</div>
+            </div>
+          </div>
+
+          <p>
+            処理が1つの式だけなら、<code>{}</code> と <code>return</code> を省略できます。
+            式の評価結果が、そのまま戻り値になります。
+          </p>
+
+          <h4>③ 引数が1つの場合</h4>
+
+          <div class="code-demo">
+            <div class="codebox">
+              <div class="code-label">JavaScript</div>
+              <pre><code>const double = n =&gt; n * 2;
+
+console.log(double(5));</code></pre>
+            </div>
+            <div class="resultbox">
+              <h4>実行結果</h4>
+              <div class="console">&gt; 10</div>
+            </div>
+          </div>
+
+          <p>引数が1つの場合は、引数を囲む <code>()</code> を省略できます。</p>
+
+          <h4>④ 引数が0個の場合</h4>
+
+          <div class="code-demo">
+            <div class="codebox">
+              <div class="code-label">JavaScript</div>
+              <pre><code>const sayHello = () =&gt; "Hello!";
+
+console.log(sayHello());</code></pre>
+            </div>
+            <div class="resultbox">
+              <h4>実行結果</h4>
+              <div class="console">&gt; Hello!</div>
+            </div>
+          </div>
+
+          <p>引数がない場合は、<code>()</code> を省略できません。</p>
+
+          <h4>⑤ オブジェクトを返す場合</h4>
+
+          <div class="code-demo">
+            <div class="codebox">
+              <div class="code-label">JavaScript</div>
+              <pre><code>const makePoint = (x, y) =&gt; ({ x: x, y: y });
+
+console.log(makePoint(3, 5));</code></pre>
+            </div>
+            <div class="resultbox">
+              <h4>実行結果</h4>
+              <div class="console">&gt; { x: 3, y: 5 }</div>
+            </div>
+          </div>
+
+          <p>
+            オブジェクトを返す場合は、<code>({ ... })</code> のように <code>()</code> で囲みます。
+            オブジェクトのプロパティ名と変数名が同じ場合は、 <code>({ x, y })</code> と省略して書くこともできます。
+          </p>
+
+          <h3>6. デフォルト引数</h3>
+
+          <p>
+            引数には、値が省略された場合に使用するデフォルト値を設定できます。
+            例えば、分や秒が省略された場合に、それぞれ0として扱うことができます。
+          </p>
+
+          <div class="code-demo">
+            <div class="codebox">
+              <div class="code-label">JavaScript</div>
+              <pre><code>function toSeconds(hour, min = 0, sec = 0) {
+  return hour * 3600 + min * 60 + sec;
+}
+
+console.log(toSeconds(1));
+console.log(toSeconds(1, 30));
+console.log(toSeconds(1, 30, 5));</code></pre>
+            </div>
+            <div class="resultbox">
+              <h4>実行結果</h4>
+              <div class="console">&gt; 3600<br />&gt; 5400<br />&gt; 5405</div>
+            </div>
+          </div>
+
+          <p>デフォルト値を設定しておけば、必要な引数だけを指定して関数を呼び出せます。</p>
+
+          <h3>7. コールバック関数</h3>
+
+          <p>
+            JavaScriptでは、関数を別の関数の引数として渡すことができます。
+            渡された関数が、特定のタイミングで呼び出される仕組みを利用した関数を
+            <strong>コールバック関数</strong> と呼びます。
+          </p>
+
+          <p>例えば、<code>setTimeout()</code> は指定した時間が経過したあとに、 渡された関数を実行します。</p>
+
+          <div class="code-demo">
+            <div class="codebox">
+              <div class="code-label">JavaScript</div>
+              <pre><code>setTimeout(() =&gt; {
+  console.log("3秒経過しました！");
+}, 3000);</code></pre>
+            </div>
+            <div class="resultbox">
+              <h4>実行結果</h4>
+              <div class="console">&gt; （3秒後）<br />&gt; 3秒経過しました！</div>
+            </div>
+          </div>
+
+          <p>
+            <code>() =&gt; { ... }</code> の部分がコールバック関数です。 これを
+            <code>setTimeout()</code> に渡すことで、3秒後に実行されるようになります。
+          </p>
+        </section>
+        <section class="panel" id="events">
+          <h2 class="section-title"><span class="badge-icon">↗</span>イベントと入力値</h2>
+          <p>
+            クリックや入力など、ユーザーの操作をきっかけに処理を実行できます。このような出来事を<strong>イベント</strong>と呼びます。今回は
+            <code>addEventListener("click", ...)</code> でクリック時の処理を登録します。
+          </p>
+          <div class="code-demo">
+            <div class="codebox">
+              <div class="code-label">index.html + JavaScript の例</div>
+              <pre><code><span class="kw">&lt;button id="hello"&gt;</span>Click Me!!<span class="kw">&lt;/button&gt;</span>
+<span class="kw">&lt;script&gt;</span>
+document.getElementById(<span class="str">"hello"</span>)
+  .addEventListener(<span class="str">"click"</span>, () =&gt; {
+    alert(<span class="str">"Hello!!"</span>);
+  });
+<span class="kw">&lt;/script&gt;</span></code></pre>
+            </div>
+            <div class="resultbox">
+              <h4>実行例</h4>
+              <p>ボタンをクリックして、ダイアログを表示してみましょう。</p>
+              <button class="demo-button" id="hello-demo">Click Me!!</button>
+            </div>
+          </div>
+          <h3>入力した文字列を表示する</h3>
+          <div class="code-demo">
+            <div class="codebox">
+              <div class="code-label">JavaScript のポイント</div>
+              <pre><code><span class="kw">const</span> nameInput =
+  document.getElementById(<span class="str">"name-input"</span>);
+
+button.addEventListener(<span class="str">"click"</span>, () =&gt; {
+  result.textContent = nameInput.value;
+});</code></pre>
+            </div>
+            <div class="resultbox">
+              <h4>実際に入力してみよう</h4>
+              <input class="demo-input" id="name-input" type="text" placeholder="名前を入力してください" />
+              <button class="demo-button" id="name-run" style="margin-top: 9px">表示する</button>
+              <div class="output" id="name-result" aria-live="polite" style="margin-top: 9px">
+                ここに結果が表示されます。
+              </div>
+            </div>
+          </div>
+          <p>
+            <code>document.getElementById()</code>でIDに対応する要素を取得し、入力欄の
+            <code>.value</code> から値を読み取ります。<code>.textContent</code> は要素内のテキストを変更します。
+          </p>
+          <div class="callout">
+            <strong>ポイント：</strong> 入力欄の <code>value</code> は文字列です。数値として計算したい場合は
+            <code>Number(input.value)</code> のように変換します。
+          </div>
+        </section>
+
+        <section class="panel" id="dom">
+          <h2 class="section-title"><span class="badge-icon">▣</span>DOM：JavaScriptからHTMLを操作する</h2>
+          <p>
+            ブラウザはHTMLを、要素同士の親子関係を持つ構造として扱います。この仕組みを<strong
+              >DOM（Document Object Model）</strong
+            >と呼びます。
+          </p>
+          <div class="code-demo">
+            <div class="codebox">
+              <div class="code-label">HTML</div>
+              <pre><code><span class="kw">&lt;body&gt;</span>
+  <span class="kw">&lt;h1&gt;</span>自己紹介<span class="kw">&lt;/h1&gt;</span>
+  <span class="kw">&lt;p&gt;</span>Web開発を勉強しています。<span class="kw">&lt;/p&gt;</span>
+<span class="kw">&lt;/body&gt;</span></code></pre>
+            </div>
+            <div class="resultbox">
+              <h4>DOMツリーのイメージ</h4>
+              <pre style="background: rgba(228, 249, 255, 0.7); color: #1d5b7e; border-radius: 8px"><code>document
+└─ html
+   ├─ head
+   └─ body
+      ├─ h1
+      │  └─ "自己紹介"
+      └─ p
+         └─ "Web開発を勉強しています。"</code></pre>
+            </div>
+          </div>
+          <h3>ボタンで文章を書き換える</h3>
+          <div class="code-demo">
+            <div class="codebox">
+              <div class="code-label">ここが大切</div>
+              <pre><code><span class="kw">const</span> title =
+  document.getElementById(<span class="str">"demo-title"</span>);
+
+document.getElementById(<span class="str">"change-title"</span>)
+  .addEventListener(<span class="str">"click"</span>, () =&gt; {
+    title.textContent = <span class="str">"変更後の文章"</span>;
+  });</code></pre>
+            </div>
+            <div class="resultbox">
+              <h4>実際に動かしてみよう</h4>
+              <h3 id="demo-title" style="margin: 8px 0; color: #116ca5">変更前の文章</h3>
+              <button class="demo-button" id="change-title">文章を変更</button>
+              <button class="demo-button" id="reset-title" style="background: linear-gradient(#8fe6f5, #2a9fbc)">
+                元に戻す
+              </button>
+            </div>
+          </div>
+          <h3>表示・非表示を切り替える</h3>
+          <div class="resultbox interactive-demo">
+            <p id="toggle-message">この文章は、ボタンを押すと表示・非表示が切り替わります。</p>
+            <div><button class="demo-button" id="toggle-message-btn">表示を切り替える</button></div>
+          </div>
+          <p>
+            JavaScriptはDOMを通して、HTML要素を取得したり、文章を変更したり、表示状態を切り替えたりできます。HTMLファイルそのものを書き換えるのではなく、ブラウザ上で表示されている内容を変更しています。
+          </p>
+        </section>
+
+        <section class="panel" id="more">
+          <h2 class="section-title"><span class="badge-icon">＋</span>少しだけ発展：エラーと通信</h2>
+          <p>
+            エラーが発生したときは、<code>try</code> /
+            <code>catch</code
+            >で処理できます。まずは、ブラウザの開発者ツールに出るエラーメッセージを確認する習慣を付けましょう。
+          </p>
+          <div class="codebox">
+            <div class="code-label">エラー処理の例</div>
+            <pre><code><span class="kw">try</span> {
+  notDefinedFunction();
+} <span class="kw">catch</span> (error) {
+  console.log(<span class="str">"エラーが発生しました。"</span>);
+}</code></pre>
+          </div>
+          <p>
+            また、JavaScriptは
+            <code>fetch()</code>
+            を使ってサーバーからデータを取得することもできます。こうした非同期通信を利用すると、ページ全体を再読み込みせずに情報を更新するWebアプリケーションを作れます。API通信の詳細は後続の講習で扱います。
+          </p>
+        </section>
+
+        <section class="panel" id="exercises">
+          <h2 class="section-title"><span class="badge-icon">✎</span>演習問題 — コードを読んで、続きを完成させよう</h2>
+          <p>
+            それぞれの問題は、まずコードを読み、「何が起きるか」を予想してから実行してください。空欄を埋める問題では、コードを全部書き直さず、指定された部分だけを変更します。
+          </p>
+          <div class="callout">
+            <strong>進め方：</strong> ①コードを読む → ②結果を予想する → ③空欄を埋める →
+            ④実行して確認する。迷ったら、直前の説明を読み返しましょう。
+          </div>
+          <div class="exercise-grid">
+            <article class="exercise">
+              <div class="exercise-head">
+                <span class="number">1</span>
+                <h3>Hello, world!</h3>
+              </div>
+              <p>コンソールに自分の名前を表示してください。文字列を指定する部分を変更します。</p>
+              <details>
+                <summary>問題のコードを開く</summary>
+                <pre><code>const name = <span class="blank">"ここを変更"</span>;
+console.log("Hello, " + name);</code></pre>
+                <p class="hint">ヒント：文字列は引用符で囲みます。</p>
+              </details>
+            </article>
+            <article class="exercise">
+              <div class="exercise-head">
+                <span class="number">2</span>
+                <h3>2つの数の計算</h3>
+              </div>
+              <p>2つの数値の合計が表示されるように、演算子を変更してください。</p>
+              <details>
+                <summary>問題のコードを開く</summary>
+                <pre><code>const a = 12;
+const b = 8;
+console.log(a <span class="blank">ここを変更</span> b);</code></pre>
+                <p class="hint">ヒント：足し算の演算子を使います。</p>
+              </details>
+            </article>
+            <article class="exercise">
+              <div class="exercise-head">
+                <span class="number">3</span>
+                <h3>条件分岐</h3>
+              </div>
+              <p>点数が60以上なら「合格」と表示されるように、条件式を完成させます。</p>
+              <details>
+                <summary>問題のコードを開く</summary>
+                <pre><code>const score = 72;
+if (score <span class="blank">ここを変更</span> 60) {
+  console.log("合格");
+} else {
+  console.log("もう少し！");
+}</code></pre>
+                <p class="hint">ヒント：「以上」を表す比較演算子は何でしょう？</p>
+              </details>
+            </article>
+            <article class="exercise">
+              <div class="exercise-head">
+                <span class="number">4</span>
+                <h3>入力文字列を表示</h3>
+              </div>
+              <p>入力欄の値を取得し、ページ内に表示するコードを完成させます。</p>
+              <details>
+                <summary>問題のコードを開く</summary>
+                <pre><code>const input = document.getElementById("word");
+const result = document.getElementById("result");
+document.getElementById("show").addEventListener("click", () => {
+  result.textContent = input.<span class="blank">ここを変更</span>;
+});</code></pre>
+                <p class="hint">ヒント：入力欄の値を取り出すプロパティです。</p>
+              </details>
+            </article>
+            <article class="exercise">
+              <div class="exercise-head">
+                <span class="number">5</span>
+                <h3>DOMを書き換える</h3>
+              </div>
+              <p>ボタンを押したら見出しの文章が変わるように、代入するテキストを変更します。</p>
+              <details>
+                <summary>問題のコードを開く</summary>
+                <pre><code>const title = document.getElementById("title");
+document.getElementById("change").addEventListener("click", () => {
+  title.textContent = <span class="blank">ここを変更</span>;
+});</code></pre>
+                <p class="hint">ヒント：表示したい文章を文字列で指定します。</p>
+              </details>
+            </article>
+            <article class="exercise">
+              <div class="exercise-head">
+                <span class="number">6</span>
+                <h3>表示を切り替える</h3>
+              </div>
+              <p>ボタンを押すたびに表示と非表示を切り替える条件を完成させます。</p>
+              <details>
+                <summary>問題のコードを開く</summary>
+                <pre><code>if (message.hidden) {
+  message.hidden = false;
+} else {
+  message.hidden = <span class="blank">ここを変更</span>;
+}</code></pre>
+                <p class="hint">ヒント：表示する場合はfalse、隠す場合はtrueです。</p>
+              </details>
+            </article>
+          </div>
+          <p class="small-note">
+            補足：このページの演習は、コードを読んで変更箇所を見つける練習用です。実際の提出課題では、講師の指示に従って自分の
+            <code>index.html</code> にコードを記述してください。
+          </p>
+        </section>
+      </main>
+    </div>
+
+    <footer class="footer">Enjoy Learning JavaScript!　✦　小さく書いて、動かして、理解しよう。</footer>
+    <button class="backtop" aria-label="ページの先頭へ戻る" onclick="window.scrollTo({ top: 0, behavior: 'smooth' })">
+      ↑
+    </button>
+
+    <script>
+      // このページでは、HTML・CSS・JavaScriptを1つのファイルにまとめています。
+      // addEventListener() は、イベントが起きたときに実行する処理を登録します。
+
+      document.getElementById('run-console').addEventListener('click', () => {
+        console.log('Hello world!!');
+        document.getElementById('console-output').textContent = '> Hello world!!（実行しました）';
+      });
+
+      document.getElementById('calc-run').addEventListener('click', () => {
+        const a = Number(document.getElementById('calc-a').value);
+        const b = Number(document.getElementById('calc-b').value);
+        document.getElementById('calc-result').textContent = `和：${a + b} ／ 積：${a * b}`;
+      });
+
+      document.getElementById('condition-run').addEventListener('click', () => {
+        const n = Number(document.getElementById('condition-n').value);
+        let message;
+        if (n < 10) {
+          message = 'Small!';
+        } else if (n > 20) {
+          message = 'Big!';
+        } else {
+          message = 'Normal';
+        }
+        document.getElementById('condition-result').textContent = message;
+      });
+
+      document.getElementById('hello-demo').addEventListener('click', () => {
+        alert('Hello!!');
+      });
+
+      document.getElementById('name-run').addEventListener('click', () => {
+        const name = document.getElementById('name-input').value;
+        document.getElementById('name-result').textContent = name
+          ? `こんにちは、${name}さん！`
+          : '名前を入力してください。';
+      });
+
+      document.getElementById('timer-run').addEventListener('click', () => {
+        const output = document.getElementById('timer-result');
+        output.textContent = '3秒待っています…';
+        setTimeout(() => {
+          output.textContent = 'コールバック関数が実行されました！';
+        }, 3000);
+      });
+
+      const title = document.getElementById('demo-title');
+      document.getElementById('change-title').addEventListener('click', () => {
+        title.textContent = '変更後の文章';
+      });
+      document.getElementById('reset-title').addEventListener('click', () => {
+        title.textContent = '変更前の文章';
+      });
+
+      const message = document.getElementById('toggle-message');
+      document.getElementById('toggle-message-btn').addEventListener('click', () => {
+        message.hidden = !message.hidden;
+      });
+    </script>
+  </body>
+</html>
