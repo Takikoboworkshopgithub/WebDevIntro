@@ -1,0 +1,997 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Web開発入門 第01講。HTMLとCSSの基本を学び、初めてのWebページを作成する教材です。"
+    />
+    <title>01：HTML / CSS — Web開発入門</title>
+    <style>
+      :root {
+        --ink: #101b45;
+        --blue: #000080;
+        --link: #0000ee;
+        --visited: #551a8b;
+        --paper: #fffef4;
+        --pink: #ffb7d5;
+        --cyan: #9efcff;
+        --yellow: #fff66d;
+        --red: #d60000;
+        --line: #001b79;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        margin: 0;
+        color: var(--ink);
+        background-color: #b9c9ef;
+        background-image:
+          radial-gradient(#ffffff 1px, transparent 1.5px), radial-gradient(#526fc0 1px, transparent 1.5px);
+        background-position:
+          0 0,
+          12px 12px;
+        background-size: 24px 24px;
+        font-family: 'MS PGothic', 'ＭＳ Ｐゴシック', Verdana, sans-serif;
+        line-height: 1.75;
+      }
+      a {
+        color: var(--link);
+        font-weight: bold;
+      }
+      a:visited {
+        color: var(--visited);
+      }
+      a:hover {
+        color: var(--red);
+        background: var(--yellow);
+      }
+      .site-shell {
+        max-width: 1040px;
+        margin: 18px auto 40px;
+        padding: 0 16px;
+      }
+      .masthead {
+        background: var(--paper);
+        border: 4px ridge #fff;
+        outline: 2px solid var(--blue);
+        padding: 18px 20px 14px;
+        text-align: center;
+        box-shadow: 7px 7px 0 #3d5194;
+      }
+      .eyebrow {
+        margin: 0;
+        color: #b00053;
+        font-size: 0.82rem;
+        font-weight: bold;
+        letter-spacing: 0.08em;
+      }
+      h1.site-title {
+        color: var(--blue);
+        margin: 0;
+        font-size: clamp(2rem, 6vw, 4.2rem);
+        line-height: 1.15;
+        text-shadow: 3px 3px 0 var(--cyan);
+      }
+      .welcome {
+        color: #c00000;
+        font-weight: bold;
+        margin: 8px 0 0;
+      }
+      .sparkle {
+        color: #b00053;
+        letter-spacing: 0.2em;
+        font-weight: bold;
+      }
+      .marquee-faux {
+        overflow: hidden;
+        white-space: nowrap;
+        background: var(--yellow);
+        border: 2px dashed #c00000;
+        color: #b00000;
+        margin: 16px 0;
+        padding: 5px 0;
+        font-weight: bold;
+      }
+      .marquee-faux span {
+        display: inline-block;
+        padding-left: 100%;
+        animation: crawl 24s linear infinite;
+      }
+      @keyframes crawl {
+        to {
+          transform: translateX(-100%);
+        }
+      }
+      .layout {
+        display: grid;
+        grid-template-columns: 220px minmax(0, 1fr);
+        gap: 16px;
+        align-items: start;
+      }
+      .sidebar,
+      main {
+        background: var(--paper);
+        border: 3px ridge #fff;
+        box-shadow: 5px 5px 0 #3d5194;
+      }
+      .sidebar {
+        padding: 14px;
+      }
+      .sidebar h2 {
+        color: #b00053;
+        text-align: center;
+        font-size: 1.1rem;
+        margin: 0 0 8px;
+        border-bottom: 2px dotted #b00053;
+      }
+      .sidebar ul {
+        padding-left: 20px;
+        margin: 0;
+      }
+      .sidebar li {
+        margin: 5px 0;
+      }
+      .badge {
+        text-align: center;
+        margin-top: 18px;
+        padding: 9px 5px;
+        border: 2px inset #ddd;
+        background: #e8e8e8;
+        font: bold 12px monospace;
+      }
+      .badge strong {
+        display: block;
+        color: #b00000;
+        font-size: 1rem;
+      }
+      main {
+        min-width: 0;
+        padding: clamp(16px, 3vw, 30px);
+      }
+      main h2 {
+        margin: 38px 0 16px;
+        padding: 5px 10px;
+        color: #fff;
+        background: var(--blue);
+        border-left: 8px solid var(--pink);
+        font-size: 1.55rem;
+        line-height: 1.45;
+      }
+      main h2:first-child {
+        margin-top: 0;
+      }
+      main h3 {
+        margin: 28px 0 10px;
+        padding-bottom: 4px;
+        color: #b00053;
+        border-bottom: 2px dotted #b00053;
+        font-size: 1.18rem;
+      }
+      p {
+        margin: 12px 0;
+      }
+      li {
+        margin: 5px 0;
+      }
+      strong {
+        color: #a00048;
+      }
+      code {
+        font-family: Consolas, 'Courier New', monospace;
+        background: #e8edff;
+        padding: 0.08em 0.25em;
+        border: 1px solid #c0c9e9;
+        overflow-wrap: anywhere;
+      }
+      pre {
+        overflow-x: auto;
+        padding: 16px;
+        color: #e9f1ff;
+        background: #10152d;
+        border: 3px ridge #aaa;
+        line-height: 1.55;
+        tab-size: 2;
+      }
+      pre code {
+        color: inherit;
+        background: transparent;
+        border: 0;
+        padding: 0;
+        overflow-wrap: normal;
+      }
+      blockquote {
+        margin: 16px 0;
+        padding: 8px 14px;
+        background: #fff6b8;
+        border-left: 5px solid #d39b00;
+      }
+      hr {
+        margin: 30px 0;
+        border: 0;
+        border-top: 3px dotted #7184bf;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 18px 0;
+        font-size: 0.94rem;
+      }
+      th,
+      td {
+        border: 1px solid #7888b9;
+        padding: 8px 10px;
+        text-align: left;
+        vertical-align: top;
+      }
+      th {
+        background: #cfeaff;
+        color: #101b45;
+      }
+      tbody tr:nth-child(even) {
+        background: #f0f3ff;
+      }
+      .notice {
+        border: 2px dashed #b00053;
+        padding: 12px 15px;
+        background: #fff0f7;
+      }
+      .task {
+        border: 3px double #008577;
+        background: #e8fffb;
+        padding: 16px;
+        margin: 18px 0;
+      }
+      .task h3 {
+        margin-top: 0;
+        color: #00685e;
+        border-color: #008577;
+      }
+      .footer {
+        margin-top: 22px;
+        text-align: center;
+        color: #fff;
+        text-shadow: 1px 1px #18275c;
+        font-size: 0.85rem;
+      }
+      .back-top {
+        position: fixed;
+        right: 14px;
+        bottom: 14px;
+        background: var(--yellow);
+        border: 2px outset #fff;
+        padding: 7px 10px;
+        box-shadow: 2px 2px 0 #4c5c9b;
+      }
+      @media (max-width: 720px) {
+        .site-shell {
+          margin-top: 8px;
+          padding: 0 8px;
+        }
+        .layout {
+          grid-template-columns: 1fr;
+        }
+        .sidebar ul {
+          columns: 2;
+        }
+        main {
+          padding: 16px;
+        }
+        table {
+          display: block;
+          overflow-x: auto;
+          white-space: nowrap;
+        }
+        .marquee-faux span {
+          animation-duration: 35s;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+        .marquee-faux span {
+          animation: none;
+          padding-left: 0;
+          white-space: normal;
+        }
+      }
+      @media print {
+        body {
+          background: white;
+        }
+        .site-shell {
+          max-width: none;
+          margin: 0;
+          padding: 0;
+        }
+        .layout {
+          display: block;
+        }
+        .sidebar,
+        .marquee-faux,
+        .back-top,
+        .footer {
+          display: none;
+        }
+        .masthead,
+        main {
+          box-shadow: none;
+          border: 1px solid #999;
+        }
+        main h2 {
+          color: #000;
+          background: #eee;
+          border-left-color: #777;
+        }
+        pre {
+          white-space: pre-wrap;
+          overflow-wrap: anywhere;
+        }
+        a {
+          color: #000;
+        }
+      }
+    </style>
+  </head>
+  <body id="top">
+    <div class="site-shell">
+      <header class="masthead">
+        <p class="eyebrow">★ WEB DEVELOPMENT INTRODUCTION ★</p>
+        <h1 class="site-title">01：HTML / CSS</h1>
+        <p class="welcome">WELCOME TO MY WEB CLASS!!!</p>
+        <div class="sparkle" aria-hidden="true">✦ ━━━━━━━━━━━━━━━━━ ✦</div>
+        <p>はじめてのWebページを作ってみよう！</p>
+      </header>
+      <div class="marquee-faux" aria-label="講習のテーマ">
+        <span>★ HTMLで構造を作る！　★ CSSで見た目を整える！　★ ブラウザで確かめながら作ろう！　★</span>
+      </div>
+      <div class="layout">
+        <aside class="sidebar" aria-label="目次">
+          <h2>CONTENTS</h2>
+          <ul>
+            <li><a href="#section-1">環境設定</a></li>
+            <li><a href="#section-2">HTMLを書いてみよう</a></li>
+            <li><a href="#section-3">実際にHTMLを書こう</a></li>
+            <li><a href="#section-4">タグと要素</a></li>
+            <li><a href="#section-5">ネスト</a></li>
+            <li><a href="#section-6">改行</a></li>
+            <li><a href="#section-7">リンク</a></li>
+            <li><a href="#section-8">画像</a></li>
+            <li><a href="#section-9">リスト</a></li>
+            <li><a href="#section-10">CSS</a></li>
+            <li><a href="#section-11">開発者ツール</a></li>
+            <li><a href="#section-12">演習</a></li>
+            <li><a href="#section-13">まとめ</a></li>
+          </ul>
+          <div class="badge"><strong>HTML + CSS</strong>LEARN BY DOING!</div>
+          <p class="sparkle" style="text-align: center" aria-hidden="true">☆ ☆ ☆</p>
+        </aside>
+        <main>
+          <p class="notice">
+            <strong>この講習の目標：</strong>こんな感じのサイトが作れるようになります。<a href="./IQ.html"
+              >IQみたいなサークルの紹介</a
+            >
+          </p>
+          <h1 id="html-css">01：HTML / CSS</h1>
+          <h2 id="section-1">1. 環境設定</h2>
+          <p>今回の講習では、Visual Studio Code（VS Code）を使ってWebページを作成します。</p>
+          <p>まず、VS Codeを開き、次の拡張機能をインストールしてください。</p>
+          <ul>
+            <li><strong>Live Server</strong>：作成したWebページをブラウザで表示し、変更を確認するための拡張機能</li>
+            <li>
+              <strong>Prettier - Code formatter</strong>：HTMLやCSSなどのコードのインデントや改行を整えるための拡張機能
+            </li>
+          </ul>
+          <p>VS Codeの左側にある拡張機能アイコンをクリックし、名前を検索してインストールします。</p>
+          <h3 id="作業用ディレクトリを作成する">作業用ディレクトリを作成する</h3>
+          <p>適当な場所でターミナルを開き、次のコマンドを実行してください。</p>
+          <div class="sourceCode" id="cb1">
+            <pre
+              class="sourceCode bash"
+            ><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> 01</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> 01</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="ex">code</span> .</span></code></pre>
+          </div>
+          <p><code>code .</code> は、現在のディレクトリをVS Codeで開くコマンドです。</p>
+          <p>VS Codeで新しいファイルを作成し、<code>index.html</code> という名前で保存してください。</p>
+          <p>
+            ※ <code>touch index.html</code> でファイルを作成してから
+            <code>code .</code>
+            を実行しても構いません。Windowsの環境によっては、ファイルの作成方法が異なる場合があります。
+          </p>
+          <h2 id="section-2">2. HTMLを書いてみよう</h2>
+          <p><code>index.html</code> を開き、エディタ上で <code>!</code> を入力してEnterキーを押してください。</p>
+          <p>次のようなコードが自動で入力されたはずです。</p>
+          <div class="sourceCode" id="cb2">
+            <pre
+              class="sourceCode html"
+            ><code class="sourceCode html"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;!doctype</span> html<span class="dt">&gt;</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">html</span><span class="ot"> lang</span><span class="op">=</span><span class="st">&quot;ja&quot;</span><span class="dt">&gt;</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">head</span><span class="dt">&gt;</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&lt;</span><span class="kw">meta</span><span class="ot"> charset</span><span class="op">=</span><span class="st">&quot;UTF-8&quot;</span><span class="ot"> </span><span class="dt">/&gt;</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&lt;</span><span class="kw">meta</span><span class="ot"> name</span><span class="op">=</span><span class="st">&quot;viewport&quot;</span><span class="ot"> content</span><span class="op">=</span><span class="st">&quot;width=device-width, initial-scale=1.0&quot;</span><span class="ot"> </span><span class="dt">/&gt;</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&lt;</span><span class="kw">title</span><span class="dt">&gt;</span>Document<span class="dt">&lt;/</span><span class="kw">title</span><span class="dt">&gt;</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;/</span><span class="kw">head</span><span class="dt">&gt;</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">body</span><span class="dt">&gt;&lt;/</span><span class="kw">body</span><span class="dt">&gt;</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">html</span><span class="dt">&gt;</span></span></code></pre>
+          </div>
+          <p>
+            これはHTML文書の基本的なひな形です。VS CodeのEmmetという機能が、HTMLの基本構造を自動で生成してくれました。
+          </p>
+          <p>毎回すべてを手入力する必要はありません。このひな形をもとに、必要な内容を追加していきます。</p>
+          <h3 id="htmlの基本構造">HTMLの基本構造</h3>
+          <ul>
+            <li><code>&lt;!doctype html&gt;</code>：HTML文書であることをブラウザに伝える</li>
+            <li><code>&lt;html&gt;</code>：HTML文書全体を囲む</li>
+            <li><code>&lt;head&gt;</code>：文字コードやページタイトルなど、文書に関する情報を書く</li>
+            <li><code>&lt;body&gt;</code>：ブラウザのページ本体に表示する内容を書く</li>
+            <li><code>&lt;title&gt;</code>：ブラウザのタブなどに表示するページタイトルを指定する</li>
+          </ul>
+          <p>
+            実際にページの内容を記述するのは、基本的に<code>&lt;body&gt;</code>と<code>&lt;/body&gt;</code>の間です。
+          </p>
+          <p>
+            また、<code>&lt;meta charset="UTF-8" /&gt;</code>
+            は文字コードを指定し、日本語などの文字を正しく扱うために使います。<code
+              >&lt;meta name="viewport" ...&gt;</code
+            >
+            は、スマートフォンなどの画面幅に合わせてページを表示するための設定です。
+          </p>
+          <h3 id="webページは何でできている">Webページは何でできている？</h3>
+          <p>Webページを作るうえで、まず押さえておきたい技術がHTMLとCSSです。</p>
+          <p><strong>HTML（HyperText Markup Language）</strong></p>
+          <p>Webページの構造や内容を記述します。見出し、文章、画像、リンクなどを配置します。</p>
+          <p><strong>CSS（Cascading Style Sheets）</strong></p>
+          <p>Webページの見た目を指定します。文字の色や大きさ、背景、余白、配置などを調整します。</p>
+          <p>例えば、HTMLで見出しを作り、CSSでその見出しを大きくしたり、色を付けたりします。</p>
+          <hr />
+          <h2 id="section-3">3. 実際にHTMLを書いてみよう！</h2>
+          <p>以下のコードを<code>index.html</code>に入力してください。</p>
+          <div class="sourceCode" id="cb3">
+            <pre
+              class="sourceCode html"
+            ><code class="sourceCode html"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;!doctype</span> html<span class="dt">&gt;</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">html</span><span class="ot"> lang</span><span class="op">=</span><span class="st">&quot;ja&quot;</span><span class="dt">&gt;</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">head</span><span class="dt">&gt;</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&lt;</span><span class="kw">meta</span><span class="ot"> charset</span><span class="op">=</span><span class="st">&quot;UTF-8&quot;</span><span class="ot"> </span><span class="dt">/&gt;</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&lt;</span><span class="kw">meta</span><span class="ot"> name</span><span class="op">=</span><span class="st">&quot;viewport&quot;</span><span class="ot"> content</span><span class="op">=</span><span class="st">&quot;width=device-width, initial-scale=1.0&quot;</span><span class="ot"> </span><span class="dt">/&gt;</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&lt;</span><span class="kw">title</span><span class="dt">&gt;</span>Document<span class="dt">&lt;/</span><span class="kw">title</span><span class="dt">&gt;</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;/</span><span class="kw">head</span><span class="dt">&gt;</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">body</span><span class="dt">&gt;</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&lt;</span><span class="kw">h1</span><span class="dt">&gt;</span>これはh1タグです。見出しに用います。<span class="dt">&lt;/</span><span class="kw">h1</span><span class="dt">&gt;</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&lt;</span><span class="kw">h2</span><span class="dt">&gt;</span>これはh2タグです。小見出しに用います。<span class="dt">&lt;/</span><span class="kw">h2</span><span class="dt">&gt;</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&lt;</span><span class="kw">h3</span><span class="dt">&gt;</span>これはh3タグです。さらに下位の見出しに用います。<span class="dt">&lt;/</span><span class="kw">h3</span><span class="dt">&gt;</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&lt;</span><span class="kw">p</span><span class="dt">&gt;</span>これはpタグです。段落を書くのに用います。<span class="dt">&lt;/</span><span class="kw">p</span><span class="dt">&gt;</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    <span class="co">&lt;!-- これはコメントです。ブラウザには表示されません。 --&gt;</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    <span class="co">&lt;!-- 以下は使用例 --&gt;</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&lt;</span><span class="kw">h1</span><span class="dt">&gt;</span>プログラミングサークル「IQ」<span class="dt">&lt;/</span><span class="kw">h1</span><span class="dt">&gt;</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&lt;</span><span class="kw">h2</span><span class="dt">&gt;</span>競プロ<span class="dt">&lt;/</span><span class="kw">h2</span><span class="dt">&gt;</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&lt;</span><span class="kw">p</span><span class="dt">&gt;</span>競技プログラミングに興味のあるメンバーで構成されています。<span class="dt">&lt;/</span><span class="kw">p</span><span class="dt">&gt;</span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&lt;</span><span class="kw">p</span><span class="dt">&gt;</span>ICPCに向けてコーディング力を鍛えます。<span class="dt">&lt;/</span><span class="kw">p</span><span class="dt">&gt;</span></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&lt;</span><span class="kw">h2</span><span class="dt">&gt;</span>Web<span class="dt">&lt;/</span><span class="kw">h2</span><span class="dt">&gt;</span></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&lt;</span><span class="kw">p</span><span class="dt">&gt;</span>Web開発に興味のあるメンバーで構成されています。<span class="dt">&lt;/</span><span class="kw">p</span><span class="dt">&gt;</span></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&lt;</span><span class="kw">p</span><span class="dt">&gt;</span>IQのシステムを制作するチームです。<span class="dt">&lt;/</span><span class="kw">p</span><span class="dt">&gt;</span></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&lt;</span><span class="kw">h2</span><span class="dt">&gt;</span>ゲーム<span class="dt">&lt;/</span><span class="kw">h2</span><span class="dt">&gt;</span></span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&lt;</span><span class="kw">p</span><span class="dt">&gt;</span>ゲーム開発に興味のあるメンバーで構成されています。<span class="dt">&lt;/</span><span class="kw">p</span><span class="dt">&gt;</span></span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&lt;</span><span class="kw">p</span><span class="dt">&gt;</span>Unityを用いてゲームを開発しています。<span class="dt">&lt;/</span><span class="kw">p</span><span class="dt">&gt;</span></span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;/</span><span class="kw">body</span><span class="dt">&gt;</span></span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">html</span><span class="dt">&gt;</span></span></code></pre>
+          </div>
+          <p>入力できたら、ファイルを保存してLive Serverで表示してみましょう。</p>
+          <p>
+            <code>index.html</code>を右クリックし、<strong>Open with Live Server</strong
+            >を選択してください。ブラウザが開き、HTMLの内容が表示されます。
+          </p>
+          <p>以降、コードを変更して保存すると、ブラウザにも変更が反映されます。</p>
+          <h2 id="section-4">4. タグと要素</h2>
+          <p>
+            HTMLでは、<code>&lt;h1&gt;</code>や<code>&lt;p&gt;</code>のような記法を使って、文章に意味や構造を与えます。
+          </p>
+          <div class="sourceCode" id="cb4">
+            <pre
+              class="sourceCode html"
+            ><code class="sourceCode html"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">h1</span><span class="dt">&gt;</span>こんにちは！<span class="dt">&lt;/</span><span class="kw">h1</span><span class="dt">&gt;</span></span></code></pre>
+          </div>
+          <p>このとき、用語を整理しておきましょう。</p>
+          <ul>
+            <li><strong>タグ</strong>：<code>&lt;h1&gt;</code>や<code>&lt;/h1&gt;</code>のような記述</li>
+            <li><strong>要素</strong>：開始タグ、内容、終了タグなどから構成されるまとまり</li>
+          </ul>
+          <p>
+            つまり、上の例では<code>&lt;h1&gt;</code>が開始タグ、<code>こんにちは！</code>が内容、<code>&lt;/h1&gt;</code>が終了タグであり、全体がh1要素です。
+          </p>
+          <p>HTMLの要素には、それぞれ意味や役割があります。</p>
+          <h3 id="セクション見出しh1h6">セクション見出し：<code>h1</code>〜<code>h6</code></h3>
+          <p>見出しを表す要素です。</p>
+          <div class="sourceCode" id="cb5">
+            <pre
+              class="sourceCode html"
+            ><code class="sourceCode html"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">h1</span><span class="dt">&gt;</span>大見出し<span class="dt">&lt;/</span><span class="kw">h1</span><span class="dt">&gt;</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">h2</span><span class="dt">&gt;</span>小見出し<span class="dt">&lt;/</span><span class="kw">h2</span><span class="dt">&gt;</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">h3</span><span class="dt">&gt;</span>さらに下位の見出し<span class="dt">&lt;/</span><span class="kw">h3</span><span class="dt">&gt;</span></span></code></pre>
+          </div>
+          <p><code>h1</code>から<code>h6</code>まであり、数字が大きいほど下位の見出しを表します。</p>
+          <p>
+            単に文字を大きくするためではなく、<strong>文書の見出し構造を表現するために使います</strong>。文字の大きさや色は、あとでCSSを使って調整できます。
+          </p>
+          <h3 id="段落p">段落：<code>p</code></h3>
+          <p>文章の段落を表す要素です。</p>
+          <div class="sourceCode" id="cb6">
+            <pre
+              class="sourceCode html"
+            ><code class="sourceCode html"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">p</span><span class="dt">&gt;</span>これは一つ目の段落です。<span class="dt">&lt;/</span><span class="kw">p</span><span class="dt">&gt;</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">p</span><span class="dt">&gt;</span>これは二つ目の段落です。<span class="dt">&lt;/</span><span class="kw">p</span><span class="dt">&gt;</span></span></code></pre>
+          </div>
+          <p>段落ごとに<code>p</code>要素で囲みます。ブラウザでは通常、段落の前後に余白が設けられます。</p>
+          <h3 id="コメント">コメント</h3>
+          <p>HTMLには、ブラウザに通常表示されないコメントを書くことができます。</p>
+          <div class="sourceCode" id="cb7">
+            <pre
+              class="sourceCode html"
+            ><code class="sourceCode html"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">&lt;!-- これはコメントです --&gt;</span></span></code></pre>
+          </div>
+          <p>
+            メモや説明を残したい場合に便利です。VS
+            Codeでは、選択した行に対してコメントの切り替え操作を使うこともできます。
+          </p>
+          <hr />
+          <h2 id="section-5">5. ネスト：タグの中にタグを入れる</h2>
+          <p>
+            HTMLでは、ある要素の中に別の要素を入れることができます。これを<strong>ネスト（入れ子構造）</strong>といいます。
+          </p>
+          <p>例えば、文章の一部を強調したい場合は、<code>p</code>要素の中に<code>strong</code>要素を入れます。</p>
+          <div class="sourceCode" id="cb8">
+            <pre
+              class="sourceCode html"
+            ><code class="sourceCode html"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">p</span><span class="dt">&gt;</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  C++というプログラミング言語には、<span class="dt">&lt;</span><span class="kw">strong</span><span class="dt">&gt;</span>プラス記号が2つ<span class="dt">&lt;/</span><span class="kw">strong</span><span class="dt">&gt;</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  使われています。</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">p</span><span class="dt">&gt;</span></span></code></pre>
+          </div>
+          <p><code>strong</code>要素は、内容が重要であることを表します。ブラウザでは通常、太字で表示されます。</p>
+          <p>同じように、<code>mark</code>要素を使うと、文章の一部をマーカーで強調するように表示できます。</p>
+          <div class="sourceCode" id="cb9">
+            <pre
+              class="sourceCode html"
+            ><code class="sourceCode html"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">p</span><span class="dt">&gt;</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  C言語から派生した言語にはC++のほかに、</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">mark</span><span class="dt">&gt;</span>Objective-C<span class="dt">&lt;/</span><span class="kw">mark</span><span class="dt">&gt;</span>があります。</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  また、Objective-CとC++を組み合わせたObjective-C++もあります。</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">p</span><span class="dt">&gt;</span></span></code></pre>
+          </div>
+          <p><code>mark</code>は、文章の中で特に注目してほしい箇所を示すための要素です。</p>
+          <h3 id="ネストの注意点">ネストの注意点</h3>
+          <p>開始タグと終了タグの順序に注意してください。</p>
+          <div class="sourceCode" id="cb10">
+            <pre
+              class="sourceCode html"
+            ><code class="sourceCode html"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">p</span><span class="dt">&gt;</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  これは<span class="dt">&lt;</span><span class="kw">strong</span><span class="dt">&gt;</span>正しい書き方<span class="dt">&lt;/</span><span class="kw">strong</span><span class="dt">&gt;</span>です。</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">p</span><span class="dt">&gt;</span></span></code></pre>
+          </div>
+          <p>次のように、要素の開始と終了の順序が交差する書き方は正しくありません。</p>
+          <div class="sourceCode" id="cb11">
+            <pre
+              class="sourceCode html"
+            ><code class="sourceCode html"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">p</span><span class="dt">&gt;</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  これは<span class="dt">&lt;</span><span class="kw">strong</span><span class="dt">&gt;</span>正しくない書き方です。</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">p</span><span class="dt">&gt;</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">strong</span><span class="dt">&gt;</span></span></code></pre>
+          </div>
+          <p>入れ子にした要素は、基本的に内側から閉じます。</p>
+          <hr />
+          <h2 id="section-6">6. 改行</h2>
+          <p>HTMLでは、ソースコード上で改行しても、ブラウザ上では通常、単なる空白として扱われます。</p>
+          <p>例えば、次のコードを実行してみてください。</p>
+          <div class="sourceCode" id="cb12">
+            <pre
+              class="sourceCode html"
+            ><code class="sourceCode html"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">p</span><span class="dt">&gt;</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  これは一行目です。</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  これも一行目です。</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">p</span><span class="dt">&gt;</span></span></code></pre>
+          </div>
+          <p>HTMLファイルでは2行に分かれていますが、ブラウザでは同じ段落の文章として表示されます。</p>
+          <p>改行したい場合は、<code>br</code>要素を使います。</p>
+          <div class="sourceCode" id="cb13">
+            <pre
+              class="sourceCode html"
+            ><code class="sourceCode html"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">p</span><span class="dt">&gt;</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  これは一行目です。<span class="dt">&lt;</span><span class="kw">br</span><span class="ot"> </span><span class="dt">/&gt;</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  これは次の行です。</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">p</span><span class="dt">&gt;</span></span></code></pre>
+          </div>
+          <p><code>br</code>は、文章の途中で改行を表す要素です。終了タグを持たない要素の一つです。</p>
+          <p>
+            ただし、段落を分けたい場合は<code>br</code>を繰り返すのではなく、<code>p</code>要素を分けるのが基本です。
+          </p>
+          <p>
+            また、<strong>文章上の改行はHTML、要素間の余白は基本的にCSSで調整する</strong>という使い分けを覚えておきましょう。
+          </p>
+          <hr />
+          <h2 id="section-7">7. リンクを作ろう</h2>
+          <p>Webページの重要な機能の一つが、別のページへ移動するためのリンクです。</p>
+          <p>リンクには<code>a</code>要素を使います。</p>
+          <h3 id="別のhtmlファイルに移動する">別のHTMLファイルに移動する</h3>
+          <p>まず、現在の<code>01</code>ディレクトリの中に、<code>sample</code>というフォルダを作成してください。</p>
+          <pre class="text"><code>01/
+├── index.html
+└── sample/
+    └── index.html</code></pre>
+          <p><code>sample/index.html</code>に、次のコードを書きます。</p>
+          <div class="sourceCode" id="cb15">
+            <pre
+              class="sourceCode html"
+            ><code class="sourceCode html"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;!doctype</span> html<span class="dt">&gt;</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">html</span><span class="ot"> lang</span><span class="op">=</span><span class="st">&quot;ja&quot;</span><span class="dt">&gt;</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">head</span><span class="dt">&gt;</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&lt;</span><span class="kw">meta</span><span class="ot"> charset</span><span class="op">=</span><span class="st">&quot;UTF-8&quot;</span><span class="ot"> </span><span class="dt">/&gt;</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&lt;</span><span class="kw">meta</span><span class="ot"> name</span><span class="op">=</span><span class="st">&quot;viewport&quot;</span><span class="ot"> content</span><span class="op">=</span><span class="st">&quot;width=device-width, initial-scale=1.0&quot;</span><span class="ot"> </span><span class="dt">/&gt;</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&lt;</span><span class="kw">title</span><span class="dt">&gt;</span>移動先のページ<span class="dt">&lt;/</span><span class="kw">title</span><span class="dt">&gt;</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;/</span><span class="kw">head</span><span class="dt">&gt;</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">body</span><span class="dt">&gt;</span></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&lt;</span><span class="kw">h1</span><span class="dt">&gt;</span>移動しましたね！<span class="dt">&lt;/</span><span class="kw">h1</span><span class="dt">&gt;</span></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;/</span><span class="kw">body</span><span class="dt">&gt;</span></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">html</span><span class="dt">&gt;</span></span></code></pre>
+          </div>
+          <p>次に、最初の<code>index.html</code>の<code>body</code>内に、次のコードを追加してください。</p>
+          <div class="sourceCode" id="cb16">
+            <pre
+              class="sourceCode html"
+            ><code class="sourceCode html"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">p</span><span class="dt">&gt;</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  ページを移動してみましょう。</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">a</span><span class="ot"> href</span><span class="op">=</span><span class="st">&quot;./sample/index.html&quot;</span><span class="ot"> target</span><span class="op">=</span><span class="st">&quot;_blank&quot;</span><span class="dt">&gt;</span>ここをクリック<span class="dt">&lt;/</span><span class="kw">a</span><span class="dt">&gt;</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  してみましょう。</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">p</span><span class="dt">&gt;</span></span></code></pre>
+          </div>
+          <p>リンクをクリックすると、移動先のページが新しいタブで開きます。</p>
+          <p>ここで使われている属性について説明します。</p>
+          <ul>
+            <li><code>href</code>：リンク先のURLやファイルパスを指定する</li>
+            <li><code>target="_blank"</code>：リンク先を新しいタブやウィンドウで開くよう指定する</li>
+          </ul>
+          <p><code>./sample/index.html</code>は、現在のHTMLファイルがあるディレクトリを基準にした相対パスです。</p>
+          <h3 id="外部サイトへ移動する">外部サイトへ移動する</h3>
+          <p><code>href</code>には、外部サイトのURLも指定できます。</p>
+          <div class="sourceCode" id="cb17">
+            <pre
+              class="sourceCode html"
+            ><code class="sourceCode html"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">p</span><span class="dt">&gt;</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  これは</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">a</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="ot">    href</span><span class="op">=</span><span class="st">&quot;https://info.cern.ch/hypertext/WWW/TheProject.html&quot;</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="ot">    target</span><span class="op">=</span><span class="st">&quot;_blank&quot;</span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="ot">    rel</span><span class="op">=</span><span class="st">&quot;noopener noreferrer&quot;</span></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a><span class="ot">  </span><span class="dt">&gt;</span></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>    世界で最初期のWebサイト</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;/</span><span class="kw">a</span><span class="dt">&gt;</span></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>  の紹介です。</span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">p</span><span class="dt">&gt;</span></span></code></pre>
+          </div>
+          <p>このリンクは、World Wide Webの初期の歴史を紹介するページへ移動します。</p>
+          <p>
+            <code>target="_blank"</code>を使う場合、<code>rel="noopener noreferrer"</code
+            >を付ける書き方が推奨されます。リンク先のページが元のページを操作するリスクを抑え、参照元情報の送信も防ぎます。
+          </p>
+          <h3 id="属性とは">属性とは？</h3>
+          <p>今までの要素と少し違い、タグの中に<code>href</code>や<code>target</code>などの指定が登場しました。</p>
+          <p>このような追加情報を<strong>属性（attribute）</strong>といいます。</p>
+          <div class="sourceCode" id="cb18">
+            <pre
+              class="sourceCode html"
+            ><code class="sourceCode html"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">a</span><span class="ot"> href</span><span class="op">=</span><span class="st">&quot;./sample/index.html&quot;</span><span class="ot"> target</span><span class="op">=</span><span class="st">&quot;_blank&quot;</span><span class="dt">&gt;</span>ここをクリック<span class="dt">&lt;/</span><span class="kw">a</span><span class="dt">&gt;</span></span></code></pre>
+          </div>
+          <p>
+            この例では、<code>href</code>と<code>target</code>が属性名で、それぞれの値がリンク先と開き方を指定しています。
+          </p>
+          <p>
+            属性は、要素の種類に応じて使い分けます。例えば、<code>a</code>要素では<code>href</code>を使ってリンク先を指定し、<code>img</code>要素では<code>src</code>を使って画像ファイルを指定します。
+          </p>
+          <h3 id="同じページ内で移動する">同じページ内で移動する</h3>
+          <p><code>a</code>要素は、別のページだけでなく、同じページ内の特定の位置にも移動できます。</p>
+          <div class="sourceCode" id="cb19">
+            <pre
+              class="sourceCode html"
+            ><code class="sourceCode html"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">p</span><span class="dt">&gt;&lt;</span><span class="kw">a</span><span class="ot"> href</span><span class="op">=</span><span class="st">&quot;#&quot;</span><span class="dt">&gt;</span>ページの先頭へ移動<span class="dt">&lt;/</span><span class="kw">a</span><span class="dt">&gt;&lt;/</span><span class="kw">p</span><span class="dt">&gt;</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">p</span><span class="dt">&gt;&lt;</span><span class="kw">a</span><span class="ot"> href</span><span class="op">=</span><span class="st">&quot;#Section_further_down&quot;</span><span class="dt">&gt;</span>下の見出しへ移動<span class="dt">&lt;/</span><span class="kw">a</span><span class="dt">&gt;&lt;/</span><span class="kw">p</span><span class="dt">&gt;</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a><span class="co">&lt;!-- リンク先の見出し --&gt;</span></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">h2</span><span class="ot"> id</span><span class="op">=</span><span class="st">&quot;Section_further_down&quot;</span><span class="dt">&gt;</span>さらに下のセクション<span class="dt">&lt;/</span><span class="kw">h2</span><span class="dt">&gt;</span></span></code></pre>
+          </div>
+          <p>ここでは、<code>id</code>属性で移動先の要素に名前を付けています。</p>
+          <p>
+            <code>href="#Section_further_down"</code
+            >は、その<code>id</code>を持つ要素へ移動するリンクです。<code>id</code>は、同じHTML文書内で重複しないように指定します。
+          </p>
+          <p>
+            なお、<code>href="#"</code>はページ先頭付近への移動に使われることがありますが、厳密には空のフラグメントを指定する記法です。ページ内の特定の位置へ移動したい場合は、<code>id</code>を指定する方法を使いましょう。
+          </p>
+          <hr />
+          <h2 id="section-8">8. 画像を表示しよう</h2>
+          <p>Webページでは、文章だけでなく画像も表示できます。画像には<code>img</code>要素を使います。</p>
+          <p><code>01</code>ディレクトリの中に画像ファイルを置き、次のように記述してください。</p>
+          <div class="sourceCode" id="cb20">
+            <pre
+              class="sourceCode html"
+            ><code class="sourceCode html"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">img</span><span class="ot"> src</span><span class="op">=</span><span class="st">&quot;./sample.jpg&quot;</span><span class="ot"> alt</span><span class="op">=</span><span class="st">&quot;サンプル画像&quot;</span><span class="ot"> </span><span class="dt">/&gt;</span></span></code></pre>
+          </div>
+          <ul>
+            <li><code>src</code>：画像ファイルのパス</li>
+            <li><code>alt</code>：画像の内容を説明する代替テキスト</li>
+          </ul>
+          <p>画像が表示されない場合は、ファイル名やパスが正しいか確認してください。</p>
+          <p><code>img</code>要素は終了タグを持ちません。また、画像の大きさはCSSで調整できます。</p>
+          <div class="sourceCode" id="cb21">
+            <pre
+              class="sourceCode html"
+            ><code class="sourceCode html"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">img</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="ot">  src</span><span class="op">=</span><span class="st">&quot;./sample.jpg&quot;</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="ot">  alt</span><span class="op">=</span><span class="st">&quot;サンプル画像&quot;</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="ot">  width</span><span class="op">=</span><span class="st">&quot;300&quot;</span></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="dt">/&gt;</span></span></code></pre>
+          </div>
+          <p>
+            <code>width</code
+            >属性を使って幅を指定することもできます。画像の見た目やレイアウトを細かく調整する方法は、CSSで学びます。
+          </p>
+          <hr />
+          <h2 id="section-9">9. リストを作ろう</h2>
+          <p>複数の項目を列挙したい場合は、リストを使います。</p>
+          <h3 id="箇条書きulとli">箇条書き：<code>ul</code>と<code>li</code></h3>
+          <div class="sourceCode" id="cb22">
+            <pre
+              class="sourceCode html"
+            ><code class="sourceCode html"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">h2</span><span class="dt">&gt;</span>趣味<span class="dt">&lt;/</span><span class="kw">h2</span><span class="dt">&gt;</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">ul</span><span class="dt">&gt;</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">li</span><span class="dt">&gt;</span>プログラミング<span class="dt">&lt;/</span><span class="kw">li</span><span class="dt">&gt;</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">li</span><span class="dt">&gt;</span>音楽制作<span class="dt">&lt;/</span><span class="kw">li</span><span class="dt">&gt;</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">li</span><span class="dt">&gt;</span>3DCG<span class="dt">&lt;/</span><span class="kw">li</span><span class="dt">&gt;</span></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">ul</span><span class="dt">&gt;</span></span></code></pre>
+          </div>
+          <ul>
+            <li><code>ul</code>：順序を持たないリスト</li>
+            <li><code>li</code>：リストの各項目</li>
+          </ul>
+          <h3 id="番号付きリストolとli">番号付きリスト：<code>ol</code>と<code>li</code></h3>
+          <div class="sourceCode" id="cb23">
+            <pre
+              class="sourceCode html"
+            ><code class="sourceCode html"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">h2</span><span class="dt">&gt;</span>Webサイトを作る手順<span class="dt">&lt;/</span><span class="kw">h2</span><span class="dt">&gt;</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">ol</span><span class="dt">&gt;</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">li</span><span class="dt">&gt;</span>HTMLを書く<span class="dt">&lt;/</span><span class="kw">li</span><span class="dt">&gt;</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">li</span><span class="dt">&gt;</span>CSSを書く<span class="dt">&lt;/</span><span class="kw">li</span><span class="dt">&gt;</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">li</span><span class="dt">&gt;</span>ブラウザで確認する<span class="dt">&lt;/</span><span class="kw">li</span><span class="dt">&gt;</span></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">ol</span><span class="dt">&gt;</span></span></code></pre>
+          </div>
+          <p><code>ol</code>は順序付きリストです。ブラウザでは通常、項目に番号が付きます。</p>
+          <p>単に見た目を整えるためだけではなく、内容が箇条書きなのか、順番のある手順なのかに応じて使い分けます。</p>
+          <hr />
+          <h2 id="section-10">10. CSSで見た目を変えよう</h2>
+          <p>ここまではHTMLを使って、見出しや文章、リンク、画像などの構造を作ってきました。</p>
+          <p>次はCSSを使って、ページの見た目を変更してみましょう。</p>
+          <h3 id="htmlに直接cssを書く">HTMLに直接CSSを書く</h3>
+          <p>HTMLの要素には、<code>style</code>属性を使って直接スタイルを指定することもできます。</p>
+          <div class="sourceCode" id="cb24">
+            <pre
+              class="sourceCode html"
+            ><code class="sourceCode html"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">h1</span><span class="ot"> style</span><span class="op">=</span><span class="st">&quot;color: red;&quot;</span><span class="dt">&gt;</span>赤い見出し<span class="dt">&lt;/</span><span class="kw">h1</span><span class="dt">&gt;</span></span></code></pre>
+          </div>
+          <p>これで見出しの文字色が赤になります。</p>
+          <p>ただし、ページ全体の見た目を管理する場合、HTMLとCSSを分離した方が修正しやすくなります。</p>
+          <h3 id="cssの基本構文">CSSの基本構文</h3>
+          <p><code>index.html</code>の<code>head</code>内に、次のような<code>style</code>要素を追加してみましょう。</p>
+          <div class="sourceCode" id="cb25">
+            <pre
+              class="sourceCode html"
+            ><code class="sourceCode html"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">style</span><span class="dt">&gt;</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  h1 {</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">color</span><span class="ch">:</span> <span class="cn">blue</span><span class="op">;</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">font-size</span><span class="ch">:</span> <span class="dv">40</span><span class="dt">px</span><span class="op">;</span></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">style</span><span class="dt">&gt;</span></span></code></pre>
+          </div>
+          <p><code>h1</code>要素の文字が青く、大きく表示されるようになります。</p>
+          <p>CSSは基本的に、次の構造で記述します。</p>
+          <div class="sourceCode" id="cb26">
+            <pre
+              class="sourceCode css"
+            ><code class="sourceCode css"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>セレクタ {</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  プロパティ<span class="ch">:</span> <span class="dv">値</span><span class="op">;</span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>}</span></code></pre>
+          </div>
+          <ul>
+            <li><strong>セレクタ</strong>：どの要素にスタイルを適用するか</li>
+            <li><strong>プロパティ</strong>：何を変更するか</li>
+            <li><strong>値</strong>：どのように変更するか</li>
+          </ul>
+          <p>例えば、<code>color: blue;</code>は文字色を青に指定しています。</p>
+          <h3 id="htmlとcssを分離する">HTMLとCSSを分離する</h3>
+          <p>実際のWeb開発では、CSSを別のファイルに分けて管理することが一般的です。</p>
+          <p><code>01</code>ディレクトリに<code>style.css</code>を作成し、次のコードを書いてください。</p>
+          <div class="sourceCode" id="cb27">
+            <pre
+              class="sourceCode css"
+            ><code class="sourceCode css"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>body {</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">background-color</span><span class="ch">:</span> <span class="cn">#f5f5f5</span><span class="op">;</span></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">color</span><span class="ch">:</span> <span class="cn">#333333</span><span class="op">;</span></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">font-family</span><span class="ch">:</span> <span class="dv">sans-serif</span><span class="op">;</span></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>h1 {</span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>  <span class="kw">color</span><span class="ch">:</span> <span class="cn">#6750a4</span><span class="op">;</span></span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>  <span class="kw">font-size</span><span class="ch">:</span> <span class="dv">36</span><span class="dt">px</span><span class="op">;</span></span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>h2 {</span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>  <span class="kw">color</span><span class="ch">:</span> <span class="cn">#008577</span><span class="op">;</span></span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a>p {</span>
+<span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a>  <span class="kw">font-size</span><span class="ch">:</span> <span class="dv">18</span><span class="dt">px</span><span class="op">;</span></span>
+<span id="cb27-18"><a href="#cb27-18" aria-hidden="true" tabindex="-1"></a>  <span class="kw">line-height</span><span class="ch">:</span> <span class="dv">1.8</span><span class="op">;</span></span>
+<span id="cb27-19"><a href="#cb27-19" aria-hidden="true" tabindex="-1"></a>}</span></code></pre>
+          </div>
+          <p>次に、<code>index.html</code>の<code>head</code>内に以下を追加します。</p>
+          <div class="sourceCode" id="cb28">
+            <pre
+              class="sourceCode html"
+            ><code class="sourceCode html"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">link</span><span class="ot"> rel</span><span class="op">=</span><span class="st">&quot;stylesheet&quot;</span><span class="ot"> href</span><span class="op">=</span><span class="st">&quot;./style.css&quot;</span><span class="ot"> </span><span class="dt">/&gt;</span></span></code></pre>
+          </div>
+          <p>HTMLとCSSのファイルは、次のようになります。</p>
+          <pre class="text"><code>01/
+├── index.html
+├── style.css
+└── sample/
+    └── index.html</code></pre>
+          <p>保存してブラウザを確認してください。背景色、文字色、文字サイズなどが変更されているはずです。</p>
+          <h3 id="よく使うcssプロパティ">よく使うCSSプロパティ</h3>
+          <table>
+            <thead>
+              <tr class="header">
+                <th>プロパティ</th>
+                <th>役割</th>
+                <th>例</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="odd">
+                <td><code>color</code></td>
+                <td>文字色</td>
+                <td><code>color: red;</code></td>
+              </tr>
+              <tr class="even">
+                <td><code>background-color</code></td>
+                <td>背景色</td>
+                <td><code>background-color: #eeeeee;</code></td>
+              </tr>
+              <tr class="odd">
+                <td><code>font-size</code></td>
+                <td>文字サイズ</td>
+                <td><code>font-size: 20px;</code></td>
+              </tr>
+              <tr class="even">
+                <td><code>font-weight</code></td>
+                <td>文字の太さ</td>
+                <td><code>font-weight: bold;</code></td>
+              </tr>
+              <tr class="odd">
+                <td><code>text-align</code></td>
+                <td>文字の配置</td>
+                <td><code>text-align: center;</code></td>
+              </tr>
+              <tr class="even">
+                <td><code>margin</code></td>
+                <td>要素の外側の余白</td>
+                <td><code>margin: 20px;</code></td>
+              </tr>
+              <tr class="odd">
+                <td><code>padding</code></td>
+                <td>要素の内側の余白</td>
+                <td><code>padding: 16px;</code></td>
+              </tr>
+              <tr class="even">
+                <td><code>width</code></td>
+                <td>幅</td>
+                <td><code>width: 300px;</code></td>
+              </tr>
+              <tr class="odd">
+                <td><code>height</code></td>
+                <td>高さ</td>
+                <td><code>height: 200px;</code></td>
+              </tr>
+            </tbody>
+          </table>
+          <h3 id="marginとpaddingの違い">marginとpaddingの違い</h3>
+          <p><code>margin</code>と<code>padding</code>は、どちらも余白に関するプロパティですが、役割が異なります。</p>
+          <ul>
+            <li><code>margin</code>：要素の外側の余白</li>
+            <li><code>padding</code>：要素の内側の余白</li>
+          </ul>
+          <p>例えば、次のCSSを追加してみましょう。</p>
+          <div class="sourceCode" id="cb30">
+            <pre
+              class="sourceCode css"
+            ><code class="sourceCode css"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>h1 {</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">background-color</span><span class="ch">:</span> <span class="cn">#eaddff</span><span class="op">;</span></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">padding</span><span class="ch">:</span> <span class="dv">20</span><span class="dt">px</span><span class="op">;</span></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">margin</span><span class="ch">:</span> <span class="dv">30</span><span class="dt">px</span><span class="op">;</span></span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>}</span></code></pre>
+          </div>
+          <p>見出しの背景色が付き、文字の周囲に内側の余白ができ、さらに要素の外側にも余白ができます。</p>
+          <p>余白の調整はWebデザインで頻繁に使うため、この違いを理解しておきましょう。</p>
+          <hr />
+          <h2 id="section-11">11. ブラウザの開発者ツールを使おう</h2>
+          <p>Web開発では、ブラウザに備わっている開発者ツールをよく使います。</p>
+          <p>ページをブラウザで開き、F12キーを押してみましょう。</p>
+          <p>Elements（要素）などのタブでは、HTMLの構造や適用されているCSSを確認できます。</p>
+          <p>例えば、表示中の見出しを選択してCSSの値を変更すると、その場で見た目が変わります。</p>
+          <p>
+            この変更は、通常、HTMLやCSSのファイルには自動保存されません。ファイルにも反映したい場合は、VS
+            Codeで編集して保存してください。
+          </p>
+          <p>開発者ツールは、表示が想定どおりにならない場合に原因を調べるためにも役立ちます。</p>
+          <hr />
+          <h2 id="section-12">12. 演習：自分のプロフィールページを作ろう</h2>
+          <p>ここまで学んだ要素を使って、自分だけのWebページを作成してください。</p>
+          <p>
+            テーマは自由です。プロフィール、好きなゲーム、音楽、大学、趣味、架空のゲーム公式サイトなど、好きな題材を選んで構いません。
+          </p>
+          <h3 id="必須条件">必須条件</h3>
+          <ul>
+            <li><code>h1</code>要素でページの見出しを作る</li>
+            <li><code>h2</code>要素で小見出しを作る</li>
+            <li><code>p</code>要素で文章を書く</li>
+            <li><code>ul</code>または<code>ol</code>でリストを作る</li>
+            <li><code>a</code>要素でリンクを作る</li>
+            <li>画像を1枚以上表示する</li>
+            <li>CSSを使って文字色や背景色を変更する</li>
+            <li><code>margin</code>または<code>padding</code>で余白を調整する</li>
+          </ul>
+          <h3 id="発展課題">発展課題</h3>
+          <ul>
+            <li>見出しを中央揃えにする</li>
+            <li>ページ全体の背景色を変更する</li>
+            <li>リンクをクリックすると別ページへ移動するようにする</li>
+            <li>セクション内リンクを作成する</li>
+            <li>自分で調べたCSSプロパティを1つ以上使う</li>
+          </ul>
+          <p>完成したら、Live Serverで表示し、意図したとおりに表示されているか確認してください。</p>
+          <hr />
+          <h2 id="section-13">13. まとめ</h2>
+          <p>今回学んだことを振り返りましょう。</p>
+          <ul>
+            <li>HTMLは、Webページの構造や内容を記述するための言語</li>
+            <li>CSSは、Webページの見た目を指定するための言語</li>
+            <li>タグを使って要素を記述する</li>
+            <li>要素の中に別の要素を入れることをネストという</li>
+            <li>属性によって、要素に追加情報を指定できる</li>
+            <li><code>a</code>要素でリンクを作り、<code>img</code>要素で画像を表示できる</li>
+            <li>CSSでは、セレクタ・プロパティ・値を使ってスタイルを指定する</li>
+            <li>HTMLとCSSは別ファイルに分けて管理できる</li>
+            <li>Live Serverと開発者ツールを使うと、ページの表示を確認しながら開発できる</li>
+          </ul>
+          <p>
+            HTMLとCSSの基本を理解したら、次は作成したWebページをGitHubで管理し、インターネット上に公開する方法を学んでいきます。
+          </p>
+        </main>
+      </div>
+      <footer class="footer">
+        <p>★ Web開発入門 — 01：HTML / CSS ★</p>
+        <p>GOOD LUCK &amp; HAVE FUN!</p>
+      </footer>
+    </div>
+    <a class="back-top" href="#top">▲ TOP</a>
+  </body>
+</html>
