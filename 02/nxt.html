@@ -1,0 +1,1959 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>02 JavaScript | Web開発入門</title>
+    <style>
+      :root {
+        --blue: #0878c9;
+        --deep-blue: #07518d;
+        --aqua: #7ce8f2;
+        --glass: rgba(255, 255, 255, 0.72);
+        --line: rgba(255, 255, 255, 0.92);
+        --ink: #124a77;
+        --muted: #376c8f;
+        --green: #1d9b78;
+        --shadow: 0 12px 32px rgba(0, 91, 155, 0.16);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        margin: 0;
+        color: var(--ink);
+        font-family: 'Segoe UI', 'Yu Gothic UI', 'Meiryo', sans-serif;
+        line-height: 1.75;
+        background:
+          radial-gradient(ellipse at 78% 8%, rgba(255, 255, 255, 0.95) 0 3%, transparent 18%),
+          radial-gradient(ellipse at 8% 24%, rgba(255, 255, 255, 0.65) 0 2%, transparent 21%),
+          linear-gradient(180deg, #58c8f4 0%, #b9efff 35%, #e4fbff 68%, #6bd7ee 100%);
+        min-height: 100vh;
+      }
+
+      body::before {
+        content: '';
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: -1;
+        opacity: 0.5;
+        background:
+          radial-gradient(ellipse at 14% 82%, #ffffff 0 2%, transparent 15%),
+          radial-gradient(ellipse at 90% 65%, #ffffff 0 2%, transparent 16%),
+          repeating-linear-gradient(
+            115deg,
+            transparent 0 90px,
+            rgba(255, 255, 255, 0.09) 91px 93px,
+            transparent 94px 180px
+          );
+      }
+
+      a {
+        color: inherit;
+      }
+      button,
+      input {
+        font: inherit;
+      }
+      button {
+        cursor: pointer;
+      }
+      .topbar {
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+        padding: 12px clamp(18px, 4vw, 58px);
+        background: rgba(235, 251, 255, 0.77);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.95);
+        box-shadow: 0 4px 20px rgba(0, 93, 151, 0.1);
+        backdrop-filter: blur(18px);
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-weight: 800;
+        color: #075eaa;
+        line-height: 1.25;
+      }
+      .brand-orb {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        background: radial-gradient(circle at 28% 23%, #fff 0 8%, #a4f8ff 10%, #38bce8 35%, #0879be 62%, #07518d 100%);
+        border: 2px solid rgba(255, 255, 255, 0.95);
+        box-shadow:
+          inset -5px -6px 10px rgba(0, 45, 100, 0.22),
+          0 2px 10px #7bdff4;
+        position: relative;
+      }
+      .brand-orb::after {
+        content: '';
+        position: absolute;
+        width: 14px;
+        height: 7px;
+        left: 7px;
+        top: 7px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.9);
+        transform: rotate(-35deg);
+      }
+      .brand small {
+        display: block;
+        font-weight: 500;
+        font-size: 0.75rem;
+        letter-spacing: 0.08em;
+      }
+      nav {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+      nav a {
+        text-decoration: none;
+        font-size: 0.9rem;
+        font-weight: 700;
+        color: #145a8c;
+        padding: 8px 15px;
+        border-radius: 999px;
+        transition: 0.2s;
+      }
+      nav a:hover,
+      nav a.active {
+        color: white;
+        background: linear-gradient(#25b6f5, #0874d1);
+        box-shadow:
+          inset 0 1px rgba(255, 255, 255, 0.7),
+          0 4px 12px rgba(0, 107, 195, 0.25);
+      }
+
+      .hero {
+        min-height: 250px;
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        padding: 42px clamp(22px, 7vw, 100px);
+        color: white;
+        background:
+          radial-gradient(
+            circle at 78% 52%,
+            rgba(255, 255, 255, 0.9) 0 1%,
+            rgba(171, 248, 255, 0.8) 1.5% 2%,
+            transparent 2.4%
+          ),
+          radial-gradient(circle at 76% 56%, rgba(255, 255, 255, 0.35) 0 10%, transparent 25%),
+          linear-gradient(135deg, #087ac8 0%, #31bde9 46%, #a6f3f5 100%);
+        border-bottom: 3px solid rgba(255, 255, 255, 0.75);
+      }
+      .hero::before {
+        content: '';
+        position: absolute;
+        inset: auto -5% -60px -5%;
+        height: 150px;
+        background:
+          linear-gradient(180deg, rgba(255, 255, 255, 0.18), rgba(0, 140, 199, 0.35)),
+          repeating-linear-gradient(175deg, rgba(255, 255, 255, 0.25) 0 2px, transparent 2px 16px);
+        border-radius: 50% 50% 0 0;
+        transform: rotate(-2deg);
+      }
+      .hero::after {
+        content: '';
+        position: absolute;
+        right: 12%;
+        top: 16px;
+        width: 155px;
+        height: 155px;
+        border-radius: 50%;
+        background: radial-gradient(
+          circle at 30% 24%,
+          white 0 3%,
+          rgba(255, 255, 255, 0.7) 4% 7%,
+          rgba(255, 255, 255, 0.15) 8% 42%,
+          rgba(8, 126, 198, 0.22) 70%,
+          rgba(255, 255, 255, 0.65) 74% 77%,
+          rgba(255, 255, 255, 0.12) 80%
+        );
+        border: 2px solid rgba(255, 255, 255, 0.78);
+        box-shadow:
+          inset -12px -12px 24px rgba(0, 90, 160, 0.17),
+          0 10px 30px rgba(0, 73, 143, 0.2);
+      }
+      .hero-content {
+        position: relative;
+        z-index: 1;
+        max-width: 760px;
+        text-shadow: 0 2px 12px rgba(0, 65, 120, 0.22);
+      }
+      .eyebrow {
+        font-size: 0.82rem;
+        letter-spacing: 0.2em;
+        font-weight: 800;
+      }
+      h1 {
+        margin: 2px 0 0;
+        font-size: clamp(2.5rem, 6vw, 4.8rem);
+        line-height: 1.08;
+        letter-spacing: -0.04em;
+      }
+      h1 span {
+        color: #e4ffff;
+        font-size: 0.72em;
+        margin-right: 0.15em;
+      }
+      .hero p {
+        margin: 12px 0 0;
+        font-size: 1.1rem;
+        font-weight: 700;
+      }
+      .bubble {
+        position: absolute;
+        border: 1px solid rgba(255, 255, 255, 0.75);
+        border-radius: 50%;
+        background: radial-gradient(
+          circle at 28% 20%,
+          rgba(255, 255, 255, 0.8),
+          rgba(255, 255, 255, 0.1) 55%,
+          rgba(21, 158, 222, 0.2)
+        );
+        box-shadow:
+          inset -7px -8px 14px rgba(0, 85, 155, 0.13),
+          0 0 18px rgba(255, 255, 255, 0.25);
+      }
+      .bubble.one {
+        width: 30px;
+        height: 30px;
+        right: 34%;
+        top: 35px;
+      }
+      .bubble.two {
+        width: 18px;
+        height: 18px;
+        right: 7%;
+        bottom: 55px;
+      }
+      .bubble.three {
+        width: 11px;
+        height: 11px;
+        right: 27%;
+        bottom: 35px;
+      }
+
+      .layout {
+        width: min(1240px, calc(100% - 36px));
+        margin: 20px auto 30px;
+        display: grid;
+        grid-template-columns: 220px minmax(0, 1fr);
+        gap: 14px;
+        align-items: start;
+      }
+      .sidebar,
+      .panel {
+        background: var(--glass);
+        border: 1px solid var(--line);
+        border-radius: 20px;
+        box-shadow:
+          var(--shadow),
+          inset 0 1px 0 white;
+        backdrop-filter: blur(14px);
+      }
+      .sidebar {
+        padding: 12px;
+        position: sticky;
+        top: 86px;
+      }
+      .sidebar h2 {
+        font-size: 0.82rem;
+        letter-spacing: 0.12em;
+        margin: 5px 10px 10px;
+        color: #2783b8;
+      }
+      .sidebar a {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 9px 11px;
+        border-radius: 11px;
+        color: #1b6395;
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 0.91rem;
+      }
+      .sidebar a:hover {
+        background: rgba(76, 196, 245, 0.2);
+      }
+      .side-icon {
+        display: inline-grid;
+        place-items: center;
+        width: 27px;
+        height: 27px;
+        border-radius: 9px;
+        color: white;
+        background: linear-gradient(#58c9f4, #0875c7);
+        box-shadow: inset 0 1px rgba(255, 255, 255, 0.8);
+        font-size: 0.9rem;
+      }
+      main {
+        min-width: 0;
+      }
+      .panel {
+        margin-bottom: 14px;
+        padding: 15px 18px 19px;
+        scroll-margin-top: 90px;
+      }
+      .section-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: -2px -4px 12px;
+        padding: 7px 12px;
+        border-radius: 12px;
+        color: #fff;
+        font-size: 1.18rem;
+        line-height: 1.4;
+        background: linear-gradient(100deg, #0783d1, #61d1f4 70%, rgba(145, 232, 255, 0.25));
+        box-shadow:
+          inset 0 1px 0 rgba(255, 255, 255, 0.75),
+          0 3px 8px rgba(0, 116, 184, 0.1);
+        text-shadow: 0 1px 3px rgba(0, 68, 120, 0.3);
+      }
+      .section-title .badge-icon {
+        width: 33px;
+        height: 33px;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        background: linear-gradient(#a3f5ff, #0780d2);
+        border: 2px solid white;
+        box-shadow: 0 2px 7px rgba(0, 72, 140, 0.25);
+      }
+      h3 {
+        color: #0877bd;
+        font-size: 1.05rem;
+        margin: 20px 0 7px;
+      }
+      p {
+        margin: 8px 0 12px;
+      }
+      .lead {
+        color: #1c5b83;
+      }
+      .pill-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin: 16px 0 6px;
+      }
+      .pill {
+        flex: 1 1 150px;
+        padding: 12px 14px;
+        border: 1px solid #a7e6fa;
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.6);
+      }
+      .pill strong {
+        color: #0874bb;
+        display: block;
+      }
+      .callout {
+        margin: 14px 0 2px;
+        padding: 12px 15px;
+        border: 1px solid #a5e6d4;
+        border-radius: 13px;
+        background: linear-gradient(135deg, rgba(224, 255, 244, 0.92), rgba(255, 255, 255, 0.65));
+      }
+      .callout strong {
+        color: #16866d;
+      }
+      /* サンプルコードの直下に実行例（結果ボックス）を表示するための縦並びレイアウトに変更 */
+      .code-demo {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        margin: 12px 0;
+      }
+      .codebox {
+        overflow: hidden;
+        border-radius: 11px;
+        background: #102c3e;
+        color: #e7f6ff;
+        border: 1px solid rgba(255, 255, 255, 0.75);
+        box-shadow: 0 4px 12px rgba(0, 61, 101, 0.13);
+      }
+      .code-label {
+        padding: 5px 11px;
+        font-size: 0.78rem;
+        font-weight: 800;
+        background: #315d77;
+        color: #f5fcff;
+      }
+      pre {
+        margin: 0;
+        padding: 13px;
+        overflow-x: auto;
+        font:
+          0.88rem/1.7 Consolas,
+          'Cascadia Code',
+          monospace;
+        tab-size: 2;
+      }
+      code {
+        font-family: Consolas, 'Cascadia Code', monospace;
+      }
+      .kw {
+        color: #80d8ff;
+      }
+      .str {
+        color: #ffe18a;
+      }
+      .fn {
+        color: #8cf0cb;
+      }
+      .comment {
+        color: #9ab7c8;
+      }
+      .resultbox {
+        border: 1px solid #a4def5;
+        border-radius: 12px;
+        padding: 12px 14px;
+        background: rgba(255, 255, 255, 0.56);
+        min-width: 0;
+      }
+      .resultbox h4 {
+        margin: 0 0 6px;
+        color: #0874b8;
+        font-size: 0.92rem;
+      }
+      .console {
+        border: 1px solid #a8cce1;
+        background: #f4fbff;
+        border-radius: 5px;
+        font:
+          0.85rem/1.6 Consolas,
+          monospace;
+        color: #1e5b81;
+        padding: 7px 10px;
+        overflow-wrap: anywhere;
+        min-height: 36px;
+      }
+      .demo-button,
+      .action-button {
+        border: 1px solid rgba(255, 255, 255, 0.95);
+        border-radius: 9px;
+        padding: 8px 16px;
+        color: white;
+        font-weight: 800;
+        background: linear-gradient(#55d1ff 0%, #1299e8 48%, #0872c7 100%);
+        box-shadow:
+          inset 0 1px 0 rgba(255, 255, 255, 0.8),
+          0 3px 8px rgba(0, 103, 177, 0.2);
+        text-shadow: 0 1px 2px rgba(0, 70, 120, 0.35);
+        transition:
+          transform 0.15s,
+          filter 0.15s;
+      }
+      .demo-button:hover,
+      .action-button:hover {
+        filter: brightness(1.06);
+        transform: translateY(-1px);
+      }
+      .demo-button:active,
+      .action-button:active {
+        transform: translateY(1px);
+      }
+      .demo-input {
+        min-width: 0;
+        width: 100%;
+        border: 1px solid #9bcde7;
+        border-radius: 9px;
+        padding: 8px 10px;
+        background: rgba(255, 255, 255, 0.88);
+        color: #164d75;
+      }
+      .demo-input:focus {
+        outline: 3px solid rgba(53, 184, 239, 0.25);
+        border-color: #148ed0;
+      }
+      .interactive-demo {
+        display: grid;
+        gap: 10px;
+      }
+      .inline-fields {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      .inline-fields label {
+        flex: 1 1 110px;
+        font-size: 0.86rem;
+        font-weight: 700;
+      }
+      .inline-fields input {
+        display: block;
+        margin-top: 4px;
+      }
+      .output {
+        min-height: 35px;
+        padding: 7px 10px;
+        border-radius: 9px;
+        background: rgba(224, 248, 255, 0.8);
+        border: 1px dashed #8fcfe9;
+        overflow-wrap: anywhere;
+      }
+      .exercise-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px;
+      }
+      .exercise {
+        border: 1px solid #a8e2f5;
+        background: linear-gradient(145deg, rgba(255, 255, 255, 0.86), rgba(218, 248, 255, 0.62));
+        border-radius: 15px;
+        padding: 13px;
+        box-shadow: inset 0 1px white;
+      }
+      .exercise-head {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        margin-bottom: 5px;
+      }
+      .number {
+        display: grid;
+        place-items: center;
+        flex: 0 0 29px;
+        height: 29px;
+        border-radius: 50%;
+        color: white;
+        font-weight: 900;
+        background: linear-gradient(#39bdff, #0877ce);
+        box-shadow: inset 0 1px white;
+      }
+      .exercise h3 {
+        margin: 0;
+        font-size: 0.98rem;
+      }
+      .exercise p {
+        font-size: 0.9rem;
+        margin: 7px 0 10px;
+      }
+      .exercise details {
+        border-top: 1px solid #c3e9f6;
+        padding-top: 9px;
+      }
+      summary {
+        cursor: pointer;
+        font-weight: 800;
+        color: #0874b7;
+        font-size: 0.88rem;
+      }
+      .exercise pre {
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+        padding: 9px;
+        margin-top: 8px;
+        background: #14394c;
+        border-radius: 8px;
+        font-size: 0.79rem;
+      }
+      .blank {
+        color: #ffe18a;
+        font-weight: 900;
+        text-decoration: underline;
+      }
+      .hint {
+        font-size: 0.82rem;
+        color: #477795;
+      }
+      .footer {
+        text-align: center;
+        color: white;
+        text-shadow: 0 2px 5px #0878a7;
+        padding: 14px 15px 26px;
+        font-weight: 800;
+      }
+      .backtop {
+        position: fixed;
+        right: 20px;
+        bottom: 20px;
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        border: 1px solid white;
+        color: white;
+        background: linear-gradient(#4acaff, #0878ce);
+        box-shadow: 0 4px 15px rgba(0, 83, 140, 0.3);
+        font-size: 1.3rem;
+      }
+      .small-note {
+        color: #4b7892;
+        font-size: 0.88rem;
+      }
+      @media (max-width: 850px) {
+        .layout {
+          grid-template-columns: 1fr;
+          width: min(100% - 22px, 760px);
+        }
+        .sidebar {
+          position: static;
+        }
+        .sidebar nav {
+          display: grid;
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+        .sidebar h2 {
+          margin-left: 5px;
+        }
+        .hero::after {
+          right: 5%;
+          width: 120px;
+          height: 120px;
+          opacity: 0.75;
+        }
+        .exercise-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+      @media (max-width: 560px) {
+        .topbar {
+          align-items: flex-start;
+          flex-direction: column;
+          gap: 8px;
+        }
+        nav {
+          width: 100%;
+        }
+        nav a {
+          flex: 1;
+          text-align: center;
+          padding: 6px 8px;
+          font-size: 0.8rem;
+        }
+        .hero {
+          min-height: 220px;
+          padding: 30px 22px;
+        }
+        .hero::after {
+          right: -22px;
+          top: 25px;
+          width: 95px;
+          height: 95px;
+        }
+        .hero p {
+          max-width: 75%;
+          font-size: 0.95rem;
+        }
+        .layout {
+          width: calc(100% - 16px);
+          margin-top: 10px;
+        }
+        .sidebar nav {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+        .panel {
+          padding: 12px;
+          border-radius: 15px;
+        }
+        .section-title {
+          font-size: 1.02rem;
+        }
+        .exercise-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/atom-one-dark.min.css"
+    />
+    <style>
+      .codebox pre code.hljs {
+        padding: 0;
+        background: transparent;
+      }
+      .panel table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 14px 0;
+        background: rgba(255, 255, 255, 0.48);
+      }
+      .panel th,
+      .panel td {
+        border: 1px solid #a8d9ec;
+        padding: 8px 10px;
+        text-align: left;
+      }
+      .panel thead th {
+        background: rgba(67, 190, 235, 0.2);
+        color: #075e9b;
+      }
+      .panel tbody th {
+        white-space: nowrap;
+      }
+      .panel .codebox {
+        margin: 12px 0;
+      }
+    </style>
+  </head>
+
+  <body>
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-orb" aria-hidden="true"></span>
+        <span>Web Programming<small>〜 JavaScript Lesson 〜</small></span>
+      </div>
+      <nav aria-label="メインナビゲーション">
+        <a href="#top">はじめに</a><a href="#basics">基本文法</a> <a href="#objects">オブジェクト</a
+        ><a href="#values">値と比較</a>
+      </nav>
+    </header>
+
+    <section class="hero" id="top">
+      <span class="bubble one" aria-hidden="true"></span><span class="bubble two" aria-hidden="true"></span>
+      <span class="bubble three" aria-hidden="true"></span>
+      <div class="hero-content">
+        <div class="eyebrow">WEB DEVELOPMENT / LESSON 02</div>
+        <h1><span>02</span> JavaScript</h1>
+        <p>Webサイトに動きをつけるプログラミング言語</p>
+      </div>
+    </section>
+
+    <div class="layout">
+      <aside class="sidebar">
+        <h2>CONTENTS</h2>
+        <nav aria-label="ページ内目次">
+          <a href="#intro"><span class="side-icon">⌂</span>はじめに</a>
+          <a href="#basics"><span class="side-icon">JS</span>基本文法</a>
+          <a href="#objects"><span class="side-icon">{ }</span>オブジェクト</a>
+          <a href="#values"><span class="side-icon">≡</span>値と比較</a>
+        </nav>
+      </aside>
+
+      <main>
+        <section class="panel" id="intro">
+          <h2 class="section-title"><span class="badge-icon">◉</span>JavaScriptとは</h2>
+          <p class="lead">JavaScriptは、Webページに処理や動きを加えるためのプログラミング言語です。</p>
+          <div class="pill-row">
+            <div class="pill"><strong>HTML</strong>ページの構造・内容を記述する</div>
+            <div class="pill"><strong>CSS</strong>色・大きさ・配置など見た目を指定する</div>
+            <div class="pill"><strong>JavaScript</strong>操作に応じて処理し、ページを書き換える</div>
+          </div>
+          <p>
+            HTMLは<strong>マークアップ言語</strong>、CSSは<strong>スタイルシート言語</strong>、JavaScriptは<strong>プログラミング言語</strong>です。名前は似ていますが、JavaとJavaScriptは別の言語です。
+          </p>
+        </section>
+
+        <section class="panel" id="basics">
+          <h2 class="section-title"><span class="badge-icon">▤</span>JavaScriptを書いてみよう</h2>
+          <p>
+            JavaScriptはHTMLの中にある
+            <code>&lt;script&gt;</code> タグの内部に記述できます。まずは、HTMLファイル全体を見てみましょう。
+          </p>
+          <div class="codebox">
+            <div class="code-label">index.html</div>
+            <pre><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html lang="ja"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;title&gt;JavaScript入門&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;h1&gt;はじめてのJavaScript&lt;/h1&gt;
+
+  &lt;script&gt;
+    console.log("JavaScriptが実行されました！");
+  &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+          </div>
+          <p>
+            この例では、<code>&lt;body&gt;</code> 内にある <code>&lt;script&gt;</code> と
+            <code>&lt;/script&gt;</code>
+            の間にJavaScriptを書いています。ブラウザはHTMLを読み込みながら、この部分のJavaScriptを実行します。
+          </p>
+
+          <h3>console.log()で出力する</h3>
+          <p>
+            <code>console.log()</code> は、値や文字列を開発者ツールのコンソールに出力する命令です。C言語の
+            <code>printf()</code>
+            などに近い、デバッグや動作確認に使う出力手段です。ただし、Webページ上に文字を表示する命令ではありません。
+          </p>
+          <div class="code-demo">
+            <div class="codebox">
+              <div class="code-label">JavaScript</div>
+              <pre><code class="language-javascript">console.log("Hello world!!");
+console.log(123);
+console.log(10 + 20);</code></pre>
+            </div>
+            <div class="resultbox">
+              <h4>Console の表示例</h4>
+              <div class="console">&gt; Hello world!!<br />&gt; 123<br />&gt; 30</div>
+            </div>
+          </div>
+          <p>
+            コンソールを確認するには、ブラウザでページを開き、右クリックから「検証」を選択してConsoleタブを開きます。Windowsでは
+            <kbd>F12</kbd> や <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>J</kbd> でも開けます。
+          </p>
+          <p>文字列だけでなく、数値や計算式も渡せます。複数の値をカンマ区切りで渡すこともできます。</p>
+          <div class="codebox">
+            <div class="code-label">JavaScript</div>
+            <pre><code class="language-javascript">const name = "Alice";
+const score = 95;
+
+console.log("name:", name, "score:", score);</code></pre>
+          </div>
+        </section>
+
+        <section class="panel" id="programming-basics">
+          <h2 class="section-title"><span class="badge-icon">∑</span>変数と基本的なプログラミング</h2>
+          <p>
+            JavaScriptにも、変数、演算子、条件分岐、繰り返し処理など、ほかのプログラミング言語と共通する仕組みがあります。一方で、変数の宣言方法や型の扱いにはJavaScript特有の特徴があります。
+          </p>
+
+          <h3>1. 変数と型</h3>
+          <p>
+            変数は <code>let</code> または
+            <code>const</code>
+            で宣言します。JavaScriptは<strong>動的型付け言語</strong>であり、変数を宣言するときに型を指定する必要はありません。代入された値に応じて、その値の型が決まります。
+          </p>
+          <div class="code-demo">
+            <div class="codebox">
+              <div class="code-label">JavaScript</div>
+              <pre><code class="language-javascript">let score = 80;
+const name = "Alice";
+
+console.log(score);
+console.log(name);
+
+// name = "Bob"; // constへの再代入はエラー
+score = 95;
+console.log(score);</code></pre>
+            </div>
+            <div class="resultbox">
+              <h4>実行結果</h4>
+              <div class="console">&gt; 80<br />&gt; Alice<br />&gt; 95</div>
+            </div>
+          </div>
+          <ul>
+            <li><code>let</code>：あとから別の値を再代入できる変数を宣言します。</li>
+            <li><code>const</code>：あとから別の値を再代入できない変数を宣言します。</li>
+          </ul>
+          <p>
+            値を変更する必要がなければ、基本的に <code>const</code> を使います。再代入が必要な場合に
+            <code>let</code> を選ぶ、という順序で考えるとよいでしょう。
+          </p>
+
+          <h3>2. 算術演算子</h3>
+          <p>四則演算や剰余などの演算子は、ほかの多くの言語と同様に使用できます。</p>
+          <div class="code-demo">
+            <div class="codebox">
+              <div class="code-label">JavaScript</div>
+              <pre><code class="language-javascript">let a = 5;
+let b = 3;
+
+console.log(a + b); // 足し算
+console.log(a - b); // 引き算
+console.log(a * b); // 掛け算
+console.log(a / b); // 割り算
+console.log(a % b); // 余り
+
+a++;
+console.log(a);     // 1増やす</code></pre>
+            </div>
+            <div class="resultbox">
+              <h4>実行結果</h4>
+              <div class="console">
+                &gt; 8<br />&gt; 2<br />&gt; 15<br />&gt; 1.6666666666666667<br />&gt; 2<br />&gt; 6
+              </div>
+            </div>
+          </div>
+          <p>
+            <code>+</code>、<code>-</code>、<code>*</code>、<code>/</code>
+            はそれぞれ加算、減算、乗算、除算を表します。<code>%</code> は剰余演算子です。また、<code>a++</code> は変数
+            <code>a</code> の値を1増やします。<code>a += 2</code> のような複合代入演算子も利用できます。
+          </p>
+
+          <h3>3. if文</h3>
+          <p>
+            JavaScriptにも <code>if</code>、<code>else if</code>、<code>else</code>
+            があり、条件に応じて処理を分岐できます。比較演算子も、ほかの多くの言語と同じように使用できます。
+          </p>
+          <div class="code-demo">
+            <div class="codebox">
+              <div class="code-label">JavaScript</div>
+              <pre><code class="language-javascript">const score = 75;
+
+if (score >= 80) {
+  console.log("Great!");
+} else if (score >= 60) {
+  console.log("Pass!");
+} else {
+  console.log("Try again!");
+}</code></pre>
+            </div>
+            <div class="resultbox">
+              <h4>実行結果</h4>
+              <div class="console">&gt; Pass!</div>
+            </div>
+          </div>
+          <p>
+            <code>if</code> で最初の条件を判定し、成立しなければ
+            <code>else if</code> の条件を順番に判定します。どの条件も成立しなかった場合は
+            <code>else</code> の処理が実行されます。
+          </p>
+
+          <h3>4. for文</h3>
+          <p>回数や添字を管理しながら繰り返す場合は、通常の <code>for</code> 文を使います。</p>
+          <div class="code-demo">
+            <div class="codebox">
+              <div class="code-label">JavaScript</div>
+              <pre><code class="language-javascript">for (let i = 1; i <= 5; i++) {
+  console.log(i);
+}</code></pre>
+            </div>
+            <div class="resultbox">
+              <h4>実行結果</h4>
+              <div class="console">&gt; 1<br />&gt; 2<br />&gt; 3<br />&gt; 4<br />&gt; 5</div>
+            </div>
+          </div>
+          <p>
+            括弧の中には、初期化式、継続条件、更新式を記述します。この例では <code>i</code> を1から始め、<code
+              >i &lt;= 5</code
+            >
+            が成立する間、処理を繰り返します。
+          </p>
+
+          <h3>5. 配列とfor...of</h3>
+          <p>
+            配列の要素を順番に取り出す場合は、<code>for...of</code>
+            を利用できます。C++の範囲for文やPythonのfor文に近い書き方です。
+          </p>
+          <div class="code-demo">
+            <div class="codebox">
+              <div class="code-label">JavaScript</div>
+              <pre><code class="language-javascript">const fruits = ["Apple", "Orange", "Lemon"];
+
+for (const fruit of fruits) {
+  console.log(fruit);
+}</code></pre>
+            </div>
+            <div class="resultbox">
+              <h4>実行結果</h4>
+              <div class="console">&gt; Apple<br />&gt; Orange<br />&gt; Lemon</div>
+            </div>
+          </div>
+          <p>
+            <code>for...of</code>
+            は、配列などの反復可能なオブジェクトから要素を1つずつ取り出します。添字を使う必要がない場合に便利です。添字を直接操作したい場合は通常の
+            <code>for</code> 文を使います。
+          </p>
+        </section>
+
+        <section class="panel" id="objects">
+          <h2 class="section-title"><span class="badge-icon">{ }</span>オブジェクトと連想配列</h2>
+          <p>
+            C++の <code>map</code> やPythonの
+            <code>dict</code>
+            のように、キーと値を対応付けて管理するデータ構造もJavaScriptにあります。JavaScriptでは、オブジェクトや
+            <code>Map</code> を利用できます。ここでは、まずオブジェクトを見てみましょう。
+          </p>
+          <h3>配列を2つ使って管理する場合</h3>
+          <p>
+            例えば、果物の名前と価格を別々の配列で管理するとします。Lemonの価格を探すには、名前の配列を順番に調べ、同じ添字にある価格を取り出す必要があります。
+          </p>
+          <div class="codebox">
+            <div class="code-label">JavaScript</div>
+            <pre><code class="language-javascript">const fruitNames = ["Apple", "Orange", "Lemon"];
+const fruitPrices = [170, 90, 110];
+
+let lemonPrice;
+
+for (let i = 0; i < fruitNames.length; i++) {
+  if (fruitNames[i] === "Lemon") {
+    lemonPrice = fruitPrices[i];
+    break;
+  }
+}
+
+console.log(lemonPrice); // 110</code></pre>
+          </div>
+          <p>
+            この方法では、2つの配列の対応関係を常に保つ必要があります。また、名前を探す処理は配列を先頭から調べるため、要素数を
+            <code>N</code> とすると最悪の場合 <code>O(N)</code> の時間がかかります。
+          </p>
+
+          <h3>オブジェクトでキーと値を対応付ける</h3>
+          <p>
+            オブジェクトを使うと、キーと値をひとまとまりに管理できます。左側が<strong>キー（key）</strong>、右側が<strong>値（value）</strong>です。
+          </p>
+          <div class="code-demo">
+            <div class="codebox">
+              <div class="code-label">JavaScript</div>
+              <pre><code class="language-javascript">const fruits = {
+  apple: 170,
+  orange: 90,
+  lemon: 110
+};
+
+console.log(fruits["lemon"]);
+console.log(fruits.lemon);</code></pre>
+            </div>
+            <div class="resultbox">
+              <h4>実行結果</h4>
+              <div class="console">&gt; 110<br />&gt; 110</div>
+            </div>
+          </div>
+          <p>
+            この例では、果物の名前をキー、価格を値として管理しています。角括弧を使った
+            <code>fruits["lemon"]</code> と、ドットを使った
+            <code>fruits.lemon</code> は、どちらも同じプロパティを参照します。
+          </p>
+          <p>
+            オブジェクトのプロパティ参照は、平均
+            <code>O(1)</code>
+            と高速です。
+          </p>
+          <p>
+            なお、キーを動的に指定したい場合や、任意の型をキーとして使いたい場合には <code>Map</code> も利用できます。
+          </p>
+          <div class="codebox">
+            <div class="code-label">Mapの例</div>
+            <pre><code class="language-javascript">const prices = new Map();
+
+prices.set("apple", 170);
+prices.set("orange", 90);
+prices.set("lemon", 110);
+
+console.log(prices.get("lemon")); // 110</code></pre>
+          </div>
+        </section>
+
+        <section class="panel" id="values">
+          <h2 class="section-title"><span class="badge-icon">≡</span>値がない状態と等価演算子</h2>
+          <h3>1. undefinedとnull</h3>
+          <p>
+            JavaScriptには、「値が存在しない」状態を表す値として <code>undefined</code> と
+            <code>null</code> があります。どちらも値がないことに関係しますが、意味合いが異なります。
+          </p>
+          <ul>
+            <li>
+              <code>undefined</code
+              >：値がまだ割り当てられていない、または存在しないプロパティを参照した場合などに現れます。
+            </li>
+            <li><code>null</code>：値が存在しないことを、プログラム側で明示的に表すために使います。</li>
+          </ul>
+          <div class="code-demo">
+            <div class="codebox">
+              <div class="code-label">JavaScript</div>
+              <pre><code class="language-javascript">let name;
+console.log(name); // undefined
+
+let user = null;
+console.log(user); // null</code></pre>
+            </div>
+            <div class="resultbox">
+              <h4>実行結果</h4>
+              <div class="console">&gt; undefined<br />&gt; null</div>
+            </div>
+          </div>
+          <p>
+            例えば、C言語ではポインタが何も指していない状態を
+            <code>NULL</code>
+            で表します。JavaScriptにはポインタを直接扱う仕組みはありませんが、データが未設定なのか、意図的に空として扱われているのかを区別するために、これらの値を使います。
+          </p>
+          <table>
+            <thead>
+              <tr>
+                <th>比較項目</th>
+                <th>undefined</th>
+                <th>null</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th>意味</th>
+                <td>値が未設定・未定義</td>
+                <td>意図的に値がない</td>
+              </tr>
+              <tr>
+                <th>設定する主体</th>
+                <td>主にJavaScriptが自動的に設定</td>
+                <td>主に開発者が明示的に設定</td>
+              </tr>
+              <tr>
+                <th>typeofの結果</th>
+                <td><code>"undefined"</code></td>
+                <td><code>"object"</code></td>
+              </tr>
+              <tr>
+                <th>例</th>
+                <td>宣言後に値を代入していない変数</td>
+                <td><code>let user = null;</code></td>
+              </tr>
+            </tbody>
+          </table>
+          <p>
+            <code>typeof null</code> が
+            <code>"object"</code> になるのは、JavaScriptの歴史的な仕様に由来する例外です。<code>null</code>
+            が通常のオブジェクトであるという意味ではありません。
+          </p>
+
+          <h3>2. ==と===</h3>
+          <p>
+            JavaScriptには、等価性を比較する演算子として <code>==</code> と
+            <code>===</code> があります。両者の違いは、比較の際に型変換を行うかどうかです。
+          </p>
+          <div class="code-demo">
+            <div class="codebox">
+              <div class="code-label">JavaScript</div>
+              <pre><code class="language-javascript">let a = "1";
+let b = 1;
+
+console.log(a == b);
+console.log(a === b);</code></pre>
+            </div>
+            <div class="resultbox">
+              <h4>実行結果</h4>
+              <div class="console">&gt; true<br />&gt; false</div>
+            </div>
+          </div>
+          <ul>
+            <li><code>==</code>：必要に応じて型変換を行ってから比較します。</li>
+            <li><code>===</code>：型変換を行わず、型と値の両方を比較します。</li>
+          </ul>
+          <p>
+            例えば、文字列の <code>"1"</code> と数値の <code>1</code> は、<code>==</code>
+            では等しいと判定されますが、<code>===</code> では型が異なるため等しくありません。
+          </p>
+          <div class="codebox">
+            <div class="code-label">比較の例</div>
+            <pre><code class="language-javascript">console.log(true == 1);          // true
+console.log(true === 1);         // false
+
+console.log(null == undefined);  // true
+console.log(null == 0);          // false
+console.log(undefined == false); // false
+
+console.log(1 === "1");          // false
+console.log(true === 1);         // false
+console.log(null === undefined);// false</code></pre>
+          </div>
+          <p>
+            型変換を伴う比較は、意図しない判定につながる場合があります。そのため、通常は
+            <code>===</code> を使い、必要な型変換は明示的に行うことをおすすめします。
+          </p>
+          <h3>==を使う例外的なケース</h3>
+          <p>
+            <code>null</code> と <code>undefined</code> のどちらであっても「値がない」として扱いたい場合には、<code
+              >value != null</code
+            >
+            という比較が利用できます。この式は、値が <code>null</code> でも <code>undefined</code> でもない場合に
+            <code>true</code> になります。
+          </p>
+          <div class="codebox">
+            <div class="code-label">JavaScript</div>
+            <pre><code class="language-javascript">if (value != null) {
+  // valueはnullでもundefinedでもない
+}</code></pre>
+          </div>
+          <p>
+            これは <code>==</code> の特殊な比較規則を利用した書き方です。一般的な比較では
+            <code>===</code> を使い、このように意図が明確な場合に限って <code>==</code> を使うとよいでしょう。
+          </p>
+        </section>
+
+        <section class="panel" id="functions">
+          <h2 class="section-title">
+            <span class="badge-icon">ƒ</span>
+            関数を使ってみよう
+          </h2>
+
+          <p>
+            JavaScriptの関数は、C言語の関数と同じように使うことができます。また、JavsScript固有の書き方があるので、いくつかの方法を紹介します。
+          </p>
+
+          <h3>1. 関数を定義する</h3>
+
+          <p>
+            JavaScriptでは、<code>function</code> を使って関数を定義できます。
+            例えば、時・分・秒を合計の秒数に変換する関数は、次のように書けます。
+          </p>
+
+          <div class="codebox">
+            <div class="code-label">index.html</div>
+            <pre><code>&lt;script&gt;
+  function toSeconds(hour, min, sec) {
+    const answer = hour * 3600 + min * 60 + sec;
+    return answer;
+  }
+&lt;/script&gt;</code></pre>
+          </div>
+
+          <ul>
+            <li><code>function toSeconds(...)</code>：<code>toSeconds</code> という名前の関数を定義します。</li>
+            <li><code>hour, min, sec</code>：関数に渡す値を受け取るための引数です。</li>
+            <li><code>return answer</code>：計算結果を関数の呼び出し元に返します。</li>
+          </ul>
+
+          <p>ただし、関数を定義しただけでは、計算は実行されません。 実際に使うには、関数を呼び出す必要があります。</p>
+
+          <h3>2. 関数を呼び出す</h3>
+
+          <p>
+            関数名の後ろに括弧を書き、引数を渡すことで関数を呼び出せます。 戻り値を
+            <code>console.log()</code> に渡せば、計算結果をコンソールで確認できます。
+          </p>
+
+          <div class="code-demo">
+            <div class="codebox">
+              <div class="code-label">index.html</div>
+              <pre><code>&lt;script&gt;
+  let hour = 23;
+  let minute = 59;
+  let second = 59;
+
+  function toSeconds(hour, min, sec) {
+    const answer = hour * 3600 + min * 60 + sec;
+    return answer;
+  }
+
+  console.log(toSeconds(hour, minute, second));
+&lt;/script&gt;</code></pre>
+            </div>
+            <div class="resultbox">
+              <h4>実行結果</h4>
+              <div class="console">&gt; 86399</div>
+            </div>
+          </div>
+
+          <p>
+            例えば、<code>toSeconds(1, 30, 0)</code> は1時間30分0秒を表し、 戻り値として <code>5400</code> を返します。
+            このように、同じ関数に異なる引数を渡して、何度でも利用できます。
+          </p>
+
+          <h3>3. console.log() と return の違い</h3>
+
+          <p>
+            <code>console.log()</code> は値をコンソールに表示し、 <code>return</code> は値を関数の呼び出し元に返します。
+            この2つは役割が異なります。
+          </p>
+
+          <div class="code-demo">
+            <div class="codebox">
+              <div class="code-label">JavaScript</div>
+              <pre><code>function add(a, b) {
+  console.log(a + b);
+}
+
+const result = add(10, 20);
+console.log(result);</code></pre>
+            </div>
+            <div class="resultbox">
+              <h4>実行結果</h4>
+              <div class="console">&gt; 30<br />&gt; undefined</div>
+            </div>
+          </div>
+
+          <p>
+            関数内で <code>30</code> を表示しても、戻り値は自動的には設定されません。
+            <code>return</code> を書いていない関数は、通常 <code>undefined</code> を返します。
+          </p>
+
+          <h3>4. 関数には複数の書き方がある</h3>
+
+          <p>
+            JavaScriptでは、<code>function</code> による定義以外にも、 関数式やアロー関数を使って関数を定義できます。
+          </p>
+
+          <div class="codebox">
+            <div class="code-label">関数式</div>
+            <pre><code>const toSeconds = function(hour, min, sec) {
+  return hour * 3600 + min * 60 + sec;
+};
+
+console.log(toSeconds(1, 30, 0)); // 5400</code></pre>
+          </div>
+
+          <p>
+            関数式では、関数を変数に代入しています。 次に紹介するアロー関数も、同じように変数へ代入して利用できます。
+          </p>
+
+          <h3>5. アロー関数</h3>
+
+          <p>
+            アロー関数は、<code>=&gt;</code> を使って関数を定義する書き方です。
+            Web開発では、イベント処理やコールバック関数などでよく使われます。
+          </p>
+
+          <h4>① 通常のアロー関数</h4>
+
+          <div class="code-demo">
+            <div class="codebox">
+              <div class="code-label">JavaScript</div>
+              <pre><code>const add = (a, b) =&gt; {
+  return a + b;
+};
+
+console.log(add(3, 5));</code></pre>
+            </div>
+            <div class="resultbox">
+              <h4>実行結果</h4>
+              <div class="console">&gt; 8</div>
+            </div>
+          </div>
+
+          <p><code>return</code> で計算結果を返します。 複数の処理を実行したい場合にも、この書き方を使えます。</p>
+
+          <h4>② 式を返す場合</h4>
+
+          <div class="code-demo">
+            <div class="codebox">
+              <div class="code-label">JavaScript</div>
+              <pre><code>const add = (a, b) =&gt; a + b;
+
+console.log(add(3, 5));</code></pre>
+            </div>
+            <div class="resultbox">
+              <h4>実行結果</h4>
+              <div class="console">&gt; 8</div>
+            </div>
+          </div>
+
+          <p>
+            処理が1つの式だけなら、<code>{}</code> と <code>return</code> を省略できます。
+            式の評価結果が、そのまま戻り値になります。
+          </p>
+
+          <h4>③ 引数が1つの場合</h4>
+
+          <div class="code-demo">
+            <div class="codebox">
+              <div class="code-label">JavaScript</div>
+              <pre><code>const double = n =&gt; n * 2;
+
+console.log(double(5));</code></pre>
+            </div>
+            <div class="resultbox">
+              <h4>実行結果</h4>
+              <div class="console">&gt; 10</div>
+            </div>
+          </div>
+
+          <p>引数が1つの場合は、引数を囲む <code>()</code> を省略できます。</p>
+
+          <h4>④ 引数が0個の場合</h4>
+
+          <div class="code-demo">
+            <div class="codebox">
+              <div class="code-label">JavaScript</div>
+              <pre><code>const sayHello = () =&gt; "Hello!";
+
+console.log(sayHello());</code></pre>
+            </div>
+            <div class="resultbox">
+              <h4>実行結果</h4>
+              <div class="console">&gt; Hello!</div>
+            </div>
+          </div>
+
+          <p>引数がない場合は、<code>()</code> を省略できません。</p>
+
+          <h4>⑤ オブジェクトを返す場合</h4>
+
+          <div class="code-demo">
+            <div class="codebox">
+              <div class="code-label">JavaScript</div>
+              <pre><code>const makePoint = (x, y) =&gt; ({ x: x, y: y });
+
+console.log(makePoint(3, 5));</code></pre>
+            </div>
+            <div class="resultbox">
+              <h4>実行結果</h4>
+              <div class="console">&gt; { x: 3, y: 5 }</div>
+            </div>
+          </div>
+
+          <p>
+            オブジェクトを返す場合は、<code>({ ... })</code> のように <code>()</code> で囲みます。
+            オブジェクトのプロパティ名と変数名が同じ場合は、 <code>({ x, y })</code> と省略して書くこともできます。
+          </p>
+
+          <h3>6. デフォルト引数</h3>
+
+          <p>
+            引数には、値が省略された場合に使用するデフォルト値を設定できます。
+            例えば、分や秒が省略された場合に、それぞれ0として扱うことができます。
+          </p>
+
+          <div class="code-demo">
+            <div class="codebox">
+              <div class="code-label">JavaScript</div>
+              <pre><code>function toSeconds(hour, min = 0, sec = 0) {
+  return hour * 3600 + min * 60 + sec;
+}
+
+console.log(toSeconds(1));
+console.log(toSeconds(1, 30));
+console.log(toSeconds(1, 30, 5));</code></pre>
+            </div>
+            <div class="resultbox">
+              <h4>実行結果</h4>
+              <div class="console">&gt; 3600<br />&gt; 5400<br />&gt; 5405</div>
+            </div>
+          </div>
+
+          <p>デフォルト値を設定しておけば、必要な引数だけを指定して関数を呼び出せます。</p>
+        </section>
+
+        <section class="panel" id="events">
+          <h2 class="section-title"><span class="badge-icon">↗</span>イベント</h2>
+
+          <p>
+            JavaScriptでは、マウス操作やキー操作、ブラウザーの動作などを感知し、
+            それに応じて処理を実行できます。このような出来事を
+            <strong>イベント</strong>と呼びます。
+          </p>
+
+          <ul>
+            <li><strong>マウス操作：</strong>クリックやポインタの移動など</li>
+            <li><strong>キー操作：</strong>キーの押下や文字の入力など</li>
+            <li><strong>ブラウザー操作：</strong>ページの読み込みやスクロールなど</li>
+          </ul>
+
+          <p>例えば、ボタンを押したら音を出す、下にスクロールしたら色が変わっていく、 といった動きも実装できます。</p>
+
+          <p>
+            今まで学習してきたCやC++では、基本的に
+            <code>main</code>関数の上から下に向かって順番に処理が実行されていました。
+            一方、JavaScriptでは、イベントに対する処理をあらかじめ登録しておき、
+            イベントが発生したときに対応する処理を実行するという仕組みをよく利用します。
+          </p>
+
+          <p>
+            このように、イベントをきっかけとして処理が実行される仕組みを
+            <strong>イベント駆動型プログラミング</strong>と呼びます。
+            イベントが発生して処理が実行されることを「発火する」と表現することもあります。
+          </p>
+
+          <p>
+            このようなイベントに応じて呼び出される関数を
+            <strong>コールバック関数</strong>と呼びます。 また、イベントを監視し、対応する処理を登録する仕組みを
+            <strong>イベントリスナー</strong>と呼びます。
+          </p>
+
+          <h3>実際にイベントを使ってみよう</h3>
+
+          <p>
+            まずは、ボタンを押したときにメッセージを表示する簡単なプログラムを見てみましょう。
+            HTMLの<code>button</code>タグに<code>onclick</code>属性を指定すると、
+            ボタンがクリックされたときに関数を実行できます。
+          </p>
+
+          <div class="code-demo">
+            <div class="codebox">
+              <div class="code-label">HTML + JavaScript</div>
+              <pre><code><span class="kw">&lt;button</span> <span class="str">onclick="hello()"</span><span class="kw">&gt;</span>
+  Click Me!!
+<span class="kw">&lt;/button&gt;</span>
+
+<span class="kw">&lt;script&gt;</span>
+  function hello() {
+    alert(<span class="str">"Hello!!"</span>);
+  }
+<span class="kw">&lt;/script&gt;</span></code></pre>
+            </div>
+            <div class="resultbox">
+              <h4>実行例</h4>
+              <p>ボタンをクリックして、ダイアログを表示してみましょう。</p>
+              <button class="demo-button" id="event-hello-demo">Click Me!!</button>
+            </div>
+          </div>
+
+          <p>
+            この例では、ボタンがクリックされたときに<code>hello()</code>関数が呼び出されます。
+            このように、イベントを利用することで、ユーザーの操作に応じてWebページの動きを変えられます。
+          </p>
+        </section>
+
+        <section class="panel" id="dom">
+          <h2 class="section-title"><span class="badge-icon">▣</span>DOM・エレメント</h2>
+
+          <h3>DOMとは</h3>
+
+          <p>HTMLは、要素同士の親子関係を持つ木構造として扱うことができます。 例えば、次のHTMLを考えてみましょう。</p>
+
+          <div class="code-demo">
+            <div class="codebox">
+              <div class="code-label">HTML</div>
+              <pre><code><span class="kw">&lt;!doctype html&gt;</span>
+<span class="kw">&lt;html lang="ja"&gt;</span>
+  <span class="kw">&lt;head&gt;</span>
+    <span class="kw">&lt;meta charset="UTF-8" /&gt;</span>
+    <span class="kw">&lt;title&gt;</span>Document<span class="kw">&lt;/title&gt;</span>
+  <span class="kw">&lt;/head&gt;</span>
+  <span class="kw">&lt;body&gt;</span>
+    <span class="kw">&lt;h1&gt;</span>自己紹介<span class="kw">&lt;/h1&gt;</span>
+    <span class="kw">&lt;p&gt;</span>こん！<span class="kw">&lt;/p&gt;</span>
+  <span class="kw">&lt;/body&gt;</span>
+<span class="kw">&lt;/html&gt;</span></code></pre>
+            </div>
+
+            <div class="resultbox">
+              <h4>HTMLの構造</h4>
+              <svg
+                viewBox="0 0 360 250"
+                width="100%"
+                xmlns="http://www.w3.org/2000/svg"
+                role="img"
+                aria-label="documentを根としたDOMツリーの図"
+              >
+                <defs>
+                  <style>
+                    .dom-line {
+                      stroke: #78a9c6;
+                      stroke-width: 1.8;
+                      fill: none;
+                    }
+                    .dom-node {
+                      fill: #e5f4fc;
+                      stroke: #5c9ec3;
+                      stroke-width: 1.3;
+                    }
+                    .dom-text {
+                      fill: #205776;
+                      font-size: 11px;
+                      font-family: sans-serif;
+                      text-anchor: middle;
+                      dominant-baseline: middle;
+                    }
+                    .dom-leaf {
+                      fill: #f0f5f8;
+                      stroke: #9aafbc;
+                      stroke-width: 1;
+                    }
+                  </style>
+                </defs>
+
+                <!-- document → html -->
+                <path class="dom-line" d="M180 33 V55" />
+
+                <!-- html → head, body -->
+                <path class="dom-line" d="M180 79 V92 H90 V105" />
+                <path class="dom-line" d="M180 92 H270 V105" />
+
+                <!-- body → h1, p -->
+                <path class="dom-line" d="M270 129 V142 H225 V155" />
+                <path class="dom-line" d="M270 142 H315 V155" />
+
+                <!-- h1, p → テキストノード -->
+                <path class="dom-line" d="M225 179 V205" />
+                <path class="dom-line" d="M315 179 V205" />
+
+                <!-- document -->
+                <rect class="dom-node" x="136" y="8" width="88" height="25" rx="6" />
+                <text class="dom-text" x="180" y="20">document</text>
+
+                <!-- html -->
+                <rect class="dom-node" x="143" y="55" width="74" height="24" rx="6" />
+                <text class="dom-text" x="180" y="67">html</text>
+
+                <!-- head -->
+                <rect class="dom-node" x="58" y="105" width="64" height="24" rx="6" />
+                <text class="dom-text" x="90" y="117">head</text>
+
+                <!-- body -->
+                <rect class="dom-node" x="238" y="105" width="64" height="24" rx="6" />
+                <text class="dom-text" x="270" y="117">body</text>
+
+                <!-- h1 -->
+                <rect class="dom-node" x="198" y="155" width="54" height="24" rx="6" />
+                <text class="dom-text" x="225" y="167">h1</text>
+
+                <!-- p -->
+                <rect class="dom-node" x="288" y="155" width="54" height="24" rx="6" />
+                <text class="dom-text" x="315" y="167">p</text>
+
+                <!-- h1のテキストノード -->
+                <rect class="dom-leaf" x="185" y="205" width="80" height="28" rx="5" />
+                <text class="dom-text" x="225" y="219">自己紹介</text>
+
+                <!-- pのテキストノード -->
+                <rect class="dom-leaf" x="275" y="205" width="80" height="28" rx="5" />
+                <text class="dom-text" x="315" y="219">こん！</text>
+              </svg>
+              <p class="caption">HTMLの要素は親子関係を持つ木構造として表現できます。</p>
+            </div>
+          </div>
+
+          <p>
+            この場合、<code>body</code>の子要素は<code>h1</code>と<code>p</code>です。
+            このような木構造を<strong>DOMツリー</strong>と呼びます。
+          </p>
+
+          <p>
+            DOM（Document Object Model）は、このDOMツリーを通してHTMLの各要素を
+            JavaScriptから取得・操作できるようにする仕組みです。
+            各要素は<strong>Element（エレメント）</strong>というオブジェクトとして扱われ、
+            文章やCSSなどの内容を変更できます。
+          </p>
+
+          <h3>エレメントを取得して変更する</h3>
+
+          <p>実際のコードを見てみましょう。 まずは、HTMLの<code>p</code>タグを取得して、文字色を変更してみます。</p>
+
+          <p>
+            HTMLの<code>button</code>タグに<code>onclick</code>属性を指定し、
+            ボタンが押されたときに関数が実行されるようにします。
+          </p>
+
+          <div class="code-demo">
+            <div class="codebox">
+              <div class="code-label">HTML + JavaScript</div>
+              <pre><code><span class="kw">&lt;p&gt;</span>1つ目の段落です。<span class="kw">&lt;/p&gt;</span>
+<span class="kw">&lt;p&gt;</span>2つ目の段落です。<span class="kw">&lt;/p&gt;</span>
+
+<span class="kw">&lt;button</span> <span class="str">onclick="changeParagraphs()"</span><span class="kw">&gt;</span>
+  pタグの色を変える
+<span class="kw">&lt;/button&gt;</span>
+
+<span class="kw">&lt;script&gt;</span>
+  function changeParagraphs() {
+    // "p"というタグ名を持つエレメントをすべて集めてくる
+    const pList = document.getElementsByTagName(<span class="str">'p'</span>);
+
+    // 集めた中の1番目（0番目）の文字色を赤にする
+    pList[0].style.color = <span class="str">'red'</span>;
+
+    // 集めた中の2番目（1番目）の文字色を青にする
+    pList[1].style.color = <span class="str">'blue'</span>;
+  }
+<span class="kw">&lt;/script&gt;</span></code></pre>
+            </div>
+
+            <div class="resultbox">
+              <h4>実行例</h4>
+              <p id="event-p1">1つ目の段落です。</p>
+              <p id="event-p2">2つ目の段落です。</p>
+              <button class="demo-button" id="event-p-color">pタグの色を変える</button>
+            </div>
+          </div>
+
+          <p>
+            <code>document.getElementsByTagName('p')</code>は、
+            指定したタグ名を持つエレメントをすべて取得するメソッドです。
+            取得したエレメントはリストのように扱うことができ、
+            <code>pList[0]</code>や<code>pList[1]</code>のように番号を指定してアクセスできます。
+          </p>
+
+          <p>
+            また、<code>.style.color</code>を変更することで、文字色を変更できます。
+            このように、<code>document.getElementsBy...</code>などを使って要素を取得し、
+            JavaScriptから動的に変更することができます。
+          </p>
+
+          <h3>基本的なプログラミングと組み合わせる</h3>
+
+          <p>
+            もちろん、これまで学習してきた変数や条件分岐などと組み合わせることもできます。
+            例えば、ボタンを押すたびに文字色を切り替えるプログラムは次のようになります。
+          </p>
+
+          <div class="code-demo">
+            <div class="codebox">
+              <div class="code-label">HTML + JavaScript</div>
+              <pre><code><span class="kw">&lt;p&gt;</span>1つ目の段落です。<span class="kw">&lt;/p&gt;</span>
+<span class="kw">&lt;p&gt;</span>2つ目の段落です。<span class="kw">&lt;/p&gt;</span>
+
+<span class="kw">&lt;button</span> <span class="str">onclick="changeParagraphs()"</span><span class="kw">&gt;</span>
+  pタグの色を変える
+<span class="kw">&lt;/button&gt;</span>
+
+<span class="kw">&lt;script&gt;</span>
+  let button_click_number = 0;
+
+  function changeParagraphs() {
+    const pList = document.getElementsByTagName(<span class="str">'p'</span>);
+
+    if (button_click_number === 0) {
+      button_click_number++;
+
+      pList[0].style.color = <span class="str">'red'</span>;
+      pList[1].style.color = <span class="str">'blue'</span>;
+    } else {
+      pList[0].style.color = <span class="str">'black'</span>;
+      pList[1].style.color = <span class="str">'black'</span>;
+
+      button_click_number = 0;
+    }
+  }
+<span class="kw">&lt;/script&gt;</span></code></pre>
+            </div>
+
+            <div class="resultbox">
+              <h4>実行例</h4>
+              <p id="event-toggle-p1">1つ目の段落です。</p>
+              <p id="event-toggle-p2">2つ目の段落です。</p>
+              <button class="demo-button" id="event-toggle-color">pタグの色を切り替える</button>
+            </div>
+          </div>
+
+          <p>
+            ボタンを押すと文字色が赤と青になり、もう一度押すと元の黒色に戻ります。
+            このように、イベントと基本的なプログラミングを組み合わせることで、 さまざまな動きを実装できます。
+          </p>
+
+          <h3>IDを指定してエレメントを取得する</h3>
+
+          <p>
+            実際には、タグ名を指定してすべての要素を取得するよりも、
+            HTMLのタグに<code>id</code>を付けて、特定の要素にアクセスする方法もよく利用されます。
+          </p>
+
+          <div class="code-demo">
+            <div class="codebox">
+              <div class="code-label">HTML + JavaScript</div>
+              <pre><code><span class="kw">&lt;p</span> <span class="str">id="my-text"</span><span class="kw">&gt;</span>
+  ボタンを押すと、この文字が緑色になります。
+<span class="kw">&lt;/p&gt;</span>
+
+<span class="kw">&lt;button</span> <span class="str">id="my-button"</span><span class="kw">&gt;</span>
+  色を変える！
+<span class="kw">&lt;/button&gt;</span>
+
+<span class="kw">&lt;script&gt;</span>
+  // 1. 操作したいエレメントを取得する
+  const myButton = document.getElementById(<span class="str">'my-button'</span>);
+  const myText = document.getElementById(<span class="str">'my-text'</span>);
+
+  // 2. ボタンがクリックされたときのイベントを設定する
+  myButton.addEventListener(<span class="str">'click'</span>, function () {
+    // p要素の文字色を緑にする
+    myText.style.color = <span class="str">'green'</span>;
+  });
+<span class="kw">&lt;/script&gt;</span></code></pre>
+            </div>
+
+            <div class="resultbox">
+              <h4>実行例</h4>
+              <p id="event-my-text">ボタンを押すと、この文字が緑色になります。</p>
+              <button class="demo-button" id="event-my-button">色を変える！</button>
+            </div>
+          </div>
+
+          <p><code>document.getElementById()</code>は、指定したIDを持つエレメントを取得するメソッドです。</p>
+
+          <p>
+            また、ここでは先ほどの<code>onclick</code>属性ではなく、
+            <code>addEventListener()</code>を使っています。
+            これはJavaScript側でイベントを登録する方法で、HTMLとJavaScriptの処理を分けて記述できます。
+            実際のWeb開発では、この方法がよく利用されます。
+          </p>
+
+          <p>
+            <code>addEventListener()</code>の第1引数にはイベントの種類を指定し、
+            第2引数にはイベント発生時に実行するコールバック関数を指定します。
+            今回は<code>'click'</code>を指定しているため、クリック時に処理が実行されます。
+          </p>
+
+          <h3>formを使った足し算アプリ</h3>
+
+          <p>
+            次に、formタグを利用して、簡単な足し算をしてみましょう。
+            2つの入力欄に数字を入力し、ボタンを押すと計算結果が表示されるプログラムです。
+          </p>
+
+          <div class="code-demo">
+            <div class="codebox">
+              <div class="code-label">HTML + JavaScript</div>
+              <pre><code><span class="kw">&lt;form&gt;</span>
+  <span class="kw">&lt;input</span> <span class="str">type="number" id="num1"</span> <span class="kw">/&gt;</span>
+<span class="kw">&lt;/form&gt;</span>
+
+<span class="kw">&lt;form&gt;</span>
+  <span class="kw">&lt;input</span> <span class="str">type="number" id="num2"</span> <span class="kw">/&gt;</span>
+<span class="kw">&lt;/form&gt;</span>
+
+<span class="kw">&lt;button</span> <span class="str">id="my-button"</span><span class="kw">&gt;</span>計算<span class="kw">&lt;/button&gt;</span>
+
+<span class="kw">&lt;p</span> <span class="str">id="result"</span><span class="kw">&gt;&lt;/p&gt;</span>
+
+<span class="kw">&lt;script&gt;</span>
+  const myButton = document.getElementById(<span class="str">'my-button'</span>);
+
+  myButton.addEventListener(<span class="str">'click'</span>, () =&gt; {
+    const num1 = document.getElementById(<span class="str">'num1'</span>).value;
+    const num2 = document.getElementById(<span class="str">'num2'</span>).value;
+
+    const result = Number(num1) + Number(num2);
+
+    document.getElementById(<span class="str">'result'</span>).textContent = result;
+  });
+<span class="kw">&lt;/script&gt;</span></code></pre>
+            </div>
+
+            <div class="resultbox">
+              <h4>実際に計算してみよう</h4>
+              <form>
+                <label for="event-num1">1つ目の数字</label>
+                <input class="demo-input" type="number" id="event-num1" placeholder="数字を入力" />
+              </form>
+              <form style="margin-top: 10px">
+                <label for="event-num2">2つ目の数字</label>
+                <input class="demo-input" type="number" id="event-num2" placeholder="数字を入力" />
+              </form>
+              <button class="demo-button" id="event-calc-button" style="margin-top: 10px">計算</button>
+              <p id="event-calc-result" class="output" aria-live="polite">ここに計算結果が表示されます。</p>
+            </div>
+          </div>
+
+          <p>
+            このプログラムでは、ボタンがクリックされたときに2つの入力欄から値を取得し、 足し算を行っています。
+            ただし、<code>input</code>から取得した<code>value</code>は文字列なので、
+            <code>Number()</code>を使って数値に変換しています。
+          </p>
+
+          <h3>もっとシンプルに書いてみよう</h3>
+
+          <p>
+            先ほどのプログラムは、<code>addEventListener()</code>を利用して記述しましたが、
+            最初に紹介した<code>onclick</code>属性を使うと、次のようにもっとシンプルに書くこともできます。
+          </p>
+
+          <div class="code-demo">
+            <div class="codebox">
+              <div class="code-label">HTML + JavaScript</div>
+              <pre><code><span class="kw">&lt;form&gt;</span>
+  <span class="kw">&lt;input</span> <span class="str">type="number" id="num1"</span><span class="kw">&gt;</span>
+<span class="kw">&lt;/form&gt;</span>
+
+<span class="kw">&lt;form&gt;</span>
+  <span class="kw">&lt;input</span> <span class="str">type="number" id="num2"</span><span class="kw">&gt;</span>
+  <span class="kw">&lt;button</span> <span class="str">type="button" onclick="calc()"</span><span class="kw">&gt;</span>
+    計算
+  <span class="kw">&lt;/button&gt;</span>
+<span class="kw">&lt;/form&gt;</span>
+
+<span class="kw">&lt;p</span> <span class="str">id="result"</span><span class="kw">&gt;&lt;/p&gt;</span>
+
+<span class="kw">&lt;script&gt;</span>
+  function calc() {
+    const a = Number(document.getElementById(<span class="str">"num1"</span>).value);
+    const b = Number(document.getElementById(<span class="str">"num2"</span>).value);
+
+    document.getElementById(<span class="str">"result"</span>).textContent = a + b;
+  }
+<span class="kw">&lt;/script&gt;</span></code></pre>
+            </div>
+
+            <div class="resultbox">
+              <h4>実際に計算してみよう</h4>
+              <form>
+                <label for="event-simple-num1">1つ目の数字</label>
+                <input class="demo-input" type="number" id="event-simple-num1" placeholder="数字を入力" />
+              </form>
+              <form style="margin-top: 10px">
+                <label for="event-simple-num2">2つ目の数字</label>
+                <input class="demo-input" type="number" id="event-simple-num2" placeholder="数字を入力" />
+                <button class="demo-button" type="button" id="event-simple-calc" style="margin-top: 10px">計算</button>
+              </form>
+              <p id="event-simple-result" class="output" aria-live="polite">ここに計算結果が表示されます。</p>
+            </div>
+          </div>
+
+          <p>
+            このように、HTMLで入力欄やボタンを用意し、JavaScriptで値を取得・計算・表示することで、
+            簡単なWebアプリケーションを作ることができます。
+          </p>
+
+          <div class="callout">
+            <strong>今回のポイント：</strong>
+            <ul>
+              <li>イベントは、ユーザーの操作やブラウザーの動作をきっかけに発生する。</li>
+              <li>DOMを通して、JavaScriptからHTMLの要素を取得・変更できる。</li>
+              <li><code>getElementById()</code>でIDを指定して要素を取得できる。</li>
+              <li><code>addEventListener()</code>でイベントに対する処理を登録できる。</li>
+              <li><code>value</code>で入力値を取得し、<code>textContent</code>で文章を変更できる。</li>
+            </ul>
+          </div>
+        </section>
+
+        <script>
+          // イベントの基本
+          document.getElementById('event-hello-demo').addEventListener('click', () => {
+            alert('Hello!!');
+          });
+
+          // getElementsByTagName の例
+          document.getElementById('event-p-color').addEventListener('click', () => {
+            document.getElementById('event-p1').style.color = 'red';
+            document.getElementById('event-p2').style.color = 'blue';
+          });
+
+          // クリック回数による色の切り替え
+          let button_click_number = 0;
+
+          document.getElementById('event-toggle-color').addEventListener('click', () => {
+            const p1 = document.getElementById('event-toggle-p1');
+            const p2 = document.getElementById('event-toggle-p2');
+
+            if (button_click_number === 0) {
+              button_click_number++;
+              p1.style.color = 'red';
+              p2.style.color = 'blue';
+            } else {
+              p1.style.color = 'black';
+              p2.style.color = 'black';
+              button_click_number = 0;
+            }
+          });
+
+          // IDを指定して文字色を変更
+          const myButton = document.getElementById('event-my-button');
+          const myText = document.getElementById('event-my-text');
+
+          myButton.addEventListener('click', function () {
+            myText.style.color = 'green';
+          });
+
+          // addEventListener を利用した足し算
+          document.getElementById('event-calc-button').addEventListener('click', () => {
+            const num1 = document.getElementById('event-num1').value;
+            const num2 = document.getElementById('event-num2').value;
+            const result = Number(num1) + Number(num2);
+
+            document.getElementById('event-calc-result').textContent = result;
+          });
+
+          // onclick を利用したシンプルな足し算
+          document.getElementById('event-simple-calc').addEventListener('click', () => {
+            const a = Number(document.getElementById('event-simple-num1').value);
+            const b = Number(document.getElementById('event-simple-num2').value);
+
+            document.getElementById('event-simple-result').textContent = a + b;
+          });
+        </script>
+      </main>
+    </div>
+
+    <footer class="footer">Enjoy Learning JavaScript! ✦ 小さく書いて、動かして、理解しよう。</footer>
+    <button class="backtop" aria-label="ページの先頭へ戻る" onclick="window.scrollTo({ top: 0, behavior: 'smooth' })">
+      ↑
+    </button>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/xml.min.js"></script>
+    <script>
+      hljs.highlightAll();
+    </script>
+  </body>
+</html>
