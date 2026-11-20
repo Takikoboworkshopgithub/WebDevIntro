@@ -1,19 +1,2986 @@
 <!doctype html>
 <html lang="ja">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Function</title>
-  </head>
-  <body>
-    <button id="helloButton">クリック！</button>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Git &amp; GitHub Lesson</title>
+<meta name="description" content="Git と GitHub を、手を動かしながら学ぶ入門教材。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&family=JetBrains+Mono:wght@400;600&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* =========================================================
+   TOKENS
+   ========================================================= */
+:root{
+  --paper:#f4f2ec;
+  --white:#fbfaf7;
+  --ink:#1a1a1a;
+  --sub:#55534d;
+  --mute:#8f8b82;
+  --line:#d6d2c7;
+  --line2:#e6e3db;
+  --accent:#c8321f;
+  --accent-weak:#f2e1dc;
+  --code:#1c1c1a;
+  --code-text:#ecebe5;
+  --code-mute:#8d8a82;
+  --code-add:#9fd19a;
+  --code-del:#f0907f;
+  --ok:#2e6b4b;
+  --latin:"Inter","Noto Sans JP",system-ui,sans-serif;
+  --jp:"Noto Sans JP","Inter",system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+  --max:1160px;
+  --gut:clamp(16px,4vw,40px);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{background:var(--paper);color:var(--ink);font-family:var(--jp);font-size:16px;line-height:1.9;letter-spacing:.02em;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+b,strong{font-weight:700}
+code{font-family:var(--mono);font-size:.9em;background:var(--line2);padding:.08em .38em;border-radius:2px;letter-spacing:0;word-break:break-all}
+.wrap{max-width:var(--max);margin:0 auto;padding:0 var(--gut)}
+.latin{font-family:var(--latin)}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 
-    <script>
-      const button = document.getElementById('helloButton');
+/* =========================================================
+   HEADER
+   ========================================================= */
+.site-head{position:sticky;top:0;z-index:50;background:var(--paper);border-bottom:1px solid var(--ink)}
+.head-in{display:flex;align-items:center;justify-content:space-between;gap:24px;height:64px}
+.brand{display:flex;align-items:center;gap:12px;text-decoration:none}
+.brand svg{flex:none}
+.brand-t{display:flex;flex-direction:column;line-height:1.2;font-family:var(--latin)}
+.brand-t b{font-size:15px;font-weight:800;letter-spacing:-.01em}
+.brand-t small{font-size:11px;color:var(--sub);letter-spacing:.08em}
+.gnav{display:flex;gap:4px}
+.gnav a{font-size:14px;font-weight:500;text-decoration:none;padding:8px 12px;position:relative}
+.gnav a::after{content:"";position:absolute;left:12px;right:12px;bottom:4px;height:2px;background:var(--accent);transform:scaleX(0);transform-origin:left;transition:transform .25s}
+.gnav a:hover::after,.gnav a.on::after{transform:scaleX(1)}
+.progress-line{height:3px;background:transparent}
+.progress-line span{display:block;height:100%;width:0;background:var(--accent);transition:width .6s}
+@media (max-width:640px){
+  .head-in{height:auto;flex-direction:column;align-items:stretch;gap:0;padding-top:10px}
+  .gnav{justify-content:space-between;margin:4px -8px 0}
+  .gnav a{font-size:13px;padding:8px}
+}
 
-      button.addEventListener('click', () => {
-        console.log('ボタンがクリックされました！');
-      });
-    </script>
-  </body>
+/* =========================================================
+   COMMON PARTS
+   ========================================================= */
+.kicker{font-family:var(--latin);font-size:12px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--sub)}
+.btn{display:inline-flex;align-items:center;gap:12px;background:var(--ink);color:var(--paper);text-decoration:none;font-weight:700;font-size:15px;padding:14px 22px;border:0;cursor:pointer;font-family:var(--jp);letter-spacing:.04em;transition:background .2s}
+.btn:hover{background:var(--accent)}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--ink)}
+.btn.ghost:hover{background:var(--ink);color:var(--paper)}
+.btn .arr{font-family:var(--latin)}
+.rule{border:0;border-top:1px solid var(--ink)}
+
+/* =========================================================
+   HOME
+   ========================================================= */
+.hero{padding:56px 0 48px;display:grid;grid-template-columns:7fr 5fr;gap:40px;align-items:end;border-bottom:1px solid var(--ink)}
+.hero h1{font-family:var(--latin);font-weight:800;font-size:clamp(56px,10vw,128px);line-height:.92;letter-spacing:-.045em;margin:20px 0 28px}
+.hero h1 .amp{color:var(--accent)}
+.hero-lead{font-size:17px;max-width:30em;color:var(--sub)}
+.hero-lead b{color:var(--ink)}
+.hero-cta{margin-top:32px;display:flex;gap:12px;flex-wrap:wrap}
+.hero-fig svg{width:100%;height:auto;display:block}
+@media (max-width:820px){.hero{grid-template-columns:1fr;padding-top:36px}.hero-fig{order:-1;max-width:420px}}
+
+.sec{padding:56px 0;border-bottom:1px solid var(--line)}
+.sec-head{display:grid;grid-template-columns:200px 1fr;gap:24px;margin-bottom:32px;align-items:baseline}
+.sec-head h2{font-size:24px;font-weight:700;letter-spacing:.04em}
+@media (max-width:720px){.sec-head{grid-template-columns:1fr;gap:4px}}
+
+.goals{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--ink)}
+.goal{padding:28px 28px 32px 0;border-right:1px solid var(--line)}
+.goal+.goal{padding-left:28px;border-right:0}
+.goal .no{font-family:var(--latin);font-weight:800;font-size:56px;letter-spacing:-.04em;line-height:1;color:var(--accent)}
+.goal h3{font-size:20px;margin:16px 0 8px}
+.goal p{color:var(--sub);font-size:15px}
+@media (max-width:720px){.goals{grid-template-columns:1fr}.goal,.goal+.goal{padding:24px 0;border-right:0}.goal+.goal{border-top:1px solid var(--line)}}
+
+.prog{display:grid;grid-template-columns:auto 1fr;gap:40px;align-items:center}
+.prog-num{font-family:var(--latin);font-weight:800;font-size:clamp(72px,12vw,120px);line-height:.9;letter-spacing:-.05em}
+.prog-num small{font-size:.35em;letter-spacing:0;margin-left:4px}
+.prog-cells{display:grid;grid-template-columns:repeat(10,1fr);gap:4px}
+.prog-cells span{height:28px;background:var(--line2);position:relative}
+.prog-cells span.done{background:var(--ink)}
+.prog-cells span.p2{background:transparent;border:1px solid var(--line)}
+.prog-cells span.p2.done{background:var(--ink);border-color:var(--ink)}
+.prog-legend{display:flex;justify-content:space-between;font-family:var(--latin);font-size:11px;color:var(--mute);margin-top:8px;letter-spacing:.1em}
+@media (max-width:720px){.prog{grid-template-columns:1fr;gap:16px}}
+
+.toc{display:grid;grid-template-columns:1fr 1fr;gap:0 48px}
+.toc-part h3{font-family:var(--latin);font-size:12px;letter-spacing:.2em;font-weight:600;padding-bottom:10px;border-bottom:1px solid var(--ink);display:flex;justify-content:space-between}
+.toc-part h3 span:last-child{color:var(--mute)}
+.toc-part p.desc{font-size:14px;color:var(--sub);margin:12px 0 4px}
+.toc-row{display:grid;grid-template-columns:48px 1fr auto;gap:12px;align-items:center;padding:16px 0;border-bottom:1px solid var(--line);text-decoration:none;transition:padding .2s,background .2s}
+a.toc-row:hover{padding-left:8px;background:var(--white)}
+.toc-row .n{font-family:var(--latin);font-weight:800;font-size:22px;letter-spacing:-.03em}
+.toc-row .t b{display:block;font-size:16px}
+.toc-row .t small{display:block;font-size:13px;color:var(--sub);line-height:1.6}
+.toc-row .st{font-family:var(--latin);font-size:11px;letter-spacing:.12em;color:var(--mute);display:flex;align-items:center;gap:8px}
+.toc-row .st i{width:12px;height:12px;border:1px solid var(--ink);display:inline-block}
+.toc-row.done .st{color:var(--ink)}
+.toc-row.done .st i{background:var(--ink)}
+.toc-row.soon{color:var(--mute)}
+.toc-row.soon .n{color:var(--line)}
+@media (max-width:820px){.toc{grid-template-columns:1fr;gap:40px}}
+
+.foot{padding:40px 0 56px;font-family:var(--latin);font-size:12px;color:var(--mute);letter-spacing:.1em}
+
+/* =========================================================
+   CHAPTER
+   ========================================================= */
+.chapter{display:grid;grid-template-columns:260px 1fr;gap:56px;padding-top:40px;padding-bottom:80px}
+.ch-side{position:sticky;top:96px;align-self:start}
+.ch-part{font-family:var(--latin);font-size:11px;letter-spacing:.18em;color:var(--sub);font-weight:600}
+.ch-no{font-family:var(--latin);font-weight:800;font-size:96px;line-height:.95;letter-spacing:-.06em;margin:8px 0 4px}
+.ch-title{font-size:22px;line-height:1.5;margin-bottom:24px}
+.ch-pages{list-style:none;border-top:1px solid var(--ink)}
+.ch-pages a{display:grid;grid-template-columns:32px 1fr;gap:8px;padding:9px 0;border-bottom:1px solid var(--line);text-decoration:none;font-size:14px;line-height:1.5;color:var(--sub)}
+.ch-pages a span{font-family:var(--latin);font-size:12px;font-weight:600;padding-top:1px}
+.ch-pages a.cur{color:var(--ink);font-weight:700}
+.ch-pages a.cur span{color:var(--accent)}
+.ch-pages a:hover{color:var(--ink)}
+.ch-body{min-width:0;max-width:760px}
+.pg-count{font-family:var(--latin);font-size:12px;letter-spacing:.16em;color:var(--sub);display:flex;align-items:center;gap:12px}
+.pg-count::before{content:"";width:24px;height:2px;background:var(--accent)}
+.pg-title{font-size:clamp(26px,4vw,36px);line-height:1.4;margin:14px 0 28px;letter-spacing:.02em}
+.pg-steps{display:none}
+@media (max-width:900px){
+  .chapter{grid-template-columns:1fr;gap:0;padding-top:24px}
+  .ch-side{position:static;display:grid;grid-template-columns:auto 1fr;gap:0 16px;align-items:end;padding-bottom:16px;border-bottom:1px solid var(--ink);margin-bottom:24px}
+  .ch-no{font-size:64px;margin:0;grid-row:1/3}
+  .ch-part{align-self:end}
+  .ch-title{font-size:18px;margin:0}
+  .ch-pages{display:none}
+  .pg-steps{display:flex;gap:4px;margin-bottom:20px}
+  .pg-steps a{flex:1;height:4px;background:var(--line)}
+  .pg-steps a.cur{background:var(--accent)}
+  .pg-steps a.past{background:var(--ink)}
+}
+
+/* ---------- content blocks ---------- */
+.pg-content>*+*{margin-top:24px}
+.pg-content p{max-width:40em}
+.lead{font-size:18px;line-height:1.9;font-weight:500}
+.h{font-size:18px;font-weight:700;display:flex;align-items:baseline;gap:10px;padding-top:16px}
+.h::before{content:"";width:10px;height:10px;background:var(--ink);flex:none;transform:translateY(-1px)}
+.h.ac::before{background:var(--accent)}
+.em{background:linear-gradient(transparent 62%,var(--accent-weak) 62%);font-weight:700}
+.ph{color:var(--accent);font-weight:600}
+
+.box{border:1px solid var(--ink);padding:18px 20px 18px;position:relative;background:var(--white)}
+.box::before{content:attr(data-k);position:absolute;top:-1px;left:-1px;background:var(--ink);color:var(--paper);font-size:11px;font-weight:700;letter-spacing:.14em;padding:3px 10px;font-family:var(--latin)}
+.box>:first-child{margin-top:16px}
+.box>*+*{margin-top:8px}
+.box.warn{border-color:var(--accent)}
+.box.warn::before{background:var(--accent)}
+.box.plain{border-color:var(--line);background:transparent}
+.box.plain::before{background:var(--line);color:var(--ink)}
+.box dl{display:grid;grid-template-columns:auto 1fr;gap:4px 16px}
+.box dt{font-weight:700}
+
+.spec{display:grid;grid-template-columns:120px 1fr;border-top:1px solid var(--ink)}
+.spec dt,.spec dd{padding:12px 0;border-bottom:1px solid var(--line)}
+.spec dt{font-size:12px;font-family:var(--latin);letter-spacing:.12em;font-weight:600;color:var(--sub);padding-top:15px}
+.spec dd{font-size:15px}
+@media (max-width:560px){.spec{grid-template-columns:1fr}.spec dt{border-bottom:0;padding-bottom:0}}
+
+.flow{list-style:none;counter-reset:f;border-top:1px solid var(--ink)}
+.flow li{counter-increment:f;display:grid;grid-template-columns:44px 1fr;gap:8px;padding:14px 0;border-bottom:1px solid var(--line)}
+.flow li::before{content:counter(f,decimal-leading-zero);font-family:var(--latin);font-weight:800;font-size:20px;letter-spacing:-.02em;line-height:1.5}
+.flow li b{display:block}
+.flow li small{display:block;color:var(--sub);font-size:14px}
+
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.cols>div{border-top:2px solid var(--ink);padding-top:12px}
+.cols h4{font-size:16px;margin-bottom:6px}
+.cols p{font-size:15px;color:var(--sub)}
+@media (max-width:620px){.cols{grid-template-columns:1fr}}
+
+.nums{display:grid;gap:0;border-top:1px solid var(--ink)}
+.nums>div>div{min-width:0}
+.nums>div{display:grid;grid-template-columns:72px 1fr;gap:12px;padding:20px 0;border-bottom:1px solid var(--line)}
+.nums .n{font-family:var(--latin);font-weight:800;font-size:40px;line-height:1;letter-spacing:-.04em;color:var(--accent)}
+.nums h4{font-size:17px;margin-bottom:4px}
+.nums p{font-size:15px;color:var(--sub)}
+.nums .term{margin-top:12px}
+
+.ba{display:grid;grid-template-columns:1fr 32px 1fr;align-items:stretch}
+.ba>.side{border:1px solid var(--line);background:var(--white);padding:14px 16px}
+.ba>.side.after{border-color:var(--ink)}
+.ba .lbl{font-family:var(--latin);font-size:11px;letter-spacing:.18em;font-weight:600;color:var(--mute);margin-bottom:8px}
+.ba .after .lbl{color:var(--accent)}
+.ba .arrow{display:flex;align-items:center;justify-content:center;font-family:var(--latin);font-size:18px}
+.tree{font-family:var(--mono);font-size:13.5px;line-height:1.75;white-space:pre;letter-spacing:0}
+.tree .new{color:var(--accent);font-weight:600}
+@media (max-width:620px){.ba{grid-template-columns:1fr}.ba .arrow{transform:rotate(90deg);height:32px}}
+
+.mis{border-top:1px solid var(--ink)}
+.mis>div{padding:14px 0;border-bottom:1px solid var(--line)}
+.mis .q{font-weight:700;display:grid;grid-template-columns:24px 1fr}
+.mis .q::before{content:"×";color:var(--accent);font-family:var(--latin);font-weight:800}
+.mis .a{display:grid;grid-template-columns:24px 1fr;color:var(--sub);font-size:15px;margin-top:4px}
+.mis .a::before{content:"→";font-family:var(--latin)}
+.mis .a>div>*+*{margin-top:8px}
+.mis-h{font-family:var(--latin);font-size:12px;letter-spacing:.18em;font-weight:600;color:var(--accent);margin-bottom:6px}
+
+.ui-path{display:flex;flex-wrap:wrap;gap:4px;align-items:center;font-size:14px}
+.ui-path span{border:1px solid var(--ink);padding:2px 10px;background:var(--white);font-family:var(--latin);font-weight:500}
+.ui-path span+span::before{content:"›";margin:0 10px 0 -18px;font-weight:700;color:var(--accent)}
+.ui-path span+span{margin-left:14px}
+
+.legend{border-top:1px solid var(--ink)}
+.legend>div{display:grid;grid-template-columns:88px 1fr;padding:12px 0;border-bottom:1px solid var(--line);align-items:center}
+.legend .sym{font-family:var(--latin);font-weight:800;font-size:18px}
+
+/* ---------- terminal ---------- */
+.term{background:var(--code);color:var(--code-text);font-family:var(--mono);font-size:14px;line-height:1.75;letter-spacing:0;overflow:hidden}
+.term-h{display:flex;justify-content:space-between;align-items:center;padding:8px 14px;border-bottom:1px solid #34332f;font-size:11px;letter-spacing:.12em;color:var(--code-mute);font-family:var(--latin)}
+.term-h button{background:none;border:1px solid #4a4944;color:var(--code-text);font:600 11px var(--latin);letter-spacing:.12em;padding:3px 10px;cursor:pointer}
+.term-h button:hover{background:var(--code-text);color:var(--code)}
+.term-b{padding:14px 16px;overflow-x:auto;white-space:pre}
+.term-b .ln{display:block;min-height:1.75em}
+.term-b .pr{color:var(--accent);font-weight:600;user-select:none}
+.term-b .cmd{color:#fff;font-weight:600}
+.term-b .out{color:var(--code-mute)}
+.term-b .cm{color:#6d6b64;font-weight:400}
+.term-b .an{color:#e8c37a;font-family:var(--jp);font-weight:500}
+.term-b .add{color:var(--code-add)}
+.term-b .del{color:var(--code-del)}
+.term-b .hunk{color:#86a8d6}
+.term-b .ph{color:#ffb4a6}
+pre.term:not(.ready){padding:14px 16px;white-space:pre}
+
+/* ---------- diagrams ---------- */
+.fig{border:1px solid var(--line);background:var(--white);padding:24px}
+.fig svg{display:block;width:100%;height:auto;overflow:visible}
+.fig .cap{font-size:13px;color:var(--sub);margin-top:12px;font-family:var(--jp)}
+.route{display:grid;grid-template-columns:1fr 64px 1fr 64px 1fr;align-items:center}
+.route .node{border:1px solid var(--ink);padding:14px 12px;background:var(--white);text-align:center}
+.route .node span{display:block;font-size:12px;color:var(--sub)}
+.route .node b{display:block;font-family:var(--latin);font-size:15px;word-break:break-all}
+.route .node.ac{background:var(--ink);color:var(--paper)}
+.route .node.ac span{color:#bdb9b0}
+.route .edge{text-align:center;font-family:var(--latin);font-weight:700;font-size:12px;position:relative;height:40px}
+.route .edge i{position:absolute;left:6px;right:6px;top:50%;height:2px;background:var(--accent);transform-origin:left}
+.route .edge i::after{content:"";position:absolute;right:-1px;top:-4px;border:5px solid transparent;border-left:8px solid var(--accent);border-right:0}
+.route .edge em{position:absolute;left:0;right:0;top:-2px;font-style:normal;letter-spacing:.06em}
+@media (max-width:620px){
+  .route{grid-template-columns:1fr}
+  .route .edge{height:44px}
+  .route .edge i{left:50%;right:auto;top:6px;bottom:6px;width:2px;height:auto;transform-origin:top}
+  .route .edge i::after{right:auto;top:auto;bottom:-1px;left:-4px;border:5px solid transparent;border-top:8px solid var(--accent);border-bottom:0}
+  .route .edge em{top:11px;left:50%;right:auto;padding-left:14px;text-align:left}
+}
+
+.areas{display:grid;grid-template-columns:1fr 40px 1fr 40px 1fr 40px 1fr;align-items:stretch}
+.area{border:1px solid var(--ink);background:var(--white);padding:14px 12px 16px;transition:background .3s,color .3s}
+.area .an{font-family:var(--latin);font-weight:800;font-size:22px;letter-spacing:-.03em;line-height:1}
+.area h4{font-size:15px;margin:10px 0 4px;line-height:1.4}
+.area p{font-size:12.5px;color:var(--sub);line-height:1.6}
+.area.remote{border-style:dashed}
+.area.lit{background:var(--ink);color:var(--paper)}
+.area.lit p{color:#c9c5bb}
+.aarrow{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-family:var(--mono);font-size:11px;font-weight:600}
+.aarrow i{font-style:normal;font-family:var(--latin);font-size:18px;color:var(--accent);transition:transform .3s}
+.aarrow.lit i{transform:translateX(4px)}
+.area-zones{display:grid;grid-template-columns:3fr 1fr;gap:40px;margin-top:8px;font-family:var(--latin);font-size:11px;letter-spacing:.14em;color:var(--sub)}
+.area-zones span{border-top:1px solid var(--ink);padding-top:4px}
+@media (max-width:760px){
+  .areas{grid-template-columns:1fr}
+  .aarrow{flex-direction:row;height:40px;gap:8px}
+  .aarrow i{transform:rotate(90deg)}
+  .aarrow.lit i{transform:rotate(90deg) translateX(4px)}
+  .area-zones{display:none}
+  .area h4{margin-top:6px}
+}
+
+.keys{display:grid;grid-template-columns:1fr 80px 1fr;align-items:center}
+.keys .place{border:1px solid var(--ink);background:var(--white);padding:16px}
+.keys .place h4{font-family:var(--latin);font-size:12px;letter-spacing:.16em;color:var(--sub);margin-bottom:10px}
+.kchip{display:flex;align-items:center;gap:10px;border:1px solid var(--line);padding:8px 10px;font-size:14px;background:var(--paper)}
+.kchip+.kchip{margin-top:8px}
+.kchip code{background:none;padding:0;font-weight:600}
+.kchip small{display:block;font-size:12px;color:var(--sub);line-height:1.4}
+.kchip.sec{border-color:var(--accent)}
+.kchip svg{flex:none}
+.keys .mid{text-align:center;font-family:var(--latin);font-size:11px;font-weight:700;letter-spacing:.1em}
+.keys .mid i{display:block;font-style:normal;font-size:22px;color:var(--accent)}
+@media (max-width:620px){.keys{grid-template-columns:1fr}.keys .mid{padding:8px 0}.keys .mid i{transform:rotate(90deg)}}
+
+.loop{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--ink)}
+.loop>div{padding:16px 14px;border-right:1px solid var(--line);position:relative;background:var(--white)}
+.loop>div:last-child{border-right:0}
+.loop .n{font-family:var(--latin);font-weight:800;font-size:12px;color:var(--accent);letter-spacing:.1em}
+.loop b{display:block;font-family:var(--mono);font-size:14px;margin:4px 0}
+.loop small{display:block;font-size:12.5px;color:var(--sub);line-height:1.6}
+.loop-back{font-family:var(--latin);font-size:12px;color:var(--sub);text-align:right;padding-top:6px;letter-spacing:.06em}
+@media (max-width:620px){.loop{grid-template-columns:1fr 1fr}.loop>div:nth-child(2){border-right:0}.loop>div:nth-child(-n+2){border-bottom:1px solid var(--line)}}
+
+/* ---------- state transition (stx) ---------- */
+.stx{border:1px solid var(--line);background:var(--white);padding:16px}
+.stl{font-family:var(--latin);font-size:11px;font-weight:600;letter-spacing:.18em;color:var(--mute);margin-bottom:6px}
+.stl.ac{color:var(--accent)}
+.srow{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.scell{border:1px solid var(--line);padding:8px;min-height:64px;background:var(--paper);min-width:0}
+.scell.rc{border-style:dashed}
+.srow.after .scell.chg{border-color:var(--accent);outline:1px solid var(--accent);outline-offset:-2px;background:var(--white)}
+.sl{font-size:11px;color:var(--sub);line-height:1.3;margin-bottom:4px}
+.sl b{font-family:var(--latin);font-weight:800;margin-right:4px;color:var(--ink)}
+.schip{display:block;font:600 11.5px/1.5 var(--mono);border:1px solid var(--ink);background:var(--white);padding:2px 6px;margin-top:4px;overflow-wrap:anywhere;letter-spacing:0}
+.schip i{font-style:normal;font-family:var(--jp);font-size:10px;font-weight:700;margin-left:6px}
+.schip.u{border-color:var(--accent)}.schip.u i{color:var(--accent)}
+.schip.m{border-color:#b0700f}.schip.m i{color:#b0700f}
+.schip.n i,.schip.s i{color:var(--accent)}
+.schip.k{border-color:var(--line);color:var(--sub)}
+.schip.c{border:0;border-left:3px solid var(--ink);font-family:var(--jp);font-weight:500}
+.schip.c code{background:none;padding:0;color:var(--accent);font-weight:600}
+.snone{font-size:12px;color:var(--mute)}
+.scmd{display:flex;align-items:center;gap:10px;padding:10px 0 12px}
+.scmd span{color:var(--accent);font:800 18px var(--latin)}
+.scmd code{background:var(--ink);color:var(--paper);padding:4px 10px;font-size:13px}
+.stx-cap{font-size:13px;color:var(--sub);margin-top:10px}
+@media (max-width:620px){.srow{grid-template-columns:1fr 1fr}}
+
+/* ---------- status map ---------- */
+.smap{display:grid;grid-template-columns:1.3fr 56px 1fr;align-items:stretch}
+.smap .scell{background:var(--white);border-color:var(--ink);padding:12px}
+.smap .scell.chg{border-color:var(--accent)}
+.sitem{border-top:1px solid var(--line);padding:8px 0 4px}
+.sitem code{background:none;padding:0;font-weight:600;font-size:13px}
+.sitem small{display:block;font-size:12.5px;color:var(--sub);line-height:1.6}
+.smap-arrow{display:flex;flex-direction:column;align-items:center;justify-content:center;font:600 12px var(--mono)}
+.smap-arrow i{font-style:normal;font:800 20px var(--latin);color:var(--accent)}
+@media (max-width:620px){.smap{grid-template-columns:1fr}.smap-arrow{flex-direction:row;gap:8px;height:40px}.smap-arrow i{transform:rotate(90deg)}}
+
+/* ---------- windows / wsl ---------- */
+.fs{display:grid;grid-template-columns:1fr 72px 1fr;align-items:center}
+.fs-side{border:1px solid var(--ink);background:var(--white);padding:14px 16px}
+.fs-side.ac{background:var(--ink);color:var(--paper)}
+.fs-side h4{font:600 11px var(--latin);letter-spacing:.16em;color:var(--sub);margin-bottom:8px}
+.fs-side.ac h4,.fs-side.ac .eq{color:#bdb9b0}
+.fs .path{font:600 13px/1.5 var(--mono);overflow-wrap:anywhere;letter-spacing:0;max-width:none}
+.fs .eq{font-size:12px;color:var(--sub);margin:8px 0 2px}
+.fs-mid{text-align:center;font:600 12px var(--mono)}
+.fs-mid i{display:block;font:800 22px var(--latin);color:var(--accent);font-style:normal}
+@media (max-width:620px){.fs{grid-template-columns:1fr}.fs-mid{padding:8px 0;display:flex;justify-content:center;gap:8px;align-items:center}.fs-mid i{transform:rotate(90deg)}}
+
+/* ---------- ssh sequence ---------- */
+.seq{border:1px solid var(--line);background:var(--white);padding:16px 20px}
+.seq-h{display:flex;justify-content:space-between;font:600 11px var(--latin);letter-spacing:.16em;padding-bottom:6px}
+.seq-b{border-left:2px solid var(--ink);border-right:2px solid var(--ink);padding:4px 0}
+.msg{position:relative;padding:10px 16px 20px;font-size:14px;line-height:1.6}
+.msg b{font-family:var(--latin);color:var(--accent);margin-right:8px}
+.msg::after{content:"";position:absolute;left:0;right:0;bottom:9px;height:2px;background:var(--ink)}
+.msg::before{content:"";position:absolute;bottom:5px;border:5px solid transparent}
+.msg.r::before{right:0;border-left:9px solid var(--ink);border-right:0}
+.msg.l{text-align:right}
+.msg.l::before{left:0;border-right:9px solid var(--ink);border-left:0}
+.msg.ac::after{background:var(--accent)}
+.msg.ac.l::before{border-right-color:var(--accent)}
+
+/* ---------- alias ---------- */
+.alias{display:grid;grid-template-columns:auto 40px 1fr;align-items:center;border:1px solid var(--line);background:var(--white);padding:16px}
+.alias .tagb{background:var(--accent);color:#fff;font:700 15px var(--mono);padding:6px 14px;text-align:center}
+.alias .eqs{text-align:center;font:800 22px var(--latin)}
+.alias code{background:none;border:1px solid var(--ink);padding:6px 10px;font-size:13px}
+@media (max-width:620px){.alias{grid-template-columns:1fr}.alias .eqs{line-height:1.4}}
+.route.two{grid-template-columns:1fr 120px 1fr}
+@media (max-width:620px){.route.two{grid-template-columns:1fr}}
+
+/* ---------- commit graph ---------- */
+.gwrap{overflow-x:auto;border:1px solid var(--line);background:var(--white);padding:14px 8px 4px}
+.gcanvas{position:relative;margin:0 auto}
+.gcanvas svg{display:block;overflow:visible}
+.ge{fill:none;stroke:var(--ink);stroke-width:2.5}
+.ge.new{stroke:var(--accent)}
+.gn circle{fill:var(--white);stroke:var(--ink);stroke-width:2.5}
+.gn.cur circle{fill:var(--ink)}
+.gn.new circle{stroke:var(--accent);fill:var(--accent-weak)}
+.gn.new.cur circle{fill:var(--accent)}
+.gn text{font:600 10px var(--mono);fill:var(--mute);text-anchor:middle}
+.gn{transform-box:fill-box;transform-origin:center}
+.gtag{position:absolute;transform:translateX(-50%);font:600 11px/1.7 var(--mono);padding:0 7px;background:var(--ink);color:var(--paper);white-space:nowrap;letter-spacing:0}
+.gtag.head{background:var(--accent);color:#fff}
+.gtag i{font-style:normal;font-weight:400;margin-right:4px;opacity:.85}
+.gtag.moved{outline:2px solid var(--accent);outline-offset:2px}
+.gstx{border:1px solid var(--line);background:var(--white);padding:16px}
+.gstx .gwrap{background:var(--paper)}
+.gleg{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:12.5px;color:var(--sub);margin-top:10px}
+.gleg span{display:inline-flex;align-items:center;gap:6px}
+.gleg i{display:inline-block;width:12px;height:12px;border-radius:50%;border:2px solid var(--ink)}
+.gleg i.f{background:var(--ink)}
+.gleg b{font:600 11px var(--mono);background:var(--ink);color:var(--paper);padding:0 6px}
+.gleg b.h{background:var(--accent)}
+
+/* ---------- branch simulator ---------- */
+.bsim{border:1px solid var(--ink);background:var(--white)}
+.bsim .gwrap{border:0;border-bottom:1px solid var(--ink);background:var(--paper);min-height:190px;padding-top:20px}
+.bsel{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.bsel select{font:600 13px var(--mono);padding:7px 8px;border:1px solid var(--ink);background:var(--paper);color:var(--ink)}
+.bsim .sim-commit{flex:0 1 240px}
+.bhead{padding:8px 14px;font:600 12px var(--mono);border-bottom:1px solid var(--line);display:flex;gap:16px;flex-wrap:wrap}
+.bhead span b{color:var(--accent)}
+
+/* ---------- team cycle ---------- */
+.cyc{display:grid;grid-template-columns:1fr 1fr;gap:8px 24px;position:relative}
+.cyc-h{grid-row:1;font:600 11px var(--latin);letter-spacing:.16em;padding-bottom:6px;border-bottom:1px solid var(--ink)}
+.cs{border:1px solid var(--ink);background:var(--white);padding:10px 12px;font-size:13px;line-height:1.6}
+.cs.gh{border-style:dashed;background:var(--paper)}
+.cs b{font:800 13px var(--latin);color:var(--accent);margin-right:8px}
+.cs code{font-size:12px;background:none;padding:0;font-weight:600}
+.cs small{display:block;color:var(--sub);font-size:12px}
+.cs-back{grid-column:1/3;text-align:center;font:600 12px var(--latin);color:var(--sub);letter-spacing:.06em}
+@media (max-width:620px){.cyc{grid-template-columns:1fr}.cyc-h{display:none}.cs{grid-column:1!important;grid-row:auto!important}.cs.gh::before{content:"GitHub";font:600 10px var(--latin);letter-spacing:.14em;color:var(--sub);display:block}.cs.pc::before{content:"YOUR PC";font:600 10px var(--latin);letter-spacing:.14em;color:var(--sub);display:block}.cs-back{grid-column:1}}
+
+/* ---------- PR mock ---------- */
+.prm{border:1px solid var(--ink);background:var(--white)}
+.prm-top{padding:14px 16px 10px;border-bottom:1px solid var(--line)}
+.prm-top h4{font-size:18px;line-height:1.5}
+.prm-top h4 span{color:var(--mute);font-family:var(--latin);font-weight:500}
+.prm-meta{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:13px;color:var(--sub);margin-top:6px}
+.prm-state{background:var(--ok);color:#fff;font:700 12px var(--latin);padding:2px 10px}
+.prm-meta code{font-size:12px}
+.prm-tabs{display:flex;gap:0;border-bottom:1px solid var(--line);font:500 13px var(--latin);overflow-x:auto}
+.prm-tabs span{padding:8px 14px;white-space:nowrap}
+.prm-tabs span.on{border-bottom:2px solid var(--accent);font-weight:700}
+.prm-body{padding:14px 16px;font-size:14px}
+.prm-merge{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;align-items:center;padding:12px 16px;border-top:1px solid var(--line);background:var(--paper);font-size:13px}
+.prm-merge .ok{color:var(--ok);font-weight:700}
+.prm-merge .ng{color:var(--accent);font-weight:700}
+.prm-merge span.btn-mock{background:var(--ok);color:#fff;font:700 13px var(--latin);padding:6px 14px}
+.prm-merge span.btn-mock.off{background:var(--line);color:var(--sub)}
+
+/* ---------- conflict ---------- */
+.conf{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.conf>div{border:1px solid var(--ink);background:var(--white);padding:12px 14px;text-align:center}
+.conf .all{grid-column:1/3}
+.conf .lbl{font:600 11px var(--latin);letter-spacing:.14em;color:var(--sub);margin-bottom:6px}
+.conf code{background:none;padding:0;font-size:13px;font-weight:600}
+.conf .q{background:var(--accent);border-color:var(--accent);color:#fff}
+.conf .q .lbl{color:#fff;opacity:.8}
+.conf .ar{border:0;background:none;padding:0;font:800 18px var(--latin);color:var(--accent);line-height:1}
+.mk{border:1px solid var(--ink);font:13px/1.7 var(--mono);letter-spacing:0}
+.mk-row{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);border-bottom:1px solid var(--line)}
+.mk-row:last-child{border-bottom:0}
+.mk-row code{background:none;padding:6px 12px;white-space:pre;overflow-x:auto;font-size:13px;word-break:normal}
+.mk-row span{padding:6px 12px;font:12.5px/1.6 var(--jp);color:var(--sub);border-left:1px solid var(--line)}
+.mk-row.mine{background:#eef1ea}
+.mk-row.theirs{background:#eceef3}
+.mk-row.m code{color:var(--accent);font-weight:700}
+@media (max-width:620px){.mk-row{grid-template-columns:1fr}.mk-row span{border-left:0;padding-top:0}.mk-row span:empty{display:none}}
+.term-b .srcl{color:var(--code-text)}
+.term-b .mkr{color:#ffb4a6;font-weight:600}
+
+/* ---------- kanban / issues ---------- */
+.kb{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.kb>div{background:var(--white);border:1px solid var(--line);padding:10px;min-height:150px}
+.kb h5{font:700 12px var(--latin);letter-spacing:.1em;padding-bottom:6px;border-bottom:2px solid var(--ink);margin-bottom:8px;display:flex;justify-content:space-between}
+.kb h5 span{color:var(--mute)}
+.kc{border:1px solid var(--ink);background:var(--paper);padding:6px 8px;font-size:12.5px;line-height:1.5;margin-bottom:6px}
+.kc small{display:block;color:var(--mute);font:600 11px var(--latin)}
+@media (max-width:560px){.kb{grid-template-columns:1fr}.kb>div{min-height:0}}
+.iss{border:1px solid var(--ink);background:var(--white)}
+.iss>div{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;padding:10px 14px;border-bottom:1px solid var(--line);font-size:14px}
+.iss>div:last-child{border-bottom:0}
+.iss .no{font:600 12px var(--latin);color:var(--mute)}
+.iss .st{width:12px;height:12px;border-radius:50%;border:2px solid var(--ok)}
+.iss .st.closed{background:var(--mute);border-color:var(--mute)}
+.iss .lab{font:600 11px var(--latin);border:1px solid var(--ink);padding:0 6px}
+
+/* ---------- practice ---------- */
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chips button{font:500 13px var(--jp);padding:5px 14px;border:1px solid var(--ink);background:transparent;color:var(--ink);cursor:pointer;transition:background .15s,color .15s}
+.chips button:hover{background:var(--white)}
+.chips button.on{background:var(--ink);color:var(--paper)}
+.pq-map{display:flex;flex-wrap:wrap;gap:4px;margin:20px 0 32px}
+.pq-map button{width:34px;height:34px;border:1px solid var(--line);background:transparent;font:600 12px var(--latin);cursor:pointer;color:var(--sub)}
+.pq-map button:hover{border-color:var(--ink)}
+.pq-map button.ok{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+.pq-map button.ng{border-color:var(--accent);color:var(--accent)}
+.pq-map button.cur{outline:2px solid var(--accent);outline-offset:2px}
+.pq-kind{display:inline-block;font:700 11px var(--latin);letter-spacing:.14em;background:var(--ink);color:var(--paper);padding:3px 10px;margin-top:14px}
+.pq-q{font-size:clamp(20px,3vw,26px);line-height:1.6;margin:14px 0 28px;font-weight:700}
+.pq-q code{font-size:.8em}
+.pq-form{display:flex;flex-wrap:wrap;gap:10px}
+.pq-input{flex:1 1 320px;display:flex;align-items:center;background:var(--code);padding:0 14px;min-width:0}
+.pq-input span{color:var(--accent);font:600 16px var(--mono);margin-right:10px}
+.pq-input input{flex:1;min-width:0;background:transparent;border:0;color:#fff;font:600 16px var(--mono);padding:14px 0;letter-spacing:0}
+.pq-input input:focus{outline:none}
+.pq-input:focus-within{outline:2px solid var(--accent);outline-offset:2px}
+.pq-input input::placeholder{color:#6d6b64;font-family:var(--jp);font-weight:400}
+.pq-choices{display:grid;gap:8px}
+.pq-choices button{display:grid;grid-template-columns:32px 1fr;align-items:center;text-align:left;border:1px solid var(--ink);background:var(--white);padding:12px 14px;font:15px/1.6 var(--jp);color:var(--ink);cursor:pointer;transition:background .15s}
+.pq-choices button:hover:not(:disabled){background:var(--paper)}
+.pq-choices button>span:first-child{font:800 14px var(--latin)}
+.pq-choices button:disabled{cursor:default}
+.pq-choices button.ok{border-color:var(--ok);outline:2px solid var(--ok);outline-offset:-3px}
+.pq-choices button.ok>span:first-child{color:var(--ok)}
+.pq-choices button.ng{border-color:var(--accent);background:var(--accent-weak)}
+.pq-choices button.ng>span:first-child{color:var(--accent)}
+.pq-choices button.dim{opacity:.45}
+.pq-fb{border:1px solid var(--line);border-left:4px solid var(--accent);background:var(--white);padding:14px 18px}
+.pq-fb.ok{border-left-color:var(--ok)}
+.pq-fb.ans{border-left-color:var(--ink)}
+.pq-fb>*+*{margin-top:8px}
+.pq-fbh{font:800 16px var(--jp)}
+.pq-fb.ok .pq-fbh{color:var(--ok)}
+.pq-fb.ng .pq-fbh{color:var(--accent)}
+.pq-fb .btn{padding:8px 16px;font-size:13px}
+.pq-ref a{font-size:14px;font-weight:700;text-decoration:none;border-bottom:1px solid var(--ink)}
+.pq-ref a:hover{color:var(--accent);border-color:var(--accent)}
+.pq-score{font:500 14px var(--latin);color:var(--sub);margin:-8px 0 16px}
+.pq-score b{font:800 40px var(--latin);color:var(--ink);letter-spacing:-.03em;margin-right:4px}
+.pq-help{font-size:13.5px;color:var(--sub);line-height:1.8;border-top:1px solid var(--ink);padding-top:12px}
+.pq-help b{color:var(--ink)}
+@media (max-width:900px){.pq-score{grid-column:2;margin:0}.pq-help{display:none}}
+
+/* ---------- errors ---------- */
+.esearch{display:flex;align-items:center;gap:10px;border:1px solid var(--ink);background:var(--white);padding:0 14px;margin:8px 0 12px}
+.esearch:focus-within{outline:2px solid var(--accent);outline-offset:2px}
+.esearch input{flex:1;min-width:0;border:0;background:transparent;font:15px var(--jp);padding:13px 0;color:var(--ink)}
+.esearch input:focus{outline:none}
+.elist{margin-top:24px;border-top:1px solid var(--ink)}
+.err{border-bottom:1px solid var(--line)}
+.err summary{list-style:none;cursor:pointer;display:grid;grid-template-columns:1fr 28px;gap:4px 12px;padding:14px 0;align-items:start}
+.err summary::-webkit-details-marker{display:none}
+.err summary::after{content:"+";grid-column:2;grid-row:1/4;font:400 24px/1 var(--latin);text-align:center;transition:transform .2s}
+.err[open] summary::after{transform:rotate(45deg);color:var(--accent)}
+.err-cat{font:600 11px var(--latin);letter-spacing:.12em;color:var(--sub)}
+.err-t{font-weight:700;font-size:16px;line-height:1.6}
+.err-m1{background:none;padding:0;font-size:12.5px;color:var(--accent);font-weight:600;overflow-wrap:anywhere}
+.err summary:hover .err-t{text-decoration:underline;text-underline-offset:4px}
+.err-b{padding:4px 0 24px}
+.err-b>*+*{margin-top:16px}
+.err-msg{background:var(--code);color:#ffb4a6;font:13px/1.75 var(--mono);padding:12px 16px;white-space:pre-wrap;overflow-wrap:anywhere;letter-spacing:0}
+.err-h{font-size:15px;display:flex;align-items:baseline;gap:10px}
+.err-h::before{content:"";width:10px;height:10px;background:var(--accent)}
+.err-b ul{padding-left:1.2em}
+.err-b li+li{margin-top:2px}
+.enone{padding:24px 0;color:var(--sub)}
+
+/* ---------- pager ---------- */
+.pager{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:56px;border-top:1px solid var(--ink);padding-top:20px}
+.pager a,.pager button{display:flex;flex-direction:column;gap:2px;text-decoration:none;padding:14px 16px;border:1px solid var(--line);background:transparent;cursor:pointer;text-align:left;font:inherit;color:inherit;transition:border-color .2s,background .2s}
+.pager a:hover,.pager button:hover{border-color:var(--ink);background:var(--white)}
+.pager small{font-family:var(--latin);font-size:11px;letter-spacing:.16em;color:var(--sub);font-weight:600}
+.pager b{font-size:15px}
+.pager .next{text-align:right;align-items:flex-end;grid-column:2}
+.pager .finish{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.pager .finish small{color:#bdb9b0}
+.pager .finish:hover{background:var(--accent);border-color:var(--accent)}
+
+/* ---------- simulator ---------- */
+.sim{border:1px solid var(--ink);background:var(--white)}
+.sim-bar{display:flex;flex-wrap:wrap;gap:6px;padding:12px;border-bottom:1px solid var(--ink);align-items:center}
+.sim-bar button{font:600 13px var(--mono);letter-spacing:0;padding:8px 12px;border:1px solid var(--ink);background:var(--white);cursor:pointer;color:var(--ink);transition:background .15s,color .15s}
+.sim-bar button:hover:not(:disabled){background:var(--ink);color:var(--paper)}
+.sim-bar button:disabled{opacity:.35;cursor:not-allowed}
+.sim-bar button.jp{font-family:var(--jp);font-weight:700}
+.sim-bar button.reset{margin-left:auto;border-color:var(--line);color:var(--sub);font-family:var(--jp);font-weight:500}
+.sim-commit{display:flex;flex:1 1 260px;min-width:0}
+.sim-commit input{flex:1;min-width:0;font:14px var(--jp);padding:7px 10px;border:1px solid var(--ink);border-right:0;background:var(--paper);color:var(--ink)}
+.sim-commit input:focus{outline:2px solid var(--accent);outline-offset:-2px}
+.sim-grid{display:grid;grid-template-columns:repeat(4,1fr)}
+.sim-col{padding:12px;border-right:1px solid var(--line);min-height:220px;min-width:0}
+.sim-col:last-child{border-right:0;background:var(--paper)}
+.sim-col h5{display:flex;align-items:baseline;gap:8px;font-size:13px;line-height:1.3;padding-bottom:8px;border-bottom:2px solid var(--ink);margin-bottom:10px}
+.sim-col h5 span{font-family:var(--latin);font-weight:800;font-size:18px}
+.sim-col h5 small{display:block;font-weight:400;font-size:11px;color:var(--sub)}
+.sim-empty{font-size:12px;color:var(--mute);padding:6px 0}
+.fcard{border:1px solid var(--ink);background:var(--white);padding:8px;margin-bottom:6px;font-size:12px}
+.fcard .fn{font-family:var(--mono);font-weight:600;font-size:12.5px;display:flex;flex-wrap:wrap;justify-content:space-between;gap:2px 6px;overflow-wrap:anywhere}
+.fcard .tag{font-family:var(--latin);font-size:10px;font-weight:700;letter-spacing:.06em;padding:0 5px;border:1px solid currentColor;white-space:nowrap;align-self:flex-start}
+.fcard .tag.u{color:var(--accent)}
+.fcard .tag.m{color:#b0700f}
+.fcard .tag.c{color:var(--mute)}
+.fcard .ver{color:var(--sub);font-family:var(--mono);font-size:11px}
+.fcard .acts{display:flex;gap:4px;margin-top:6px}
+.fcard .acts button{flex:1;font:600 11px var(--mono);padding:4px;border:1px solid var(--line);background:var(--paper);cursor:pointer;color:var(--ink)}
+.fcard .acts button:hover:not(:disabled){border-color:var(--ink);background:var(--ink);color:var(--paper)}
+.fcard .acts button:disabled{opacity:.35;cursor:not-allowed}
+.ccard{border-left:3px solid var(--ink);background:var(--white);padding:6px 8px;margin-bottom:6px;font-size:12px;line-height:1.5}
+.sim-col:last-child .ccard{background:var(--white)}
+.ccard .id{font-family:var(--mono);font-weight:600;color:var(--accent)}
+.ccard .ref{font-family:var(--mono);font-size:10px;font-weight:600;background:var(--ink);color:var(--paper);padding:0 4px;margin-left:4px}
+.ccard .msg{display:block;word-break:break-all}
+.sim-note{padding:12px 14px;border-top:1px solid var(--ink);font-size:14px;display:grid;grid-template-columns:24px 1fr;min-height:52px;background:var(--paper)}
+.sim-note::before{content:"→";font-family:var(--latin);font-weight:800;color:var(--accent)}
+.sim .term{border-top:1px solid var(--ink)}
+.sim .term-b{height:180px;overflow-y:auto}
+.fly{position:fixed;z-index:200;pointer-events:none;border:1px solid var(--accent);background:var(--accent-weak);padding:6px 8px;font:600 12px var(--mono);color:var(--ink)}
+.mission{border-top:1px solid var(--ink)}
+.mission li{list-style:none;display:grid;grid-template-columns:28px 1fr;padding:10px 0;border-bottom:1px solid var(--line);font-size:15px;transition:color .3s}
+.mission li::before{content:"";width:14px;height:14px;border:1px solid var(--ink);margin-top:6px}
+.mission li.ok{color:var(--mute);text-decoration:line-through}
+.mission li.ok::before{background:var(--accent);border-color:var(--accent)}
+@media (max-width:760px){
+  .sim-grid{grid-template-columns:1fr 1fr}
+  .sim-col{min-height:150px}
+  .sim-col:nth-child(2){border-right:0}
+  .sim-col:nth-child(-n+2){border-bottom:1px solid var(--line)}
+  .sim-bar button.reset{margin-left:0}
+}
+
+/* ---------- soon ---------- */
+.soon-page{padding:96px 0 120px}
+.soon-page h1{font-family:var(--latin);font-weight:800;font-size:clamp(48px,9vw,96px);letter-spacing:-.04em;line-height:1}
+.soon-page p{margin:20px 0 32px;color:var(--sub);max-width:32em}
+
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:var(--paper);padding:12px 20px;font-size:14px;z-index:300;opacity:0;pointer-events:none;transition:opacity .3s}
+.toast.on{opacity:1}
+.totop{position:fixed;right:16px;bottom:16px;width:44px;height:44px;border:1px solid var(--ink);background:var(--paper);font:800 18px var(--latin);cursor:pointer;z-index:40;opacity:0;pointer-events:none;transition:opacity .3s}
+.totop.on{opacity:1;pointer-events:auto}
+.totop:hover{background:var(--ink);color:var(--paper)}
+</style>
+</head>
+<body>
+
+<header class="site-head">
+  <div class="wrap head-in">
+    <a class="brand" href="#/" aria-label="トップへ">
+      <svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true">
+        <rect width="34" height="34" fill="#1a1a1a"/>
+        <path d="M9 26V8M9 18c0-5 16-3 16-10" stroke="#f4f2ec" stroke-width="2.2" fill="none"/>
+        <circle cx="9" cy="26" r="3" fill="#f4f2ec"/><circle cx="9" cy="8" r="3" fill="#f4f2ec"/><circle cx="25" cy="8" r="3" fill="#c8321f"/>
+      </svg>
+      <span class="brand-t"><b>Web Programming</b><small>Git &amp; GitHub Lesson</small></span>
+    </a>
+    <nav class="gnav" id="gnav">
+      <a href="#/ch00/1" data-nav="ch00">はじめに</a>
+      <a href="#/ch02/1" data-nav="p1">第1部</a>
+      <a href="#/ch06/1" data-nav="p2">第2部</a>
+      <a href="#/practice" data-nav="practice">練習</a>
+      <a href="#/errors" data-nav="errors">エラー</a>
+    </nav>
+  </div>
+  <div class="progress-line"><span id="progBar"></span></div>
+</header>
+
+<main id="app"></main>
+<button class="totop" id="totop" aria-label="ページの先頭へ">↑</button>
+<div class="toast" id="toast"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.2/anime.min.js"></script>
+<script>
+/* =========================================================
+   CONTENT
+   - pre.term の中: "$ " で始まる行 = 入力するコマンド / それ以外 = 出力
+   - {{ }} で囲んだ部分 = 自分のものに置き換える部分（色付き表示）
+   - 出力行の "  ← " 以降 = 補足（黄色）
+   ========================================================= */
+const CHAPTERS = [
+/* ---------------- 00 ---------------- */
+{ id:'ch00', no:'00', part:0, title:'はじめに', sub:'ゴールと、この教材の読み方',
+  pages:[
+  { t:'この教材のゴール', anim:'route', h:`
+<p class="lead">この教材で目指すことは2つだけです。</p>
+<div class="goals" style="margin-top:28px">
+  <div class="goal"><p class="no">01</p><h3>自分のサイトを公開する</h3><p>自分で作ったHTMLを GitHub に送り（push）、<b>GitHub Pages</b> で誰でも見られるURLにします。</p></div>
+  <div class="goal"><p class="no">02</p><h3>チームで1つのサイトを作る</h3><p>2〜3人で同じリポジトリを使い、ブランチ・Pull Request・マージ・コンフリクトを体験します。</p></div>
+</div>
+<h3 class="h ac">ゴール01 までの道のり</h3>
+<div class="route">
+  <div class="node"><span>あなたのPC</span><b>WSL</b></div>
+  <div class="edge"><em>push</em><i></i></div>
+  <div class="node"><span>GitHub</span><b>リポジトリ</b></div>
+  <div class="edge"><em>Pages</em><i></i></div>
+  <div class="node ac"><span>インターネット</span><b>you.github.io</b></div>
+</div>
+<p>コマンドを暗記する必要はありません。<span class="em">「いまファイルがどこにあって、次のコマンドでどこへ移るのか」</span>を考えられるようになることを目指します。</p>
+`},
+  { t:'読み方と準備', h:`
+<p class="lead">この教材で使う記号と、ターミナルの準備です。</p>
+<div class="legend">
+  <div><span class="sym">■</span><span>見出し・大事なこと</span></div>
+  <div><span class="sym">→</span><span>次にやること・結果</span></div>
+  <div><span class="sym" style="color:var(--accent)">×</span><span>よくある間違い</span></div>
+  <div><span class="sym" style="color:var(--accent)">ユーザー名</span><span>色付きの文字は、自分のものに置き換えて入力する</span></div>
+</div>
+<h3 class="h">ターミナルを開く</h3>
+<p>Windows のスタートメニューから <b>Ubuntu</b>（または Windows Terminal の Ubuntu タブ）を開きます。この教材のコマンドは、すべて <b>WSL の Ubuntu</b> で実行します。</p>
+<pre class="term">
+$ git --version
+git version 2.43.0
+</pre>
+<p><code>$</code> の後ろが入力する部分、灰色の行がコンピューターからの返事（出力）です。<code>$</code> は入力しません。右上の COPY ボタンで、コマンドだけをコピーできます。</p>
+<div class="mis">
+  <div><p class="q">git: command not found と表示された</p><div class="a"><div><p>Git がまだ入っていません。次の2行を実行してから、もう一度 <code>git --version</code> を確かめます。パスワードを聞かれたら、Ubuntu のパスワードを入力します（入力しても画面には何も表示されません）。</p>
+<pre class="term">
+$ sudo apt update
+$ sudo apt install git
+</pre></div></div></div>
+</div>
+`}
+  ]},
+/* ---------------- 01 ---------------- */
+{ id:'ch01', no:'01', part:1, title:'なぜGitを使うのか', sub:'チーム開発で何が楽になるのか',
+  pages:[
+  { t:'3人でサイトを作ると', anim:'overwrite', h:`
+<p class="lead">Aさん・Bさん・Cさんの3人で、1つのWebサイトを作るとします。<br>Git を使わずに、ファイルを送り合って作業すると……</p>
+<div class="fig">
+<svg viewBox="0 0 520 230" role="img" aria-label="Aさんの変更がBさんの変更で上書きされる図">
+  <g font-family="Inter,Noto Sans JP,sans-serif">
+    <g class="ow-1"><rect x="10" y="90" width="110" height="50" fill="#fbfaf7" stroke="#1a1a1a"/><text x="65" y="112" text-anchor="middle" font-size="13" font-weight="700">index.html</text><text x="65" y="130" text-anchor="middle" font-size="12" fill="#55534d">元のファイル</text></g>
+    <path class="ow-l1 draw" d="M120 105 C 160 105 160 45 200 45" stroke="#1a1a1a" fill="none" stroke-width="1.5"/>
+    <path class="ow-l2 draw" d="M120 125 C 160 125 160 185 200 185" stroke="#1a1a1a" fill="none" stroke-width="1.5"/>
+    <g class="ow-a"><rect x="200" y="20" width="140" height="50" fill="#fbfaf7" stroke="#1a1a1a"/><text x="270" y="42" text-anchor="middle" font-size="13" font-weight="700">Aさんの版</text><text x="270" y="60" text-anchor="middle" font-size="12" fill="#55534d">ヘッダーを修正</text></g>
+    <g class="ow-b"><rect x="200" y="160" width="140" height="50" fill="#fbfaf7" stroke="#1a1a1a"/><text x="270" y="182" text-anchor="middle" font-size="13" font-weight="700">Bさんの版</text><text x="270" y="200" text-anchor="middle" font-size="12" fill="#55534d">フッターを修正</text></g>
+    <path class="ow-l3 draw" d="M340 45 C 380 45 380 105 400 105" stroke="#1a1a1a" fill="none" stroke-width="1.5"/>
+    <path class="ow-l4 draw" d="M340 185 C 380 185 380 125 400 125" stroke="#1a1a1a" fill="none" stroke-width="1.5"/>
+    <g class="ow-f"><rect x="400" y="80" width="112" height="70" fill="#1a1a1a"/><text x="456" y="104" text-anchor="middle" font-size="12" fill="#bdb9b0">最終的に残る版</text><text x="456" y="126" text-anchor="middle" font-size="14" font-weight="700" fill="#f4f2ec">Bさんの版</text></g>
+    <g class="ow-x"><line x1="250" y1="28" x2="290" y2="62" stroke="#c8321f" stroke-width="3"/><line x1="290" y1="28" x2="250" y2="62" stroke="#c8321f" stroke-width="3"/><text x="270" y="92" text-anchor="middle" font-size="12" font-weight="700" fill="#c8321f">Aさんの修正が消えた</text></g>
+  </g>
+</svg>
+<p class="cap">2人が同じファイルを別々に直して送ると、あとから送ったほうで上書きされます。</p>
+</div>
+<h3 class="h">ほかにも起きること</h3>
+<div class="mis">
+  <div><p class="q">誰が・いつ・どこを変えたのかわからない</p></div>
+  <div><p class="q">昨日は動いていたのに、昨日の状態に戻せない</p></div>
+  <div><p class="q">「いまファイルを触らないで」と声をかけ合わないと作業できない</p></div>
+</div>
+`},
+  { t:'Gitがあると何が変わるか', h:`
+<p class="lead">Git は、ファイルの変更を<span class="em">「記録（コミット）」</span>として残していく道具です。記録があることで、チーム開発の問題が解決します。</p>
+<div class="nums">
+  <div><span class="n">01</span><div><h4>全員の変更が記録に残る</h4><p>誰が・いつ・何を変えたのかが、すべて残ります。</p>
+<pre class="term">
+$ git log --format="%h %an %s"
+e41c0d2 Sato お問い合わせページを追加
+9b7a3f1 Suzuki ヘッダーの色を変更
+3f2a1b9 Yamada 最初のコミット
+</pre></div></div>
+  <div><span class="n">02</span><div><h4>同時に作業できる</h4><p>それぞれが自分の作業場所（<b>ブランチ</b>）で作業し、あとで1つに合わせます（<b>マージ</b>）。別の場所を変えていれば、Git が自動で合わせてくれます。同じ場所を変えたときだけ、Git が教えてくれます（<b>コンフリクト</b>）。</p>
+<div class="fig gfig" style="margin-top:14px;padding:16px">
+<svg viewBox="0 0 400 195" role="img" aria-label="AさんとBさんが別々の枝で作業し、mainに合流する図">
+  <g fill="none" stroke-width="2.5">
+    <path class="draw" d="M20 95 H385" stroke="#1a1a1a"/>
+    <path class="draw" d="M50 95 C80 95 80 35 110 35 H220 C250 35 250 95 280 95" stroke="#c8321f"/>
+    <path class="draw" d="M50 95 C80 95 80 155 110 155 H310 C340 155 340 95 365 95" stroke="#8f8b82"/>
+  </g>
+  <g font-family="Inter,Noto Sans JP,sans-serif">
+    <text x="18" y="84" font-size="13" font-weight="700">main</text>
+    <g class="pop"><circle cx="50" cy="95" r="8" fill="#1a1a1a"/></g>
+    <g class="pop"><circle cx="135" cy="35" r="8" fill="#c8321f"/><circle cx="195" cy="35" r="8" fill="#c8321f"/><text x="165" y="17" text-anchor="middle" font-size="14" font-weight="700" fill="#c8321f">Aさん：ヘッダー</text></g>
+    <g class="pop"><circle cx="150" cy="155" r="8" fill="#8f8b82"/><circle cx="215" cy="155" r="8" fill="#8f8b82"/><circle cx="280" cy="155" r="8" fill="#8f8b82"/><text x="215" y="186" text-anchor="middle" font-size="14" font-weight="700" fill="#55534d">Bさん：フッター</text></g>
+    <g class="pop"><circle cx="280" cy="95" r="9" fill="#fbfaf7" stroke="#1a1a1a" stroke-width="3"/><circle cx="365" cy="95" r="9" fill="#fbfaf7" stroke="#1a1a1a" stroke-width="3"/><text x="322" y="84" text-anchor="middle" font-size="13" fill="#55534d">マージ</text></g>
+  </g>
+</svg>
+<p class="cap">2人が同時に別の枝で作業し、終わったら main に合流させます。どちらの修正も消えません。</p>
+</div></div></div>
+  <div><span class="n">03</span><div><h4>いつでも戻せる</h4><p>記録した状態にはいつでも戻れます。だから、壊すことを怖がらずに試せます。</p>
+<div class="fig gfig" style="margin-top:14px;padding:16px">
+<svg viewBox="0 0 400 150" role="img" aria-label="壊れた状態から、記録した前の状態に戻る図">
+  <path class="draw" d="M40 100 H362" stroke="#1a1a1a" stroke-width="2.5" fill="none"/>
+  <g font-family="Inter,Noto Sans JP,sans-serif" font-size="13" text-anchor="middle">
+    <g class="pop"><circle cx="50" cy="100" r="8" fill="#1a1a1a"/><text x="50" y="132" fill="#55534d">記録1</text></g>
+    <g class="pop"><circle cx="150" cy="100" r="10" fill="#fbfaf7" stroke="#1a1a1a" stroke-width="3"/><text x="150" y="132" font-weight="700">記録2</text></g>
+    <g class="pop"><circle cx="250" cy="100" r="8" fill="#1a1a1a"/><text x="250" y="132" fill="#55534d">記録3</text></g>
+    <g class="pop"><circle cx="350" cy="100" r="10" fill="#c8321f"/><text x="350" y="132" fill="#c8321f" font-weight="700">壊れた</text></g>
+  </g>
+  <path class="draw" d="M343 84 C 320 30, 180 30, 157 82" stroke="#c8321f" stroke-width="2" fill="none"/>
+  <path class="pop" d="M157 90 L150 77 L163 79 Z" fill="#c8321f"/>
+  <text class="pop" x="250" y="22" text-anchor="middle" font-family="Noto Sans JP,sans-serif" font-size="14" font-weight="700" fill="#c8321f">記録した状態に戻れる</text>
+</svg>
+</div></div></div>
+</div>
+<div class="box" data-k="POINT"><p>ひとりで開発するときも同じです。1週間後の自分は、ほとんど他人です。<b>「未来の自分」というチームメイト</b>のために記録を残す、と考えましょう。</p></div>
+`},
+  { t:'Git と GitHub のちがい', h:`
+<p class="lead">名前が似ていますが、別のものです。</p>
+<div class="cols">
+  <div><h4>Git</h4><p>自分のPCの中で動く<b>記録ソフト</b>。ターミナルでコマンドを打って使います。インターネットがなくても使えます。</p></div>
+  <div><h4>GitHub</h4><p>Git の記録をインターネット上に置いて、<b>ほかの人と共有するWebサービス</b>。サイトの公開（GitHub Pages）などの機能もあります。</p></div>
+</div>
+<div class="route">
+  <div class="node"><span>AさんのPC</span><b>Git</b></div>
+  <div class="edge"><em>push / pull</em><i></i></div>
+  <div class="node ac"><span>インターネット上</span><b>GitHub</b></div>
+  <div class="edge"><em>push / pull</em><i></i></div>
+  <div class="node"><span>BさんのPC</span><b>Git</b></div>
+</div>
+<p>GitHub が「みんなの記録が集まる場所」になり、各自の PC の Git がそこと記録をやりとりします。</p>
+<div class="box plain" data-k="NEXT"><p>第1部では、まず<b>ひとり</b>で Git を使い、GitHub に自分のサイトを公開するところまで進めます。</p></div>
+`}
+  ]},
+/* ---------------- 02 ---------------- */
+{ id:'ch02', no:'02', part:1, title:'Gitのしくみ', sub:'4つの場所とコミット',
+  pages:[
+  { t:'リポジトリ', h:`
+<p class="lead">Git が記録をとる単位を<span class="em">リポジトリ</span>と呼びます。</p>
+<div class="box" data-k="用語"><dl><dt>リポジトリ</dt><dd>ファイルと、その変更の記録をセットで管理しているフォルダ。</dd></dl></div>
+<p>ふつうのフォルダで Git を使い始めると、中に <code>.git</code> という隠しフォルダが作られます。記録はすべてこの中に保存されます。</p>
+<div class="ba">
+  <div class="side"><p class="lbl">BEFORE — ふつうのフォルダ</p><div class="tree">mysite/
+├── index.html
+└── style.css</div></div>
+  <div class="arrow">→</div>
+  <div class="side after"><p class="lbl">AFTER — リポジトリ</p><div class="tree">mysite/
+├── <span class="new">.git/</span>   ← 記録の保管庫
+├── index.html
+└── style.css</div></div>
+</div>
+<h3 class="h">ローカルとリモート</h3>
+<div class="cols">
+  <div><h4>ローカルリポジトリ</h4><p>自分の PC の中にあるリポジトリ。</p></div>
+  <div><h4>リモートリポジトリ</h4><p>GitHub など、ネットの向こう側にあるリポジトリ。</p></div>
+</div>
+<div class="route two">
+  <div class="node"><span>あなたの PC</span><b>ローカル</b></div>
+  <div class="edge"><em>push / pull</em><i></i></div>
+  <div class="node ac"><span>GitHub</span><b>リモート</b></div>
+</div>
+<p>同じリポジトリが、PC と GitHub の両方にあります。<code>push</code> で PC → GitHub へ記録を送り、<code>pull</code> で GitHub → PC へ記録を取り込みます。</p>
+`},
+  { t:'4つの場所', anim:'areas', h:`
+<p class="lead">Git では、変更が<span class="em">4つの場所</span>を順番に移動していきます。この図がいちばん大事です。</p>
+<div class="areas">
+  <div class="area" data-i="0"><p class="an">01</p><h4>ワークツリー</h4><p>いま編集しているファイル。ふだん VS Code で触っている場所。</p></div>
+  <div class="aarrow" data-i="0"><i>→</i>add</div>
+  <div class="area" data-i="1"><p class="an">02</p><h4>ステージ</h4><p>次の記録に入れる変更を並べておく台。</p></div>
+  <div class="aarrow" data-i="1"><i>→</i>commit</div>
+  <div class="area" data-i="2"><p class="an">03</p><h4>ローカル<br>リポジトリ</h4><p>記録（コミット）の保管庫。<code>.git</code> の中。</p></div>
+  <div class="aarrow" data-i="2"><i>→</i>push</div>
+  <div class="area remote" data-i="3"><p class="an">04</p><h4>リモート<br>リポジトリ</h4><p>GitHub 上の保管庫。みんなと共有される。</p></div>
+</div>
+<div class="area-zones"><span>あなたの PC</span><span>GitHub</span></div>
+<dl class="spec">
+  <dt>git add</dt><dd>変更をステージに乗せる</dd>
+  <dt>git commit</dt><dd>ステージに乗っているものを、1つの記録としてローカルリポジトリに保存する</dd>
+  <dt>git push</dt><dd>ローカルリポジトリの記録を GitHub に送る</dd>
+</dl>
+<div class="box" data-k="なぜステージがあるの？"><p>記念写真を撮るときに、写したい人だけを台の上に並べてからシャッターを押すのと同じです。3つのファイルを変えたけれど、そのうち2つだけを「ヘッダーを修正」という1つの記録にしたい。そんなときに、ステージで<b>記録に入れるものを選べます</b>。</p></div>
+<h3 class="h">例：3つ変えて、2つだけ記録する</h3>
+<div class="stx" data-cmd="git add index.html style.css"
+ data-before='{"wt":["index.html|m","style.css|m","memo.txt|u"],"lc":["3f2a1b9 最初のコミット|c"]}'
+ data-after='{"wt":["index.html|k","style.css|k","memo.txt|u"],"ix":["index.html|s","style.css|s"],"lc":["3f2a1b9 最初のコミット|c"]}'></div>
+<div class="stx" data-cmd='git commit -m "ヘッダーを修正"'
+ data-before='{"wt":["index.html|k","style.css|k","memo.txt|u"],"ix":["index.html|s","style.css|s"],"lc":["3f2a1b9 最初のコミット|c"]}'
+ data-after='{"wt":["index.html|k","style.css|k","memo.txt|u"],"lc":["8d4e2a0 ヘッダーを修正|c","3f2a1b9 最初のコミット|c"]}'></div>
+<p class="stx-cap">赤い枠が、コマンドで変わった場所です。<code>memo.txt</code> は add していないので記録に入らず、ワークツリーに残ったままです。<br>U = まだ追跡していない新しいファイル ／ M = 変更あり ／ 灰色 = 変更なし</p>
+`},
+  { t:'コミット ＝ その瞬間の状態', anim:'chain', h:`
+<p class="lead">コミットは、ある瞬間の<span class="em">プロジェクト全体の状態</span>を保存したものです。</p>
+<div class="fig">
+<svg viewBox="0 0 440 170" role="img" aria-label="3つのコミットが親をたどってつながる図">
+  <g font-family="Inter,JetBrains Mono,sans-serif">
+    <line class="ch-e draw" x1="168" y1="100" x2="92" y2="100" stroke="#1a1a1a" stroke-width="2"/>
+    <line class="ch-e draw" x1="318" y1="100" x2="242" y2="100" stroke="#1a1a1a" stroke-width="2"/>
+    <path class="ch-ah" d="M92 100 l10 -6 v12z" fill="#1a1a1a"/>
+    <path class="ch-ah" d="M242 100 l10 -6 v12z" fill="#1a1a1a"/>
+    <g class="ch-n"><circle cx="60" cy="100" r="30" fill="#fbfaf7" stroke="#1a1a1a" stroke-width="2"/><text x="60" y="105" text-anchor="middle" font-size="13" font-family="JetBrains Mono,monospace" font-weight="600">3f2a</text><text x="60" y="152" text-anchor="middle" font-size="12" fill="#55534d" font-family="Noto Sans JP,sans-serif">最初のコミット</text></g>
+    <g class="ch-n"><circle cx="210" cy="100" r="30" fill="#fbfaf7" stroke="#1a1a1a" stroke-width="2"/><text x="210" y="105" text-anchor="middle" font-size="13" font-family="JetBrains Mono,monospace" font-weight="600">5a7b</text><text x="210" y="152" text-anchor="middle" font-size="12" fill="#55534d" font-family="Noto Sans JP,sans-serif">自己紹介を修正</text></g>
+    <g class="ch-n"><circle cx="360" cy="100" r="30" fill="#1a1a1a"/><text x="360" y="105" text-anchor="middle" font-size="13" font-family="JetBrains Mono,monospace" font-weight="600" fill="#f4f2ec">c91e</text><text x="360" y="152" text-anchor="middle" font-size="12" fill="#55534d" font-family="Noto Sans JP,sans-serif">写真を追加</text></g>
+    <g class="ch-tag"><rect x="326" y="18" width="68" height="24" fill="#c8321f"/><text x="360" y="35" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">main</text><line x1="360" y1="42" x2="360" y2="68" stroke="#c8321f" stroke-width="2"/></g>
+  </g>
+</svg>
+<p class="cap">矢印は「1つ前のコミット（親）」を指しています。新しいコミットほど右にあります。</p>
+</div>
+<h3 class="h">1つのコミットが持っている情報</h3>
+<dl class="spec">
+  <dt>ID</dt><dd><code>c91e4d0…</code> のような英数字。コミットの名前です。</dd>
+  <dt>メッセージ</dt><dd>「写真を追加」など、何をしたかの説明。</dd>
+  <dt>作者・日時</dt><dd>誰が、いつ記録したか。</dd>
+  <dt>親</dt><dd>1つ前のコミット。これをたどると、過去の状態に戻れます。</dd>
+</dl>
+<div class="box" data-k="POINT"><p>コミットは<b>頂点</b>、親子の関係は<b>辺</b>。Git の履歴はグラフ（木構造の仲間）になっています。<b>「ある頂点を選ぶ ＝ ある時点の状態を選ぶ」</b>ということ。この考え方は第2部のブランチで大活躍します。</p></div>
+`},
+  { t:'シミュレーターで試す', sim:true, h:`
+<p class="lead">本物の Git を使わずに、4つの場所の動きを試してみましょう。ボタンを押すと、ファイルが場所から場所へ移動します。</p>
+<h3 class="h ac">ミッション</h3>
+<ul class="mission" id="mission">
+  <li data-m="1"><span>ファイルを2つ作る</span></li>
+  <li data-m="2"><span><code>index.html</code> だけを add して commit する</span></li>
+  <li data-m="3"><span>残りのファイルも commit する</span></li>
+  <li data-m="4"><span>push して、GitHub に記録を送る</span></li>
+  <li data-m="5"><span>ファイルを編集して、もう一度 GitHub まで届ける</span></li>
+</ul>
+<div id="sim"></div>
+<div class="box plain" data-k="見るところ"><p>add しただけでは GitHub には届きません。<b>commit で記録し、push で送る</b>ところまでやって、はじめて GitHub に反映されます。</p></div>
+`}
+  ]},
+/* ---------------- 03 ---------------- */
+{ id:'ch03', no:'03', part:1, title:'最初のコミット', sub:'init / status / add / commit / diff / log',
+  pages:[
+  { t:'作業フォルダを用意する', h:`
+<p class="lead">自分のサイトのファイルを、WSL の中に用意します。</p>
+<p>Windows 側のフォルダは、WSL からは <code>/mnt/c/...</code> という場所に見えています。デスクトップにある <code>mysite</code> フォルダを、WSL のホームフォルダ（<code>~</code>）にコピーしましょう。</p>
+<div class="fs">
+  <div class="fs-side"><h4>WINDOWS</h4><p class="path">C:&#92;Users&#92;taro&#92;Desktop&#92;mysite</p><p class="eq">↓ WSL から見ると</p><p class="path">/mnt/c/Users/taro/Desktop/mysite</p></div>
+  <div class="fs-mid"><i>→</i>cp -r</div>
+  <div class="fs-side ac"><h4>WSL (UBUNTU)</h4><p class="path">~/mysite</p><p class="eq">＝ /home/taro/mysite</p></div>
+</div>
+<p>同じ C ドライブを、Windows と WSL が別の名前で呼んでいるだけです。<code>~</code> は WSL の自分のホームフォルダを表します。</p>
+<pre class="term">
+$ cp -r /mnt/c/Users/{{Windowsのユーザー名}}/Desktop/{{mysite}} ~/
+$ cd ~/{{mysite}}
+$ ls
+images  index.html  style.css
+</pre>
+<dl class="spec">
+  <dt>cp -r</dt><dd>フォルダを中身ごとコピーする</dd>
+  <dt>cd</dt><dd>そのフォルダに移動する</dd>
+  <dt>ls</dt><dd>いるフォルダの中身を表示する</dd>
+</dl>
+<div class="box" data-k="CHECK"><p><code>ls</code> の結果に <b><code>index.html</code></b> が表示されていること。GitHub Pages は、フォルダのいちばん上にある <code>index.html</code> をトップページとして表示します。</p></div>
+<div class="mis">
+  <div><p class="q">No such file or directory と表示された</p><div class="a"><div><p>デスクトップが OneDrive の中にある場合があります。<code>/mnt/c/Users/{{名前}}/OneDrive/Desktop/</code> も試してください。</p></div></div></div>
+</div>
+<p>WSL の中のファイルは、<code>code .</code>（VS Code で開く）や <code>explorer.exe .</code>（エクスプローラーで開く）で Windows 側から編集できます。</p>
+`},
+  { t:'名前とメールアドレスを登録する', h:`
+<p class="lead">コミットには「誰が記録したか」が残ります。その名前を、最初に1回だけ登録します。</p>
+<pre class="term">
+$ git config --global user.name "{{GitHubのユーザー名}}"
+$ git config --global user.email "{{GitHubに登録したメールアドレス}}"
+$ git config --global init.defaultBranch main
+</pre>
+<dl class="spec">
+  <dt>user.name</dt><dd>コミットに記録される名前</dd>
+  <dt>user.email</dt><dd>コミットに記録されるメールアドレス。GitHub は、これを見て「誰のコミットか」を判断します</dd>
+  <dt>init.defaultBranch</dt><dd>最初に作られるブランチの名前を <code>main</code> にする（GitHub の標準と合わせるため）</dd>
+</dl>
+<p>登録できたか確認します。</p>
+<pre class="term">
+$ git config --global --list
+user.name=taro-yamada
+user.email=taro@example.com
+init.defaultBranch=main
+</pre>
+<div class="box warn" data-k="[!] 注意"><p>ここで登録したメールアドレスは、公開したコミットから<b>誰でも見られます</b>。公開したくない場合は、GitHub の <span class="ui-path" style="display:inline-flex"><span>Settings</span><span>Emails</span></span> にある <code>…@users.noreply.github.com</code> のアドレスを使いましょう。</p></div>
+`},
+  { t:'git init — 記録を始める', h:`
+<p class="lead">このフォルダを Git の管理対象（リポジトリ）にします。</p>
+<pre class="term">
+$ git init
+Initialized empty Git repository in /home/taro/mysite/.git/
+</pre>
+<dl class="spec">
+  <dt>何をする</dt><dd>今いるフォルダの中に <code>.git</code> フォルダを作り、記録を始められる状態にする</dd>
+  <dt>いつ使う</dt><dd>1つのプロジェクトにつき、最初の1回だけ</dd>
+</dl>
+<div class="ba">
+  <div class="side"><p class="lbl">BEFORE</p><div class="tree">$ ls -a
+.  ..  images  index.html  style.css</div></div>
+  <div class="arrow">→</div>
+  <div class="side after"><p class="lbl">AFTER</p><div class="tree">$ ls -a
+.  ..  <span class="new">.git</span>  images  index.html  style.css</div></div>
+</div>
+<p><code>ls -a</code> の <code>-a</code> は「隠しファイルも表示する」という意味です。</p>
+<div class="mis">
+  <div><p class="q">ホームフォルダ（~）で git init してしまった</p><div class="a"><div><p>ホームの中のすべてが記録対象になってしまいます。<b>ホームフォルダにいることを確認してから</b>、<code>.git</code> だけを削除します。</p>
+<pre class="term">
+$ cd ~
+$ rm -rf .git
+</pre></div></div></div>
+  <div><p class="q">fatal: not a git repository と表示された</p><div class="a"><div><p>リポジトリではないフォルダで git コマンドを実行しています。<code>pwd</code> で今いる場所を確かめて、<code>cd ~/{{mysite}}</code> で移動しましょう。</p></div></div></div>
+</div>
+`},
+  { t:'git status — 状態を見る', h:`
+<p class="lead">いちばんよく使うコマンドです。<span class="em">迷ったら、まず git status。</span></p>
+<pre class="term">
+$ git status
+On branch main
+
+No commits yet
+
+Untracked files:
+  (use "git add &lt;file&gt;..." to include in what will be committed)
+	images/
+	index.html
+	style.css
+
+nothing added to commit but untracked files present (use "git add" to track)
+</pre>
+<h3 class="h">読み方</h3>
+<dl class="spec">
+  <dt>On branch main</dt><dd>今いるブランチは <code>main</code></dd>
+  <dt>No commits yet</dt><dd>まだ記録が1つもない</dd>
+  <dt>Untracked files</dt><dd><b>まだ Git が記録の対象にしていない</b>ファイル（ワークツリーにしかない）</dd>
+</dl>
+<h3 class="h">見出しは「ファイルがいる場所」を表す</h3>
+<div class="smap">
+  <div class="scell"><p class="sl"><b>01</b>ワークツリー</p>
+    <div class="sitem"><code>Untracked files</code><small>新しく作って、まだ一度も add していないファイル</small></div>
+    <div class="sitem"><code>Changes not staged for commit</code><small>変更したけれど、まだ add していないファイル</small></div>
+  </div>
+  <div class="smap-arrow"><i>→</i>add</div>
+  <div class="scell chg"><p class="sl"><b>02</b>ステージ</p>
+    <div class="sitem"><code>Changes to be committed</code><small>add 済み。次の commit で記録されるファイル</small></div>
+  </div>
+</div>
+<p>見出しを見れば、<b>今どのファイルがどの場所にいるのか</b>がわかります。何も出なければ（<code>working tree clean</code>）、すべて記録済みです。</p>
+`},
+  { t:'git add — ステージに乗せる', h:`
+<p class="lead">記録に入れたい変更を、ステージに乗せます。</p>
+<pre class="term">
+$ git add index.html   # 1つだけ乗せる
+$ git add .            # このフォルダの変更を全部乗せる
+</pre>
+<dl class="spec">
+  <dt>何をする</dt><dd>ワークツリーの変更を、ステージにコピーする</dd>
+  <dt>なぜ</dt><dd>次の記録に「何を入れるか」を選ぶため</dd>
+  <dt>.（ドット）</dt><dd>「今いるフォルダ全体」という意味</dd>
+</dl>
+<div class="stx" data-cmd="git add ."
+ data-before='{"wt":["images/photo.jpg|u","index.html|u","style.css|u"]}'
+ data-after='{"wt":["images/photo.jpg|k","index.html|k","style.css|k"],"ix":["images/photo.jpg|n","index.html|n","style.css|n"]}'></div>
+<p class="stx-cap">ファイルはワークツリーに残ったまま、同じ内容がステージにも乗ります（移動ではなくコピー）。</p>
+<p>add は成功しても、何も表示されません。<code>git status</code> で確かめます。</p>
+<pre class="term">
+$ git add .
+$ git status
+On branch main
+
+No commits yet
+
+Changes to be committed:
+  (use "git rm --cached &lt;file&gt;..." to unstage)
+	new file:   images/photo.jpg
+	new file:   index.html
+	new file:   style.css
+</pre>
+<p>→ 見出しが <b>Untracked files</b> から <b>Changes to be committed</b> に変わりました。3つのファイルがステージに乗っています。</p>
+<div class="mis">
+  <div><p class="q">関係ないファイルまで add してしまった</p><div class="a"><div><p>ステージから降ろせます（ファイル自体は消えません）。</p>
+<pre class="term">
+$ git restore --staged {{ファイル名}}
+</pre></div></div></div>
+</div>
+`},
+  { t:'git commit — 記録する', h:`
+<p class="lead">ステージに乗っているものを、1つの記録として保存します。</p>
+<pre class="term">
+$ git commit -m "最初のコミット"
+[main (root-commit) 3f2a1b9] 最初のコミット
+ 3 files changed, 58 insertions(+)
+ create mode 100644 images/photo.jpg
+ create mode 100644 index.html
+ create mode 100644 style.css
+</pre>
+<dl class="spec">
+  <dt>-m "…"</dt><dd>コミットメッセージ。<b>何をしたか</b>を短く書く</dd>
+  <dt>3f2a1b9</dt><dd>このコミットの ID（人によって違います）</dd>
+  <dt>root-commit</dt><dd>いちばん最初のコミット、という意味</dd>
+</dl>
+<div class="stx" data-cmd='git commit -m "最初のコミット"'
+ data-before='{"wt":["images/photo.jpg|k","index.html|k","style.css|k"],"ix":["images/photo.jpg|n","index.html|n","style.css|n"]}'
+ data-after='{"wt":["images/photo.jpg|k","index.html|k","style.css|k"],"lc":["3f2a1b9 最初のコミット|c"]}'></div>
+<p class="stx-cap">ステージに並べた変更が、1つのコミットになってローカルリポジトリに入ります。GitHub（04）にはまだ何も届いていません。</p>
+<div class="box" data-k="良いメッセージ"><dl><dt>○</dt><dd>「プロフィール写真を追加」「ヘッダーの色を変更」</dd><dt style="color:var(--accent)">×</dt><dd>「修正」「あああ」「update」 ← 後から見て何のことかわからない</dd></dl></div>
+<div class="mis">
+  <div><p class="q">-m を付け忘れて、見慣れない画面が開いた</p><div class="a"><div><p>メッセージを書くためのエディタが開いています。何も書かずに閉じれば、コミットは中止されます。</p><p>下に「^X Exit」と書いてある（nano）→ <code>Ctrl</code> + <code>X</code><br>左端に「~」が並んでいる（vim）→ <code>Esc</code> を押して <code>:q!</code> と入力し、<code>Enter</code></p></div></div></div>
+  <div><p class="q">Author identity unknown と表示された</p><div class="a"><div><p>名前とメールアドレスが登録されていません。このチャプターの2ページ目に戻って <code>git config</code> を実行しましょう。</p></div></div></div>
+  <div><p class="q">nothing to commit と表示された</p><div class="a"><div><p>ステージに何も乗っていません。先に <code>git add</code> をしましょう。</p></div></div></div>
+</div>
+`},
+  { t:'git diff と git log — 変更と履歴を見る', anim:'loop', h:`
+<p class="lead">ファイルを編集したら、何を変えたかを確かめてから記録します。</p>
+<h3 class="h">git diff — まだ add していない変更を見る</h3>
+<pre class="term diff">
+$ git diff
+diff --git a/index.html b/index.html
+--- a/index.html
++++ b/index.html
+@@ -8,7 +8,7 @@
+   &lt;h1&gt;山田太郎のサイト&lt;/h1&gt;
+-  &lt;p&gt;よろしく&lt;/p&gt;
++  &lt;p&gt;よろしくお願いします！&lt;/p&gt;
+</pre>
+<p><code>-</code> の行が消した内容、<code>+</code> の行が追加した内容です。</p>
+<h3 class="h">git log — 記録の一覧を見る</h3>
+<pre class="term">
+$ git add .
+$ git commit -m "あいさつ文を修正"
+$ git log --oneline
+5a7b9f3 (HEAD -&gt; main) あいさつ文を修正
+3f2a1b9 最初のコミット
+</pre>
+<p>新しい記録が上に積み重なります。<code>--oneline</code> を付けると、1つのコミットが1行で表示されます。表示が画面に収まらないときは、<code>q</code> キーで終了します。</p>
+<h3 class="h ac">これからずっと繰り返すリズム</h3>
+<div class="loop">
+  <div><p class="n">01</p><b>編集</b><small>VS Code でファイルを直す</small></div>
+  <div><p class="n">02</p><b>git status</b><small>どのファイルが変わったか確認</small></div>
+  <div><p class="n">03</p><b>git add</b><small>記録したい変更を選ぶ</small></div>
+  <div><p class="n">04</p><b>git commit</b><small>メッセージを付けて記録</small></div>
+</div>
+<p class="loop-back">↻ 01 に戻る</p>
+`}
+  ]},
+/* ---------------- 04 ---------------- */
+{ id:'ch04', no:'04', part:1, title:'SSHでGitHubとつなぐ', sub:'鍵を作って GitHub に登録する',
+  pages:[
+  { t:'SSH鍵とは', anim:'keys', h:`
+<p class="lead">GitHub に push するには、「本当にあなたか」を証明する必要があります。そのための仕組みが <span class="em">SSH 鍵</span>です。</p>
+<div class="keys">
+  <div class="place"><h4>YOUR PC</h4>
+    <div class="kchip sec"><svg width="22" height="22" viewBox="0 0 22 22"><circle cx="7" cy="11" r="5" fill="none" stroke="#c8321f" stroke-width="2"/><path d="M12 11h9M18 11v4M21 11v3" stroke="#c8321f" stroke-width="2"/></svg><div><code>id_ed25519</code><small>秘密鍵：絶対にほかの人に渡さない</small></div></div>
+    <div class="kchip pub"><svg width="22" height="22" viewBox="0 0 22 22"><rect x="3" y="9" width="16" height="11" fill="none" stroke="#1a1a1a" stroke-width="2"/><path d="M7 9V6a4 4 0 0 1 8 0v3" fill="none" stroke="#1a1a1a" stroke-width="2"/></svg><div><code>id_ed25519.pub</code><small>公開鍵：GitHub に渡してよい</small></div></div>
+  </div>
+  <div class="mid"><i>→</i>公開鍵だけ<br>登録</div>
+  <div class="place"><h4>GITHUB</h4>
+    <div class="kchip pub2"><svg width="22" height="22" viewBox="0 0 22 22"><rect x="3" y="9" width="16" height="11" fill="none" stroke="#1a1a1a" stroke-width="2"/><path d="M7 9V6a4 4 0 0 1 8 0v3" fill="none" stroke="#1a1a1a" stroke-width="2"/></svg><div><code>id_ed25519.pub</code><small>あなたの公開鍵</small></div></div>
+  </div>
+</div>
+<p>鍵は2つで1セットです。GitHub に<b>公開鍵（南京錠）</b>を預けておき、push のときに PC の<b>秘密鍵（鍵）</b>でそれを開けられることを示して、本人であることを証明します。</p>
+<div class="box" data-k="POINT"><p>GitHub への push では、アカウントのパスワードは使えません。この教材では SSH 鍵を使います。設定は PC ごとに最初の1回だけです。</p></div>
+<h3 class="h">この章の流れ</h3>
+<ol class="flow">
+  <li><div><b>鍵を作る</b><small>ssh-keygen</small></div></li>
+  <li><div><b>公開鍵を GitHub に登録する</b><small>Settings › SSH and GPG keys</small></div></li>
+  <li><div><b>つながるか確認する</b><small>ssh -T git@github.com</small></div></li>
+</ol>
+`},
+  { t:'鍵を作る', h:`
+<p class="lead">WSL のターミナルで、鍵のペアを作ります。</p>
+<pre class="term">
+$ ssh-keygen -t ed25519 -C "{{GitHubに登録したメールアドレス}}"
+Generating public/private ed25519 key pair.
+Enter file in which to save the key (/home/taro/.ssh/id_ed25519):  ← そのまま Enter
+Enter passphrase (empty for no passphrase):  ← そのまま Enter
+Enter same passphrase again:  ← そのまま Enter
+Your identification has been saved in /home/taro/.ssh/id_ed25519
+Your public key has been saved in /home/taro/.ssh/id_ed25519.pub
+</pre>
+<dl class="spec">
+  <dt>-t ed25519</dt><dd>鍵の種類。現在おすすめされている方式</dd>
+  <dt>-C "…"</dt><dd>鍵に付けるメモ。誰の鍵かわかるようにメールアドレスを入れる</dd>
+  <dt>passphrase</dt><dd>鍵にかける合言葉。設定すると、使うたびに入力を求められる。授業では空（Enter のみ）で OK</dd>
+</dl>
+<p>2つのファイルができたことを確認します。</p>
+<pre class="term">
+$ ls ~/.ssh
+id_ed25519  id_ed25519.pub
+</pre>
+<div class="mis">
+  <div><p class="q">Overwrite (y/n)? と聞かれた</p><div class="a"><div><p>すでに鍵があります。<code>n</code> を押して中止し、今ある鍵をそのまま使いましょう。上書きすると、前の鍵を登録したサービスにつながらなくなります。</p></div></div></div>
+</div>
+`},
+  { t:'公開鍵を GitHub に登録する', h:`
+<p class="lead">公開鍵の中身を表示して、GitHub に貼り付けます。</p>
+<pre class="term">
+$ cat ~/.ssh/id_ed25519.pub
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAI…（長い文字列）… taro@example.com
+</pre>
+<p>表示された1行を、<code>ssh-ed25519</code> から最後のメールアドレスまで<b>すべて</b>コピーします。</p>
+<div class="box warn" data-k="[!] 注意"><p>表示するのは <code>.pub</code> が付いている方です。<code>.pub</code> がない秘密鍵は、誰にも見せない・どこにも貼らないでください。</p></div>
+<h3 class="h">GitHub での操作</h3>
+<ol class="flow">
+  <li><div><b>設定画面を開く</b><p class="ui-path" style="margin-top:6px"><span>右上のアイコン</span><span>Settings</span></p></div></li>
+  <li><div><b>SSH 鍵の画面を開く</b><p class="ui-path" style="margin-top:6px"><span>SSH and GPG keys</span><span>New SSH key</span></p></div></li>
+  <li><div><b>入力する</b><small>Title：どの PC の鍵かわかる名前（例：WSL）／ Key type：Authentication Key ／ Key：コピーした1行を貼り付け</small></div></li>
+  <li><div><b>Add SSH key を押す</b><small>パスワードなどの確認を求められたら、画面の指示に従います</small></div></li>
+</ol>
+`},
+  { t:'つながるか確認する', h:`
+<p class="lead">GitHub に「あいさつ」して、鍵が正しく登録できたか確かめます。</p>
+<pre class="term">
+$ ssh -T git@github.com
+The authenticity of host 'github.com (xx.xx.xx.xx)' can't be established.
+ED25519 key fingerprint is SHA256:+DiY3wvvV6TuJJhbpZisF/zLDA0zPMSvHdkr4UvCOqU.
+Are you sure you want to continue connecting (yes/no/[fingerprint])? yes  ← yes と入力
+Warning: Permanently added 'github.com' (ED25519) to the list of known hosts.
+Hi {{ユーザー名}}! You've successfully authenticated, but GitHub does not provide shell access.
+</pre>
+<p>はじめての接続では「この相手を信用しますか？」と聞かれます。<code>yes</code> と入力します（<code>y</code> だけでは進めません）。</p>
+<h3 class="h">裏側で起きていること</h3>
+<div class="seq">
+  <div class="seq-h"><span>YOUR PC</span><span>GITHUB</span></div>
+  <div class="seq-b">
+    <div class="msg r"><b>01</b>この公開鍵の持ち主として接続したい</div>
+    <div class="msg l"><b>02</b>その公開鍵は登録済み。本人なら秘密鍵でサインを作って</div>
+    <div class="msg r"><b>03</b>秘密鍵でサインを作って送る</div>
+    <div class="msg l ac"><b>04</b>公開鍵でサインを確かめた → Hi ユーザー名!</div>
+  </div>
+</div>
+<p>秘密鍵そのものは、一度も PC の外に出ません。送られるのは<b>秘密鍵で作ったサインだけ</b>です。サインは秘密鍵を持っている人にしか作れないので、秘密鍵は誰にも渡してはいけません。</p>
+<div class="box" data-k="成功"><p><b>Hi ユーザー名! You've successfully authenticated</b> と表示されれば成功です。後半の "does not provide shell access" はエラーではありません。</p></div>
+<div class="mis">
+  <div><p class="q">Permission denied (publickey). と表示された</p><div class="a"><div><p>GitHub に登録した公開鍵と、PC の鍵が合っていません。<code>cat ~/.ssh/id_ed25519.pub</code> の1行を、もう一度すべてコピーして登録し直しましょう。</p></div></div></div>
+</div>
+`}
+  ]},
+/* ---------------- 05 ---------------- */
+{ id:'ch05', no:'05', part:1, title:'GitHub Pagesで公開する', sub:'remote / push / Pages',
+  pages:[
+  { t:'GitHub Pages とは', anim:'route', h:`
+<p class="lead">GitHub Pages は、<span class="em">リポジトリに置いた HTML を、そのまま Web サイトとして公開してくれる</span>機能です。</p>
+<div class="route">
+  <div class="node"><span>あなたのPC</span><b>mysite/</b></div>
+  <div class="edge"><em>push</em><i></i></div>
+  <div class="node"><span>GitHub のリポジトリ</span><b>you.github.io</b></div>
+  <div class="edge"><em>自動で公開</em><i></i></div>
+  <div class="node ac"><span>誰でも見られる URL</span><b>https://you.github.io/</b></div>
+</div>
+<h3 class="h">URL はリポジトリ名で決まる</h3>
+<dl class="spec">
+  <dt>ユーザー名.github.io</dt><dd><code>https://ユーザー名.github.io/</code> で公開される（この教材ではこちら）</dd>
+  <dt>それ以外の名前</dt><dd><code>https://ユーザー名.github.io/リポジトリ名/</code> で公開される</dd>
+</dl>
+<h3 class="h">この章の流れ</h3>
+<ol class="flow">
+  <li><div><b>GitHub にリポジトリを作る</b></div></li>
+  <li><div><b>ローカルに GitHub の住所を登録する</b><small>git remote</small></div></li>
+  <li><div><b>push する</b><small>git push</small></div></li>
+  <li><div><b>Pages の設定を確認して、URL を開く</b></div></li>
+</ol>
+`},
+  { t:'GitHub にリポジトリを作る', h:`
+<p class="lead">記録を送る先となる、空のリポジトリを GitHub に作ります。</p>
+<ol class="flow">
+  <li><div><b>作成画面を開く</b><p class="ui-path" style="margin-top:6px"><span>右上の ＋</span><span>New repository</span></p></div></li>
+  <li><div><b>Repository name を入力する</b><small><code>{{ユーザー名}}.github.io</code>（ユーザー名は小文字でも OK）</small></div></li>
+  <li><div><b>Public を選ぶ</b><small>無料プランの GitHub Pages は Public リポジトリで使います</small></div></li>
+  <li><div><b>README・.gitignore・license は追加しない</b><small>初期設定のまま。すでにローカルに記録があるので、GitHub 側は空にしておきます</small></div></li>
+  <li><div><b>Create repository を押す</b></div></li>
+</ol>
+<p>作成すると、Quick setup という画面が表示されます。<b>SSH</b> を選んで、表示された住所をコピーします。</p>
+<pre class="term" data-t="COPY する住所">
+git@github.com:{{ユーザー名}}/{{ユーザー名}}.github.io.git
+</pre>
+<div class="mis">
+  <div><p class="q">HTTPS（https://github.com/…）の住所をコピーした</p><div class="a"><div><p>HTTPS の住所だと、push のときにユーザー名とパスワードを聞かれて先に進めません。<code>git@github.com:</code> で始まる SSH の住所を使います。</p></div></div></div>
+</div>
+`},
+  { t:'git remote — 送り先を登録する', h:`
+<p class="lead">ローカルリポジトリに「記録の送り先はここ」と教えます。</p>
+<div class="alias"><span class="tagb">origin</span><span class="eqs">=</span><code>git@github.com:taro-yamada/taro-yamada.github.io.git</code></div>
+<p>長い住所に <code>origin</code> という短い名前を付けておくイメージです。スマホの連絡先に、電話番号を名前で登録するのと同じです。</p>
+<pre class="term">
+$ git remote add origin git@github.com:{{ユーザー名}}/{{ユーザー名}}.github.io.git
+$ git remote -v
+origin	git@github.com:taro-yamada/taro-yamada.github.io.git (fetch)
+origin	git@github.com:taro-yamada/taro-yamada.github.io.git (push)
+</pre>
+<dl class="spec">
+  <dt>remote add</dt><dd>リモートリポジトリの住所に名前を付けて登録する</dd>
+  <dt>origin</dt><dd>付けた名前。「いつもの送り先」という意味で、慣習的に origin を使う</dd>
+  <dt>remote -v</dt><dd>登録されている住所を表示する</dd>
+</dl>
+<div class="mis">
+  <div><p class="q">error: remote origin already exists. と表示された</p><div class="a"><div><p>origin はすでに登録されています。住所を間違えて登録した場合は、上書きします。</p>
+<pre class="term">
+$ git remote set-url origin git@github.com:{{ユーザー名}}/{{ユーザー名}}.github.io.git
+</pre></div></div></div>
+</div>
+`},
+  { t:'git push — GitHub に送る', h:`
+<p class="lead">いよいよ、ローカルの記録を GitHub に送ります。</p>
+<pre class="term">
+$ git push -u origin main
+Enumerating objects: 6, done.
+Counting objects: 100% (6/6), done.
+Writing objects: 100% (6/6), 24.10 KiB | 4.82 MiB/s, done.
+Total 6 (delta 0), reused 0 (delta 0), pack-reused 0
+To github.com:taro-yamada/taro-yamada.github.io.git
+ * [new branch]      main -&gt; main
+branch 'main' set up to track 'origin/main'.
+</pre>
+<dl class="spec">
+  <dt>origin main</dt><dd>「origin」に「main ブランチ」を送る</dd>
+  <dt>-u</dt><dd>この組み合わせを覚えておく。<b>2回目からは <code>git push</code> だけ</b>で送れる</dd>
+  <dt>[new branch]</dt><dd>GitHub 側に main ブランチが作られた</dd>
+</dl>
+<div class="stx" data-cmd="git push -u origin main"
+ data-before='{"wt":["index.html|k","style.css|k"],"lc":["5a7b9f3 あいさつ文を修正|c","3f2a1b9 最初のコミット|c"]}'
+ data-after='{"wt":["index.html|k","style.css|k"],"lc":["5a7b9f3 あいさつ文を修正|c","3f2a1b9 最初のコミット|c"],"rc":["5a7b9f3 あいさつ文を修正|c","3f2a1b9 最初のコミット|c"]}'></div>
+<p class="stx-cap">ローカルのコミットが、そのままの形で GitHub にコピーされます。ファイルだけでなく、<b>記録（履歴）ごと</b>送られるのがポイントです。</p>
+<p>→ GitHub のリポジトリのページを再読み込みすると、ファイルが表示されています。</p>
+<div class="mis">
+  <div><p class="q">error: src refspec main does not match any</p><div class="a"><div><p>送る記録がない、またはブランチ名が main ではありません。<code>git log --oneline</code> でコミットがあるか確認し、なければ先に commit します。ブランチ名が <code>master</code> になっている場合は、名前を変えてから push します。</p>
+<pre class="term">
+$ git branch -M main
+$ git push -u origin main
+</pre></div></div></div>
+  <div><p class="q">! [rejected] main -&gt; main (fetch first) と表示された</p><div class="a"><div><p>GitHub 側に、ローカルにない記録があります（リポジトリを作るときに README を追加した場合など）。先に GitHub の記録を取り込んでから push します。</p>
+<pre class="term">
+$ git pull --rebase origin main
+$ git push -u origin main
+</pre></div></div></div>
+  <div><p class="q">Permission denied (publickey).</p><div class="a"><div><p>SSH の設定がうまくいっていません。第4章の <code>ssh -T git@github.com</code> で確認しましょう。</p></div></div></div>
+</div>
+`},
+  { t:'Pages を確認して公開する', h:`
+<p class="lead">GitHub のリポジトリの画面で、公開の設定を確認します。</p>
+<div class="route">
+  <div class="node"><span>push された</span><b>main</b></div>
+  <div class="edge"><em>自動</em><i></i></div>
+  <div class="node"><span>Actions タブ</span><b>pages build and deployment</b></div>
+  <div class="edge"><em>完了</em><i></i></div>
+  <div class="node ac"><span>公開</span><b>you.github.io</b></div>
+</div>
+<p>push すると、GitHub が自動でサイトを組み立てて公開します。設定は、最初に1回確認するだけです。</p>
+<ol class="flow">
+  <li><div><b>Pages の設定を開く</b><p class="ui-path" style="margin-top:6px"><span>Settings</span><span>Pages</span></p></div></li>
+  <li><div><b>Build and deployment を確認する</b><small>Source：<b>Deploy from a branch</b> ／ Branch：<b>main</b>、フォルダ：<b>/ (root)</b>。違っていたら選び直して Save</small></div></li>
+  <li><div><b>公開が終わるのを待つ</b><small>リポジトリの Actions タブで「pages build and deployment」に緑のチェックが付けば完了。数十秒〜数分かかります</small></div></li>
+  <li><div><b>URL を開く</b><small><code>https://{{ユーザー名}}.github.io/</code></small></div></li>
+</ol>
+<div class="box" data-k="DONE"><p>自分のサイトが表示されたら、<b>ゴール01 達成</b>です。スマートフォンからも開いてみましょう。</p></div>
+<div class="mis">
+  <div><p class="q">404 File not found と表示される</p><div class="a"><div><p>公開まで数分かかることがあります。少し待ってから再読み込みします。それでも表示されない場合は、リポジトリのいちばん上に <code>index.html</code> があるか確認しましょう（<code>Index.html</code> のような大文字は不可）。</p></div></div></div>
+  <div><p class="q">ページは出るのに、画像や CSS が読み込まれない</p><div class="a"><div><p>GitHub Pages は<b>大文字・小文字を区別</b>します。Windows では動いていても、<code>Images/Photo.JPG</code> と <code>images/photo.jpg</code> は別物として扱われます。HTML に書いたパスと、実際のファイル名を見比べましょう。</p></div></div></div>
+</div>
+`},
+  { t:'更新のサイクル', anim:'loop', h:`
+<p class="lead">公開したあとにサイトを直すときは、次の流れを繰り返します。</p>
+<div class="loop">
+  <div><p class="n">01</p><b>編集</b><small>ファイルを直す</small></div>
+  <div><p class="n">02</p><b>git add .</b><small>変更をステージへ</small></div>
+  <div><p class="n">03</p><b>git commit</b><small>記録する</small></div>
+  <div><p class="n">04</p><b>git push</b><small>GitHub へ → 自動で公開</small></div>
+</div>
+<p class="loop-back">↻ 01 に戻る</p>
+<pre class="term">
+$ git status
+$ git add .
+$ git commit -m "{{何を変えたか}}"
+$ git push
+</pre>
+<p>push してから数十秒〜数分で、公開中のサイトに反映されます。</p>
+<div class="box" data-k="第1部 おわり"><p>ここまでで、<b>ローカルで記録する → GitHub に送る → 公開される</b>という、個人開発の流れがひと通りできるようになりました。第2部では、この仕組みを使って<b>チームで1つのサイトを作ります</b>。</p></div>
+`}
+  ]},
+/* ---------------- 06 ---------------- */
+{ id:'ch06', no:'06', part:2, title:'ブランチ', sub:'コミットのグラフと、頂点を指す名札',
+  pages:[
+  { t:'履歴はグラフ', h:`
+<p class="lead">第2部の主役はブランチです。その前に、Git の履歴の<span class="em">形</span>をもう一度見てみましょう。</p>
+<div class="gfx" data-ops="c:最初のコミット;c:写真を追加;sc:feature;c:色を変更;s:main;c:文を修正;m:feature"></div>
+<div class="gleg"><span><i></i>コミット（頂点）</span><span><i class="f"></i>いま見ている頂点</span><span><b>main</b> ブランチ（名札）</span><span><b class="h">HEAD→main</b> 今いるブランチ</span></div>
+<dl class="spec">
+  <dt>頂点</dt><dd>コミット。<b>その時点のプロジェクト全体の状態</b>を持っている</dd>
+  <dt>辺</dt><dd>「1つ前のコミット（親）」とのつながり。左が古く、右が新しい</dd>
+  <dt>根</dt><dd>最初のコミット。親を持たない</dd>
+  <dt>合流点</dt><dd>親を2つ持つ頂点。2つの枝を合わせた（マージした）ところ</dd>
+</dl>
+<div class="box" data-k="木との違い"><p>木では、どの頂点も親は1つだけです。Git の履歴は、マージすると親が2つの頂点ができるので、正確には<b>有向非巡回グラフ（DAG）</b>と呼ばれます。ふだんは「枝分かれして、また合流できる木」と考えれば十分です。</p></div>
+<div class="box" data-k="POINT"><p><b>「どの頂点を選ぶか」＝「どの時点の状態を見るか」</b>。この章では、ずっとこの考え方で進めます。</p></div>
+`},
+  { t:'ブランチ ＝ 頂点に付いた名札', h:`
+<p class="lead">ブランチは、ファイルのコピーでもフォルダでもありません。ある頂点を指している<span class="em">名札</span>です。</p>
+<div class="gfx" data-ops="c:最初のコミット;c:写真を追加;b:feature"></div>
+<dl class="spec">
+  <dt>main</dt><dd>最初からあるブランチ。チームで確認済みの状態を置く場所</dd>
+  <dt>feature</dt><dd>新しく作った名札。作った瞬間は、main と同じ頂点を指している</dd>
+  <dt>HEAD</dt><dd><b>いま自分がどの名札の上にいるか</b>を表す印。ワークツリーの中身は、HEAD がたどる頂点の状態になっている</dd>
+</dl>
+<h3 class="h ac">commit すると、今いる名札だけが進む</h3>
+<div class="gstx" data-before="c:最初のコミット;c:写真を追加;sc:feature" data-cmd='$ git commit -m "色を変更"' data-op="c:色を変更"></div>
+<p class="stx-cap">新しい頂点ができて、HEAD が付いている <code>feature</code> の名札だけがそこへ進みます。<code>main</code> は元の頂点を指したままです。</p>
+<div class="box plain" data-k="だから"><p>ブランチを作っても、ファイルは1つもコピーされません。名札を1枚増やすだけなので、一瞬で作れて、いくつ作っても軽いのです。</p></div>
+`},
+  { t:'git branch と git switch', h:`
+<p class="lead">名札を作るのが <code>git branch</code>、名札を移動するのが <code>git switch</code> です。</p>
+<pre class="term">
+$ git branch               # ブランチの一覧（* が今いるブランチ）
+* main
+$ git switch -c feature    # feature を作って、そこへ移動する
+Switched to a new branch 'feature'
+$ git branch
+* feature
+  main
+</pre>
+<div class="gstx" data-before="c:最初のコミット;c:写真を追加" data-cmd="$ git switch -c feature" data-op="sc:feature"></div>
+<p class="stx-cap">頂点は増えません。今いる頂点に <code>feature</code> という名札が付き、HEAD がそちらへ移ります。</p>
+<dl class="spec">
+  <dt>git branch</dt><dd>ブランチの一覧を表示する</dd>
+  <dt>git switch 名前</dt><dd>そのブランチへ移動する。ワークツリーの中身が、そのブランチの頂点の状態に入れ替わる</dd>
+  <dt>git switch -c 名前</dt><dd>ブランチを作って、すぐそこへ移動する（いちばんよく使う）</dd>
+</dl>
+<div class="mis">
+  <div><p class="q">switch したら、ファイルの中身が変わってしまった</p><div class="a"><div><p>正常です。HEAD が別の頂点に移ったので、ワークツリーもその時点の状態に入れ替わりました。元のブランチに switch し直せば戻ります。</p></div></div></div>
+  <div><p class="q">error: Your local changes to the following files would be overwritten と表示された</p><div class="a"><div><p>まだ commit していない変更があります。切り替えると消えてしまうので、Git が止めてくれました。先に add と commit をしてから switch しましょう。</p></div></div></div>
+  <div><p class="q">ブランチ名に空白や日本語を使った</p><div class="a"><div><p>英小文字・数字・<code>-</code> だけを使うのが安全です（例：<code>add-profile</code>）。</p></div></div></div>
+</div>
+`},
+  { t:'git merge — 枝を合流させる', h:`
+<p class="lead"><code>git merge</code> は、<span class="em">今いるブランチに、別のブランチの変更を取り込む</span>コマンドです。取り込む側に移動してから実行します。</p>
+<pre class="term">
+$ git switch main      # 取り込む側に移動して
+$ git merge feature    # feature の変更を取り込む
+</pre>
+<h3 class="h">パターン1：早送り（fast-forward）</h3>
+<div class="gstx" data-before="c:最初のコミット;c:写真を追加;sc:feature;c:色を変更;c:文を追加;s:main" data-cmd="$ git merge feature" data-op="m:feature"></div>
+<p class="stx-cap">main は進んでいなかったので、<b>main の名札を feature の位置まで進めるだけ</b>で合流できます。新しい頂点はできません。</p>
+<pre class="term">
+$ git merge feature
+Updating 5a7b9f3..8d4e2a0
+Fast-forward
+ index.html | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+</pre>
+<h3 class="h">パターン2：マージコミット</h3>
+<div class="gstx" data-before="c:最初のコミット;c:写真を追加;sc:feature;c:色を変更;s:main;c:文を修正" data-cmd="$ git merge feature" data-op="m:feature"></div>
+<p class="stx-cap">両方のブランチが進んでいるので、<b>親を2つ持つ新しい頂点（マージコミット）</b>を作って合流させます。</p>
+<pre class="term">
+$ git merge feature
+Merge made by the 'ort' strategy.
+ style.css | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+</pre>
+<div class="box" data-k="POINT"><p>どちらになるかは、Git が自動で決めます。覚える必要はありません。グラフを見て<b>「頂点が増えたのか、名札が動いただけなのか」</b>がわかれば十分です。</p></div>
+<div class="mis">
+  <div><p class="q">merge したら、見慣れない画面（エディタ）が開いた</p><div class="a"><div><p>マージコミットのメッセージを確認する画面です。最初からメッセージが入っているので、そのまま閉じれば OK です。<br>nano → <code>Ctrl</code> + <code>X</code> ／ vim → <code>Esc</code> を押して <code>:wq</code> と入力し、<code>Enter</code></p></div></div></div>
+</div>
+`},
+  { t:'グラフを見る・名札を外す', h:`
+<p class="lead">ターミナルでも、グラフの形を確かめられます。</p>
+<pre class="term">
+$ git log --oneline --graph --all
+*   e41c0d2 (HEAD -&gt; main) Merge branch 'feature'
+|\\
+| *c91e4d0 (feature) 色を変更
+* | 8d4e2a0 文を修正
+|/
+* 5a7b9f3 写真を追加
+* 3f2a1b9 最初のコミット
+</pre>
+<p><code>*</code> が頂点、<code>|</code> <code>/</code> <code>\</code> が辺です。いちばん上が最新で、右に90度回すと、これまでの図と同じ形になります。<code>( )</code> の中が名札です。</p>
+<h3 class="h">合流が終わったブランチを削除する</h3>
+<pre class="term">
+$ git branch -d feature
+Deleted branch feature (was c91e4d0).
+</pre>
+<div class="gstx" data-before="c:最初のコミット;c:写真を追加;sc:feature;c:色を変更;s:main;c:文を修正;m:feature" data-cmd="$ git branch -d feature" data-op="d:feature"></div>
+<p class="stx-cap">外れるのは名札だけです。頂点（コミット）は main からたどれるので、記録は消えません。</p>
+<div class="mis">
+  <div><p class="q">error: the branch 'feature' is not fully merged.</p><div class="a"><div><p>そのブランチには、まだ合流していない頂点があります。名札を外すと、その頂点にたどり着けなくなるので Git が止めてくれました。先に merge しましょう。</p></div></div></div>
+</div>
+`},
+  { t:'ブランチシミュレーター', bsim:true, h:`
+<p class="lead">ボタンを押して、頂点と名札がどう動くかを確かめましょう。<span class="em">赤い名札（HEAD）が付いたブランチだけが、commit で進みます。</span></p>
+<h3 class="h ac">ミッション</h3>
+<ul class="mission" id="bmission">
+  <li data-m="1"><span><code>feature</code> ブランチを作って移動する</span></li>
+  <li data-m="2"><span>feature で2回 commit する</span></li>
+  <li data-m="3"><span>main に戻って feature を merge する（早送りになる）</span></li>
+  <li data-m="4"><span>新しいブランチを作り、main と両方で commit してから merge する（マージコミットができる）</span></li>
+  <li data-m="5"><span>合流が終わったブランチを削除する</span></li>
+</ul>
+<div id="bsim"></div>
+<div class="box plain" data-k="試してみよう"><p>まだ merge していないブランチを <code>git branch -d</code> で消そうとすると、どうなるでしょう？</p></div>
+`}
+  ]},
+/* ---------------- 07 ---------------- */
+{ id:'ch07', no:'07', part:2, title:'チーム開発の流れ', sub:'clone / Pull Request / レビュー / Merge',
+  pages:[
+  { t:'チームの準備', h:`
+<p class="lead">2〜3人で、GitHub 上の1つのリポジトリを共有します。代表者（Aさん）がリポジトリを作り、ほかのメンバーを招待します。</p>
+<div class="route">
+  <div class="node"><span>Aさんの PC</span><b>team-page</b></div>
+  <div class="edge"><em>push / pull</em><i></i></div>
+  <div class="node ac"><span>GitHub（Aさんのアカウント）</span><b>team-page</b></div>
+  <div class="edge"><em>push / pull</em><i></i></div>
+  <div class="node"><span>B・Cさんの PC</span><b>team-page</b></div>
+</div>
+<h3 class="h">Aさんがやること</h3>
+<ol class="flow">
+  <li><div><b>リポジトリを作る</b><p class="ui-path" style="margin-top:6px"><span>右上の ＋</span><span>New repository</span></p><small>名前は <code>team-page</code>、Public。今回は <b>Add README をオン</b>にして作る（すぐに clone できるようにするため）</small></div></li>
+  <li><div><b>メンバーを招待する</b><p class="ui-path" style="margin-top:6px"><span>Settings</span><span>Collaborators</span><span>Add people</span></p><small>メンバーの GitHub ユーザー名を入力して招待する</small></div></li>
+</ol>
+<h3 class="h">B・Cさんがやること</h3>
+<ol class="flow">
+  <li><div><b>招待を承認する</b><small>GitHub から届くメール（または GitHub の通知）を開き、Accept invitation を押す</small></div></li>
+</ol>
+<h3 class="h">全員がやること（最初の1回だけ）</h3>
+<pre class="term">
+$ git config --global pull.rebase false
+</pre>
+<p><code>git pull</code> で記録を取り込むときの合わせ方を「マージ」に決めておく設定です。設定していないと、状況によって pull がエラーで止まることがあります。</p>
+`},
+  { t:'git clone — まるごともらう', h:`
+<p class="lead">GitHub のリポジトリを、<span class="em">履歴ごと</span>自分の PC にコピーします。Aさんも含めて、全員が実行します。</p>
+<pre class="term">
+$ cd ~
+$ git clone git@github.com:{{Aさんのユーザー名}}/team-page.git
+Cloning into 'team-page'...
+remote: Enumerating objects: 3, done.
+Receiving objects: 100% (3/3), done.
+$ cd team-page
+$ git remote -v
+origin	git@github.com:taro-yamada/team-page.git (fetch)
+origin	git@github.com:taro-yamada/team-page.git (push)
+</pre>
+<div class="stx" data-cmd="git clone git@github.com:…/team-page.git"
+ data-before='{"rc":["1a2b3c4 Initial commit|c"]}'
+ data-after='{"wt":["README.md|k"],"lc":["1a2b3c4 Initial commit|c"],"rc":["1a2b3c4 Initial commit|c"]}'></div>
+<p class="stx-cap">clone すると、ローカルリポジトリとワークツリーが一度にできあがります。</p>
+<dl class="spec">
+  <dt>clone がやること</dt><dd>① <code>team-page</code> フォルダを作る ② 履歴をまるごとダウンロードする ③ <code>origin</code> を自動で登録する</dd>
+  <dt>だから</dt><dd><code>git init</code> や <code>git remote add</code> は不要</dd>
+</dl>
+<div class="mis">
+  <div><p class="q">ERROR: Repository not found. と表示された</p><div class="a"><div><p>住所が間違っているか、まだ招待を承認していません。GitHub の招待を Accept してから、もう一度試しましょう。</p></div></div></div>
+</div>
+`},
+  { t:'チーム開発の1サイクル', h:`
+<p class="lead">チーム開発では、次のサイクルを繰り返します。<span class="em">main では直接作業せず、必ず自分のブランチで作業する</span>のが基本ルールです。</p>
+<div class="cyc">
+  <p class="cyc-h" style="grid-column:1">YOUR PC</p><p class="cyc-h" style="grid-column:2">GITHUB</p>
+  <div class="cs pc" style="grid-column:1;grid-row:2"><b>01</b><code>git switch main</code> → <code>git pull</code><small>main を最新にする</small></div>
+  <div class="cs pc" style="grid-column:1;grid-row:3"><b>02</b><code>git switch -c add-名前</code><small>作業用のブランチを作る</small></div>
+  <div class="cs pc" style="grid-column:1;grid-row:4"><b>03</b>編集 → <code>add</code> → <code>commit</code><small>いつものリズムで記録する</small></div>
+  <div class="cs pc" style="grid-column:1;grid-row:5"><b>04</b><code>git push -u origin add-名前</code><small>ブランチを GitHub に送る</small></div>
+  <div class="cs gh" style="grid-column:2;grid-row:6"><b>05</b>Pull Request を作る<small>「main に合流させてください」とお願いする</small></div>
+  <div class="cs gh" style="grid-column:2;grid-row:7"><b>06</b>レビュー → Merge<small>ほかのメンバーが確認して合流させる</small></div>
+  <p class="cs-back" style="grid-row:8">↻ 01 に戻る（main を最新にしてから次の作業へ）</p>
+</div>
+<h3 class="h">GitHub 上の履歴はこう育つ</h3>
+<div class="gfx" data-ops="c:Initial commit;sc:add-sato;c:佐藤の紹介;s:main;sc:add-suzuki;c:鈴木の紹介;s:main;M:add-sato;M:add-suzuki;d:add-sato;d:add-suzuki"></div>
+<p class="stx-cap">それぞれが別の枝で作業し、Pull Request で1つずつ main に合流させます。GitHub で Merge すると、マージコミット（親が2つの頂点）が作られます。</p>
+<div class="box" data-k="なぜ main で作業しないの？"><p>main は「チームで確認済みの、いつ公開してもよい状態」です。作業途中のものを main に入れないようにすることで、誰かの作業が終わっていなくても、ほかの人の作業が止まりません。</p></div>
+`},
+  { t:'ブランチを push する', h:`
+<p class="lead">サイクルの 01〜04 です。main ではなく、<span class="em">自分のブランチ</span>を GitHub に送ります。</p>
+<pre class="term">
+$ git switch main
+$ git pull
+$ git switch -c add-{{自分の名前}}
+$ git add .
+$ git commit -m "{{自分の名前}}の紹介を追加"
+$ git push -u origin add-{{自分の名前}}
+remote: Create a pull request for 'add-sato' on GitHub by visiting:
+remote:      https://github.com/taro-yamada/team-page/pull/new/add-sato
+To github.com:taro-yamada/team-page.git
+ * [new branch]      add-sato -&gt; add-sato
+branch 'add-sato' set up to track 'origin/add-sato'.
+</pre>
+<p>3行目と4行目のあいだで、ファイルを編集します。push すると、GitHub に <code>add-sato</code> ブランチができます。出力に「Pull Request を作るならこの URL」と案内が出ています。</p>
+<div class="mis">
+  <div><p class="q">main のまま作業して commit してしまった</p><div class="a"><div><p>まだ push していなければ、その場で新しいブランチを作れば OK です。今の頂点に新しい名札が付くので、そのブランチを push しましょう。</p>
+<pre class="term">
+$ git switch -c add-{{自分の名前}}
+$ git push -u origin add-{{自分の名前}}
+</pre></div></div></div>
+</div>
+`},
+  { t:'Pull Request を作る', h:`
+<p class="lead">Pull Request（PR）は、<span class="em">「私のブランチを main に合流させてください」というお願い</span>です。合流させる前に、チームの人に変更を確認してもらえます。</p>
+<div class="prm">
+  <div class="prm-top"><h4>佐藤の紹介を追加 <span>#2</span></h4>
+    <div class="prm-meta"><span class="prm-state">Open</span><span>sato が <code>main</code> ← <code>add-sato</code> への合流をお願いしています</span></div></div>
+  <div class="prm-tabs"><span class="on">Conversation</span><span>Commits</span><span>Files changed</span></div>
+  <div class="prm-body">自己紹介を追加しました。確認お願いします。</div>
+  <div class="prm-merge"><span class="ok">✓ This branch has no conflicts with the base branch</span><span class="btn-mock">Merge pull request</span></div>
+</div>
+<p class="stx-cap">PR 画面の主な部分（実際の画面を簡単にしたもの）。</p>
+<h3 class="h">作り方</h3>
+<ol class="flow">
+  <li><div><b>PR の作成画面を開く</b><small>push 直後はリポジトリのページに <b>Compare &amp; pull request</b> ボタンが出ます。出ていなければ <span class="ui-path" style="display:inline-flex"><span>Pull requests</span><span>New pull request</span></span></small></div></li>
+  <li><div><b>合流の向きを確認する</b><small><code>base: main</code> ← <code>compare: add-自分の名前</code>（「compare を base に入れる」という意味）</small></div></li>
+  <li><div><b>タイトルと説明を書く</b><small>何を変えたか、見てほしいところはどこかを書く</small></div></li>
+  <li><div><b>Create pull request を押す</b></div></li>
+</ol>
+`},
+  { t:'レビューして Merge する', h:`
+<p class="lead">ほかのメンバーが変更を確認（<span class="em">レビュー</span>）して、問題がなければ main に合流させます。</p>
+<h3 class="h">レビューする人</h3>
+<ol class="flow">
+  <li><div><b>Files changed タブで差分を見る</b><small>行番号の横の ＋ から、その行にコメントできる</small></div></li>
+  <li><div><b>Review changes から結果を送る</b><small>Approve（OK）／ Comment（コメントだけ）／ Request changes（直してほしい）を選んで Submit review</small></div></li>
+</ol>
+<h3 class="h">PR を出した人</h3>
+<ol class="flow">
+  <li><div><b>指摘があれば直す</b><small>同じブランチで commit して push すると、PR に自動で追加される。PR を作り直す必要はない</small></div></li>
+</ol>
+<h3 class="h">合流させる</h3>
+<ol class="flow">
+  <li><div><b>Merge pull request → Confirm merge</b><small>main に合流する</small></div></li>
+  <li><div><b>Delete branch</b><small>GitHub 上の作業ブランチ（名札）を消す。記録は残る</small></div></li>
+</ol>
+<div class="gstx" data-before="c:Initial commit;sc:add-sato;c:佐藤の紹介;s:main" data-cmd="GitHub で Merge pull request" data-op="M:add-sato"></div>
+<p class="stx-cap">GitHub で Merge すると、マージコミット（親が2つの頂点）ができ、GitHub 上の main がそこへ進みます。</p>
+<div class="box" data-k="チームのルール"><p>自分の PR は、自分では Approve できません。この演習では<b>「PR は自分以外の人がレビューして Merge する」</b>と決めておきましょう。</p></div>
+`},
+  { t:'手元の main を最新にする', h:`
+<p class="lead">GitHub の main が進んでも、<span class="em">自分の PC の main は自動では進みません</span>。<code>git pull</code> で取り込みます。</p>
+<pre class="term">
+$ git switch main
+$ git pull
+Updating 1a2b3c4..9f8e7d6
+Fast-forward
+ index.html | 4 ++++
+ 1 file changed, 4 insertions(+)
+$ git branch -d add-sato
+Deleted branch add-sato (was 4c5d6e7).
+</pre>
+<div class="stx" data-cmd="git pull"
+ data-before='{"wt":["index.html|k"],"lc":["1a2b3c4 Initial commit|c"],"rc":["9f8e7d6 Merge pull request #2|c","4c5d6e7 佐藤の紹介|c","1a2b3c4 Initial commit|c"]}'
+ data-after='{"wt":["index.html|k"],"lc":["9f8e7d6 Merge pull request #2|c","4c5d6e7 佐藤の紹介|c","1a2b3c4 Initial commit|c"],"rc":["9f8e7d6 Merge pull request #2|c","4c5d6e7 佐藤の紹介|c","1a2b3c4 Initial commit|c"]}'></div>
+<dl class="spec">
+  <dt>git pull</dt><dd>GitHub の記録を取ってきて（fetch）、今いるブランチに合わせる（merge）。push の逆向き</dd>
+  <dt>branch -d</dt><dd>合流が終わった手元の作業ブランチを片付ける</dd>
+</dl>
+<div class="box" data-k="POINT"><p>次の作業を始める前に、必ず <b>main を最新にしてから</b>ブランチを作ります。古い main から枝分かれすると、あとでコンフリクトが起きやすくなります。</p></div>
+`},
+  { t:'演習：チーム紹介ページ', h:`
+<p class="lead">ここまでの流れで、チームで1つの紹介ページを作りましょう。</p>
+<h3 class="h">STEP 1　Aさん：ひな形を置く</h3>
+<p>最初の1回だけ、Aさんが main にひな形を push します。</p>
+<pre class="term src" data-t="index.html">
+&lt;!doctype html&gt;
+&lt;html lang="ja"&gt;
+&lt;head&gt;
+  &lt;meta charset="utf-8"&gt;
+  &lt;title&gt;チーム紹介&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;h1&gt;チーム名&lt;/h1&gt;
+
+  &lt;!-- A --&gt;
+
+  &lt;!-- B --&gt;
+
+  &lt;!-- C --&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<pre class="term">
+$ git add index.html
+$ git commit -m "ひな形を追加"
+$ git push
+</pre>
+<h3 class="h">STEP 2　全員：自分の紹介を追加する</h3>
+<p>main を pull してから、自分のブランチで、<b>自分の担当のコメントのすぐ下</b>に書きます。</p>
+<pre class="term src" data-t="追加する例">
+  &lt;!-- B --&gt;
+  &lt;section&gt;
+    &lt;h2&gt;佐藤 花子&lt;/h2&gt;
+    &lt;p&gt;好きなもの：コーヒーとスケッチ&lt;/p&gt;
+  &lt;/section&gt;
+</pre>
+<h3 class="h">STEP 3　PR → レビュー → Merge</h3>
+<p>全員が PR を出し、<b>自分以外の人</b>がレビューして Merge します。担当の場所が分かれているので、順番に Merge してもぶつかりません。</p>
+<h3 class="h">STEP 4　公開する</h3>
+<p>Aさんがリポジトリの <span class="ui-path" style="display:inline-flex"><span>Settings</span><span>Pages</span></span> で main / (root) を選んで Save。<code>https://{{Aさんのユーザー名}}.github.io/team-page/</code> で公開されます。</p>
+<div class="box plain" data-k="NEXT"><p>次の章では、<b>全員がわざと同じ行（<code>&lt;h1&gt;チーム名&lt;/h1&gt;</code>）を変えて</b>、コンフリクトを起こしてみます。</p></div>
+`}
+  ]},
+/* ---------------- 08 ---------------- */
+{ id:'ch08', no:'08', part:2, title:'コンフリクトを解決する', sub:'同じ行を変えたときの直し方',
+  pages:[
+  { t:'コンフリクトとは', h:`
+<p class="lead">2人が<span class="em">同じ行</span>をそれぞれ別の内容に変えると、Git はどちらを残すべきか決められません。そこで作業を止めて、人間に「どっちにする？」と聞きます。これが<b>コンフリクト（衝突）</b>です。</p>
+<div class="conf">
+  <div class="all"><p class="lbl">元の行</p><code>&lt;h1&gt;チーム名&lt;/h1&gt;</code></div>
+  <div class="ar">↓</div><div class="ar">↓</div>
+  <div><p class="lbl">Aさんのブランチ</p><code>&lt;h1&gt;チーム・ブルー&lt;/h1&gt;</code></div>
+  <div><p class="lbl">Bさんのブランチ</p><code>&lt;h1&gt;チーム・レッド&lt;/h1&gt;</code></div>
+  <div class="ar all">↓</div>
+  <div class="all q"><p class="lbl">GIT</p><b>同じ行が別々に変わっている。どっちを残す？</b></div>
+</div>
+<h3 class="h">ぶつかるとき・ぶつからないとき</h3>
+<div class="cols">
+  <div><h4>別の行を変えた → 自動で合わさる</h4><p>Aさんが1行目、Bさんが10行目を変えた。Git が両方の変更を取り込んでくれる。</p></div>
+  <div><h4>同じ行を変えた → コンフリクト</h4><p>2人が同じ行（またはすぐ隣の行）を変えた。人間が決める必要がある。</p></div>
+</div>
+<div class="box" data-k="怖くない"><p>コンフリクトは<b>エラーでも失敗でもありません</b>。Git からの「ここだけ決めてください」という相談です。何も壊れていないし、記録も消えていません。</p></div>
+`},
+  { t:'演習：わざと起こす', h:`
+<p class="lead">チーム紹介ページで、2人が同時に <code>&lt;h1&gt;</code> のチーム名を変えてみます。</p>
+<ol class="flow">
+  <li><div><b>全員：main を最新にする</b><small><code>git switch main</code> → <code>git pull</code></small></div></li>
+  <li><div><b>Aさん：<code>team-blue</code> ブランチで h1 を「チーム・ブルー」に変えて push → PR</b></div></li>
+  <li><div><b>Bさん：<code>team-red</code> ブランチで h1 を「チーム・レッド」に変えて push → PR</b></div></li>
+  <li><div><b>Aさんの PR を先に Merge する</b></div></li>
+</ol>
+<div class="gfx" data-ops="c:Initial commit;c:ひな形を追加;sc:team-red;c:レッドに変更;s:main;sc:team-blue;c:ブルーに変更;s:main;M:team-blue;s:team-red"></div>
+<p class="stx-cap">GitHub の main には「ブルー」が入りました。team-red は、ブルーが入る前の main から枝分かれしたままです。</p>
+<p>すると、Bさんの PR の画面がこう変わります。</p>
+<div class="prm">
+  <div class="prm-top"><h4>チーム名を変更 <span>#5</span></h4>
+    <div class="prm-meta"><span class="prm-state">Open</span><span><code>main</code> ← <code>team-red</code></span></div></div>
+  <div class="prm-merge"><span class="ng">× This branch has conflicts that must be resolved</span><span class="btn-mock off">Merge pull request</span></div>
+</div>
+<p class="stx-cap">コンフリクトがあるうちは、Merge ボタンが押せません。</p>
+<p>簡単なコンフリクトなら GitHub の画面上でも直せますが、この教材では<b>手元の PC で直す方法</b>を練習します。どんな場合にも使える方法だからです。</p>
+`},
+  { t:'手元でコンフリクトを起こす', h:`
+<p class="lead">Bさんの PC で、GitHub の最新の main を自分のブランチに取り込みます。</p>
+<pre class="term">
+$ git switch team-red
+$ git fetch
+$ git merge origin/main
+Auto-merging index.html
+CONFLICT (content): Merge conflict in index.html
+Automatic merge failed; fix conflicts and then commit the result.
+</pre>
+<dl class="spec">
+  <dt>git fetch</dt><dd>GitHub の最新の記録を取ってくるだけ。ワークツリーや自分のブランチは変わらない</dd>
+  <dt>origin/main</dt><dd>取ってきた「GitHub の main」の写し。読み取り専用の名札</dd>
+  <dt>merge origin/main</dt><dd>GitHub の main の変更を、今いる team-red に取り込む</dd>
+</dl>
+<p>Git が途中で止まりました。状態を確認します。</p>
+<pre class="term">
+$ git status
+On branch team-red
+You have unmerged paths.
+  (fix conflicts and run "git commit")
+  (use "git merge --abort" to abort the merge)
+
+Unmerged paths:
+  (use "git add &lt;file&gt;..." to mark resolution)
+	both modified:   index.html
+</pre>
+<p><b>both modified</b>（両方で変更された）のが <code>index.html</code> だとわかります。</p>
+<div class="mis">
+  <div><p class="q">いったん、やめたい</p><div class="a"><div><p>merge する前の状態に戻ります。落ち着いてから、もう一度やり直せます。</p>
+<pre class="term">
+$ git merge --abort
+</pre></div></div></div>
+</div>
+`},
+  { t:'マーカーを読む', h:`
+<p class="lead">コンフリクトしたファイルを開くと、Git が<span class="em">両方の内容</span>を、目印（マーカー）付きで書き込んでいます。</p>
+<pre class="term src" data-t="index.html（コンフリクト中）">
+&lt;body&gt;
+&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD
+  &lt;h1&gt;チーム・レッド&lt;/h1&gt;
+=======
+  &lt;h1&gt;チーム・ブルー&lt;/h1&gt;
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; origin/main
+</pre>
+<div class="mk">
+  <div class="mk-row mine m"><code>&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD</code><span>ここから：<b>自分</b>（今いる team-red）の内容</span></div>
+  <div class="mk-row mine"><code>  &lt;h1&gt;チーム・レッド&lt;/h1&gt;</code><span></span></div>
+  <div class="mk-row m"><code>=======</code><span>区切り線</span></div>
+  <div class="mk-row theirs"><code>  &lt;h1&gt;チーム・ブルー&lt;/h1&gt;</code><span></span></div>
+  <div class="mk-row theirs m"><code>&gt;&gt;&gt;&gt;&gt;&gt;&gt; origin/main</code><span>ここまで：<b>取り込もうとした側</b>（GitHub の main）の内容</span></div>
+</div>
+<div class="box" data-k="POINT"><p>マーカーは3種類だけです。<code>&lt;&lt;&lt;&lt;&lt;&lt;&lt;</code> から <code>=======</code> までが自分、<code>=======</code> から <code>&gt;&gt;&gt;&gt;&gt;&gt;&gt;</code> までが相手です。</p></div>
+<p>VS Code で開くと、マーカーの上に <b>Accept Current Change</b>（自分の方を残す）／ <b>Accept Incoming Change</b>（相手の方を残す）／ <b>Accept Both Changes</b>（両方残す）というボタンが表示され、クリックでも選べます。</p>
+`},
+  { t:'直して、記録する', h:`
+<p class="lead">ファイルを<span class="em">最終的にこうしたい形</span>に書き直し、マーカーをすべて消します。</p>
+<div class="ba">
+  <div class="side"><p class="lbl">BEFORE — コンフリクト中</p><div class="tree">&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD
+  &lt;h1&gt;チーム・レッド&lt;/h1&gt;
+=======
+  &lt;h1&gt;チーム・ブルー&lt;/h1&gt;
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; origin/main</div></div>
+  <div class="arrow">→</div>
+  <div class="side after"><p class="lbl">AFTER — 話し合って決めた形</p><div class="tree">  &lt;h1&gt;チーム・<span class="new">ブルーレッド</span>&lt;/h1&gt;</div></div>
+</div>
+<p>どちらか片方を残しても、両方を合わせて新しく書いても構いません。<b>どれが正しいかは Git ではなくチームが決めます</b>。</p>
+<h3 class="h">解決したことを Git に伝える</h3>
+<pre class="term">
+$ git add index.html
+$ git commit -m "チーム名のコンフリクトを解決"
+[team-red 7e1f2a9] チーム名のコンフリクトを解決
+$ git push
+</pre>
+<div class="gstx" data-before="c:Initial commit;c:ひな形を追加;sc:team-red;c:レッドに変更;s:main;sc:team-blue;c:ブルーに変更;s:main;M:team-blue;s:team-red" data-cmd="$ git merge origin/main → 解決して commit" data-op="m:main"></div>
+<p class="stx-cap">team-red に、親を2つ持つ頂点ができました。これで team-red は main の変更を含んだ状態になります（図では origin/main を main と表示しています）。</p>
+<p>→ push すると PR の画面が <b>This branch has no conflicts with the base branch</b> に変わり、Merge できるようになります。</p>
+<div class="mis">
+  <div><p class="q">マーカーを消し忘れたまま commit した</p><div class="a"><div><p>サイトに <code>&lt;&lt;&lt;&lt;&lt;&lt;&lt;</code> などがそのまま表示されてしまいます。ファイルを直して、もう一度 add・commit・push すれば OK です。commit する前に、次のコマンドでマーカーが残っていないか確かめられます（何も表示されなければ OK）。</p>
+<pre class="term">
+$ grep -n "&lt;&lt;&lt;&lt;&lt;&lt;&lt;\\|&gt;&gt;&gt;&gt;&gt;&gt;&gt;" index.html
+</pre></div></div></div>
+</div>
+`}
+  ]},
+/* ---------------- 09 ---------------- */
+{ id:'ch09', no:'09', part:2, title:'道具箱', sub:'.gitignore / README / Issues / Projects / Actions',
+  pages:[
+  { t:'.gitignore — 記録しないファイルを決める', h:`
+<p class="lead">リポジトリの中には、<span class="em">記録しない方がいいファイル</span>もあります。それを Git に教えるのが <code>.gitignore</code> です。</p>
+<dl class="spec">
+  <dt>パスワード・鍵</dt><dd><code>.env</code> など。公開リポジトリに push すると、世界中から見えてしまう</dd>
+  <dt>自動でできるもの</dt><dd><code>node_modules/</code> など。コマンドで作り直せるので、記録すると重くなるだけ</dd>
+  <dt>PC のゴミ</dt><dd><code>.DS_Store</code>（Mac）や <code>Thumbs.db</code>（Windows）など</dd>
+</dl>
+<p>リポジトリのいちばん上に <code>.gitignore</code> という名前のファイルを作り、1行に1つずつ書きます。</p>
+<pre class="term src" data-t=".gitignore">
+# パスワードなど
+.env
+
+# 自動でできるフォルダ（/ で終わるとフォルダ）
+node_modules/
+
+# PC が勝手に作るファイル
+.DS_Store
+Thumbs.db
+
+# 拡張子でまとめて指定
+*.log
+</pre>
+<div class="stx" data-cmd="echo .env >> .gitignore（.gitignore に書く）"
+ data-before='{"wt":["index.html|m",".env|u"]}'
+ data-after='{"wt":["index.html|m",".gitignore|u"]}'></div>
+<p class="stx-cap"><code>.env</code> は status に出てこなくなり、<code>git add .</code> しても記録されません。代わりに <code>.gitignore</code> 自体は記録しておきます（チーム全員で同じルールを使うため）。</p>
+<div class="mis">
+  <div><p class="q">すでに commit したファイルを .gitignore に書いたのに、無視されない</p><div class="a"><div><p>.gitignore が効くのは、まだ記録していないファイルだけです。記録の対象から外します（ファイル自体は消えません）。</p>
+<pre class="term">
+$ git rm --cached {{ファイル名}}
+$ git commit -m "{{ファイル名}}を記録の対象から外す"
+</pre><p>パスワードなどをすでに push してしまった場合は、履歴に残っています。そのパスワードはすぐに変更しましょう。</p></div></div></div>
+</div>
+`},
+  { t:'README.md — リポジトリの説明書', h:`
+<p class="lead"><code>README.md</code> は、リポジトリのトップページに<span class="em">自動で表示される説明書</span>です。初めて見た人が「これは何で、どう使うのか」がわかるように書きます。</p>
+<pre class="term src" data-t="README.md">
+# チーム紹介ページ
+
+Web プログラミングの授業で作った、チームの紹介ページです。
+
+## 公開ページ
+https://taro-yamada.github.io/team-page/
+
+## メンバー
+- 山田 太郎
+- 佐藤 花子
+- 鈴木 一郎
+
+## 作業のルール
+1. main では直接作業しない
+2. 作業は add-名前 ブランチで行う
+3. PR は自分以外の人がレビューして Merge する
+</pre>
+<p><code>.md</code> は <b>Markdown</b> という書き方です。記号を付けるだけで、見出しや箇条書きになります。</p>
+<dl class="spec">
+  <dt># 見出し</dt><dd>大きな見出し（<code>##</code> で一段小さい見出し）</dd>
+  <dt>- 項目</dt><dd>箇条書き</dd>
+  <dt>1. 項目</dt><dd>番号付きの箇条書き</dd>
+  <dt>**太字**</dt><dd>太字になる</dd>
+  <dt>&#96;code&#96;</dt><dd>コードの見た目になる</dd>
+</dl>
+<div class="box" data-k="TIP"><p>README は GitHub の画面上でも編集できます（ファイルを開いて鉛筆マーク）。ただし GitHub で直接 commit した場合は、手元で <code>git pull</code> してから作業を始めましょう。</p></div>
+`},
+  { t:'Issues — やることと問題を管理する', h:`
+<p class="lead">Issue は、リポジトリに付けられる<span class="em">「やること・不具合・相談」のメモ</span>です。チームの誰が何をやるのかを、GitHub 上で共有できます。</p>
+<div class="iss">
+  <div><span class="st"></span><span><b>トップの写真が表示されない</b><br><span class="no">#3 opened by suzuki</span></span><span class="lab">bug</span></div>
+  <div><span class="st"></span><span><b>お問い合わせページを作る</b><br><span class="no">#4 opened by sato</span></span><span class="lab">enhancement</span></div>
+  <div><span class="st closed"></span><span><b>チーム名を決める</b><br><span class="no">#1 closed</span></span><span class="lab">discussion</span></div>
+</div>
+<p class="stx-cap">Issues タブの一覧（実際の画面を簡単にしたもの）。</p>
+<dl class="spec">
+  <dt>作り方</dt><dd><span class="ui-path" style="display:inline-flex"><span>Issues</span><span>New issue</span></span> でタイトルと内容を書く</dd>
+  <dt>Assignees</dt><dd>担当者。誰がやるかを決める</dd>
+  <dt>Labels</dt><dd>bug（不具合）、enhancement（機能追加）などの分類</dd>
+  <dt>#番号</dt><dd>Issue には番号が付く。コメントや PR で <code>#3</code> と書くとリンクになる</dd>
+</dl>
+<h3 class="h ac">PR と Issue をつなぐ</h3>
+<p>PR の説明に <code>Closes #3</code> と書いておくと、その PR が main に Merge されたときに、Issue #3 が<b>自動で閉じられます</b>。「どの PR でどの問題を解決したか」が記録に残ります。</p>
+<div class="route">
+  <div class="node"><span>Issue</span><b>#3 写真が出ない</b></div>
+  <div class="edge"><em>Closes #3</em><i></i></div>
+  <div class="node"><span>Pull Request</span><b>写真のパスを修正</b></div>
+  <div class="edge"><em>Merge</em><i></i></div>
+  <div class="node ac"><span>自動で</span><b>#3 Closed</b></div>
+</div>
+`},
+  { t:'Projects — 作業をボードで見える化する', h:`
+<p class="lead">GitHub Projects は、Issue や PR を<span class="em">カードとして並べる作業ボード</span>です。チーム全体の進み具合がひと目でわかります。</p>
+<div class="kb">
+  <div><h5>Todo <span>2</span></h5><div class="kc"><small>#4</small>お問い合わせページを作る</div><div class="kc"><small>#6</small>スマホ表示を整える</div></div>
+  <div><h5>In Progress <span>1</span></h5><div class="kc"><small>#3</small>トップの写真が表示されない</div></div>
+  <div><h5>Done <span>1</span></h5><div class="kc"><small>#1</small>チーム名を決める</div></div>
+</div>
+<p class="stx-cap">Board 表示の例。カードをドラッグして、列を移動させます。</p>
+<ol class="flow">
+  <li><div><b>Project を作る</b><small>リポジトリの <b>Projects</b> タブなどから新しい Project を作り、<b>Board</b> のテンプレートを選ぶ</small></div></li>
+  <li><div><b>Issue をカードとして追加する</b><small>ボードの下の「＋ Add item」から、リポジトリの Issue を選んで追加する</small></div></li>
+  <li><div><b>進み具合に合わせて動かす</b><small>手をつけたら In Progress、終わったら Done へ</small></div></li>
+</ol>
+<div class="box plain" data-k="使い分け"><p><b>Issue</b> は「やること1つ1つ」、<b>Projects</b> は「それを並べて全体を見る板」です。小さなチームなら、Issue だけでも十分に回せます。</p></div>
+`},
+  { t:'Actions — push をきっかけに自動で動かす', h:`
+<p class="lead">GitHub Actions は、<span class="em">「push されたら○○する」</span>のような作業を、GitHub 上で自動で実行してくれる仕組みです。</p>
+<p>実は、もう使っています。GitHub Pages で push するたびにサイトが更新されたのは、Actions が自動で動いていたからです（Actions タブの <b>pages build and deployment</b>）。</p>
+<div class="route">
+  <div class="node"><span>きっかけ</span><b>push</b></div>
+  <div class="edge"><em>自動で</em><i></i></div>
+  <div class="node"><span>GitHub が用意した PC</span><b>決めた手順を実行</b></div>
+  <div class="edge"><em>結果</em><i></i></div>
+  <div class="node ac"><span>Actions タブ</span><b>✓ 成功 / × 失敗</b></div>
+</div>
+<h3 class="h">手順はファイルに書く</h3>
+<p><code>.github/workflows/</code> フォルダに YAML というファイルを置くと、Actions が動きます。いちばん小さな例です。</p>
+<pre class="term src" data-t=".github/workflows/hello.yml">
+name: hello
+on: push                     # push されたら動く
+jobs:
+  greet:
+    runs-on: ubuntu-latest   # GitHub が用意する Ubuntu で
+    steps:
+      - uses: actions/checkout@v4   # リポジトリの中身を取ってきて
+      - run: echo "push されました！"  # コマンドを実行する
+</pre>
+<dl class="spec">
+  <dt>on</dt><dd>いつ動くか（push、PR が作られたとき など）</dd>
+  <dt>runs-on</dt><dd>どんな環境で動かすか</dd>
+  <dt>steps</dt><dd>上から順に実行する手順</dd>
+</dl>
+<div class="box" data-k="実際の開発では"><p>「PR が出たら自動でテストする」「main に入ったら自動で公開する」といった使い方をします。人間が忘れがちな確認を、毎回必ず実行してくれるのが強みです。この教材では、<b>こういう仕組みがある</b>とわかれば十分です。</p></div>
+<div class="box" data-k="おわり"><p>これで第2部は終わりです。ブランチで分かれて作業し、PR でレビューし、コンフリクトを解決して合流させる。<b>チーム開発の基本の流れ</b>をひと通り体験しました。</p></div>
+`}
+  ]}
+];
+const CH = Object.fromEntries(CHAPTERS.map(c=>[c.id,c]));
+
+/* =========================================================
+   STORAGE
+   ========================================================= */
+const KEY='gitlesson.v1';
+function load(){ try{ return JSON.parse(localStorage.getItem(KEY))||{done:{},last:null}; }catch(e){ return {done:{},last:null}; } }
+function save(){ try{ localStorage.setItem(KEY,JSON.stringify(store)); }catch(e){} }
+let store = load(); if(!store.done) store.done={};
+
+function progress(){ const n=CHAPTERS.filter(c=>store.done[c.id]).length; return {n,total:CHAPTERS.length,pct:Math.round(n/CHAPTERS.length*100)}; }
+
+/* =========================================================
+   UTIL
+   ========================================================= */
+const $=(s,r=document)=>r.querySelector(s);
+const $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const A=()=>window.anime && !matchMedia('(prefers-reduced-motion: reduce)').matches;
+function toast(msg){ const t=$('#toast'); t.textContent=msg; t.classList.add('on'); clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('on'),1600); }
+function ph(s){ return s.replace(/\{\{(.+?)\}\}/g,'<span class="ph">$1</span>'); }
+function unph(s){ return s.replace(/\{\{(.+?)\}\}/g,'$1'); }
+async function copy(text){
+  try{ await navigator.clipboard.writeText(text); return true; }
+  catch(e){ const ta=document.createElement('textarea'); ta.value=text; document.body.appendChild(ta); ta.select(); let ok=false; try{ok=document.execCommand('copy');}catch(_){} ta.remove(); return ok; }
+}
+
+/* pre.term → 端末表示 */
+function termHTML(lines,{diff=false,src=false}={}){
+  return lines.map(l=>{
+    if(src){ const mk=/^(<{7}|={7}|>{7})/.test(l); return `<span class="ln ${mk?'mkr':'srcl'}">${esc(l)||' '}</span>`; }
+    if(l.startsWith('$ ')){
+      const body=l.slice(2); const m=body.match(/^(.*?)(\s+#\s.*)$/);
+      const cmd=m?m[1]:body, cm=m?m[2]:'';
+      return `<span class="ln"><span class="pr">$ </span><span class="cmd">${ph(esc(cmd))}</span>${cm?`<span class="cm">${esc(cm)}</span>`:''}</span>`;
+    }
+    if(l.trim()==='') return '<span class="ln"> </span>';
+    let cls='out';
+    if(diff){ if(/^\+(?!\+\+)/.test(l)) cls='add'; else if(/^-(?!--)/.test(l)) cls='del'; else if(l.startsWith('@@')) cls='hunk'; }
+    const i=l.indexOf('  ← ');
+    if(i>-1) return `<span class="ln ${cls}">${ph(esc(l.slice(0,i)))}  <span class="an">← ${esc(l.slice(i+4))}</span></span>`;
+    return `<span class="ln ${cls}">${ph(esc(l))}</span>`;
+  }).join('');
+}
+function enhanceTerms(root){
+  $$('pre.term',root).forEach(pre=>{
+    const lines=pre.textContent.replace(/^\n+/,'').replace(/\s+$/,'').split('\n');
+    const cmds=pre.classList.contains('src')?[]:lines.filter(l=>l.startsWith('$ ')).map(l=>unph(l.slice(2).replace(/\s+#\s.*$/,'')).trim());
+    const plain=pre.classList.contains('src')||!lines.some(l=>l.startsWith('$ '));
+    const copyText=plain?unph(lines.join('\n')):cmds.join('\n');
+    const label=pre.dataset.t||'TERMINAL — UBUNTU (WSL)';
+    const div=document.createElement('div');
+    div.className='term ready';
+    div.innerHTML=`<div class="term-h"><span>${esc(label)}</span><button type="button">COPY</button></div><div class="term-b">${termHTML(lines,{diff:pre.classList.contains('diff'),src:pre.classList.contains('src')})}</div>`;
+    $('button',div).onclick=async e=>{ const ok=await copy(copyText); e.target.textContent=ok?'COPIED':'FAILED'; setTimeout(()=>e.target.textContent='COPY',1400); };
+    pre.replaceWith(div);
+  });
+}
+
+/* =========================================================
+   ROUTER
+   ========================================================= */
+const app=$('#app');
+function route(){
+  const h=location.hash.replace(/^#\/?/,'');
+  const m=h.match(/^(ch\d\d)(?:\/(\d+))?$/);
+  if(m && CH[m[1]]) renderChapter(m[1], parseInt(m[2]||'1',10));
+  else if(h==='practice') renderPractice();
+  else if(h==='errors') renderErrors();
+  else renderHome();
+  updateChrome(m?m[1]:h);
+  window.scrollTo({top:0,behavior:'instant'});
+}
+function updateChrome(where){
+  $('#progBar').style.width=progress().pct+'%';
+  const c=CH[where];
+  $$('#gnav a').forEach(a=>{
+    const k=a.dataset.nav;
+    a.classList.toggle('on', !!c ? (k==='ch00'&&c.part===0)||(k==='p1'&&c.part===1)||(k==='p2'&&c.part===2) : k===where);
+  });
+}
+window.addEventListener('hashchange',route);
+
+/* =========================================================
+   HOME
+   ========================================================= */
+function renderHome(){
+  const p=progress();
+  const cont=store.last && CH[store.last.split('/')[0]] ? '#/'+store.last : '#/ch00/1';
+  const row=c=>{
+    const ready=!!c.pages, done=!!store.done[c.id];
+    const tag=ready?'a':'div';
+    return `<${tag} class="toc-row ${ready?'':'soon'} ${done?'done':''}" ${ready?`href="#/${c.id}/1"`:''}>
+      <span class="n">${c.no}</span><span class="t"><b>${c.title}</b><small>${c.sub}</small></span>
+      <span class="st">${ready?(done?'DONE':'—'):'SOON'}${ready?'<i></i>':''}</span></${tag}>`;
+  };
+  app.innerHTML=`
+  <div class="wrap">
+    <section class="hero">
+      <div>
+        <p class="kicker">Web Programming / Git &amp; GitHub</p>
+        <h1>Git<span class="amp">&amp;</span><br>GitHub</h1>
+        <p class="hero-lead">コードの変更を<b>記録し</b>、ネットに<b>公開し</b>、仲間と<b>一緒に育てる</b>。<br>そのための道具を、手を動かしながら学びます。</p>
+        <div class="hero-cta">
+          <a class="btn" href="${cont}">${store.last?'続きから':'はじめる'} <span class="arr">→</span></a>
+          <a class="btn ghost" href="#/ch02/4">シミュレーターを試す</a>
+        </div>
+      </div>
+      <div class="hero-fig">${heroSVG()}</div>
+    </section>
+
+    <section class="sec">
+      <div class="sec-head"><p class="kicker">Goal</p><h2>この教材のゴール</h2></div>
+      <div class="goals">
+        <div class="goal"><p class="no">01</p><h3>自分のサイトを公開する</h3><p>自分で作った HTML を GitHub に push して、GitHub Pages で公開します。</p></div>
+        <div class="goal"><p class="no">02</p><h3>チームで1つのサイトを作る</h3><p>2〜3人でブランチ・Pull Request・マージ・コンフリクトを体験します。</p></div>
+      </div>
+    </section>
+
+    <section class="sec">
+      <div class="sec-head"><p class="kicker">Progress</p><h2>学習の進み具合</h2></div>
+      <div class="prog">
+        <p class="prog-num"><span id="pctNum">0</span><small>%</small></p>
+        <div>
+          <div class="prog-cells">${CHAPTERS.map(c=>`<span class="${c.part===2?'p2':''} ${store.done[c.id]?'done':''}" title="${c.no} ${c.title}"></span>`).join('')}</div>
+          <div class="prog-legend"><span>00</span><span>${p.n} / ${p.total} CHAPTERS</span><span>09</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="sec" style="border-bottom:0">
+      <div class="sec-head"><p class="kicker">Contents</p><h2>目次</h2></div>
+      <div class="toc">
+        <div class="toc-part">
+          <h3><span>PART 1</span><span>ひとりで使う → 公開する</span></h3>
+          ${CHAPTERS.filter(c=>c.part<=1).map(row).join('')}
+        </div>
+        <div class="toc-part">
+          <h3><span>PART 2</span><span>チームで使う</span></h3>
+          ${CHAPTERS.filter(c=>c.part===2).map(row).join('')}
+          <h3 style="margin-top:40px"><span>EXTRA</span><span>練習とリファレンス</span></h3>
+          <a class="toc-row" href="#/practice"><span class="n">+</span><span class="t"><b>コマンド練習</b><small>入力・選択・結果の予想（${PRACTICE.length}問）</small></span><span class="st">${PRACTICE.filter(x=>(store.practice||{})[x.id]==='ok').length} / ${PRACTICE.length}</span></a>
+          <a class="toc-row" href="#/errors"><span class="n">!</span><span class="t"><b>エラー解決集</b><small>よく出るエラーの意味と直し方（${ERRORS.length}件）</small></span><span class="st">→</span></a>
+        </div>
+      </div>
+    </section>
+  </div>
+  <footer class="wrap foot">WEB PROGRAMMING — GIT &amp; GITHUB LESSON</footer>`;
+  animateHero(p.pct);
+}
+function heroSVG(){
+  // コミットグラフ（main と feature ブランチ）
+  return `<svg viewBox="0 0 420 300" aria-hidden="true">
+    <g fill="none" stroke-width="3">
+      <path class="hg-l" d="M30 220 H390" stroke="#1a1a1a"/>
+      <path class="hg-l" d="M120 220 C 150 220 150 120 190 120 H290 C 330 120 330 220 360 220" stroke="#c8321f"/>
+    </g>
+    <g class="hg-n">
+      <circle cx="30" cy="220" r="11" fill="#1a1a1a"/>
+      <circle cx="120" cy="220" r="11" fill="#1a1a1a"/>
+      <circle cx="210" cy="220" r="11" fill="#1a1a1a"/>
+      <circle cx="190" cy="120" r="11" fill="#c8321f"/>
+      <circle cx="250" cy="120" r="11" fill="#c8321f"/>
+      <circle cx="290" cy="120" r="11" fill="#c8321f"/>
+      <circle cx="360" cy="220" r="14" fill="#f4f2ec" stroke="#1a1a1a" stroke-width="4"/>
+    </g>
+    <g class="hg-t" font-family="JetBrains Mono,monospace" font-size="13" font-weight="600">
+      <rect x="326" y="252" width="68" height="24" fill="#1a1a1a"/><text x="360" y="269" text-anchor="middle" fill="#f4f2ec">main</text>
+      <rect x="236" y="70" width="108" height="24" fill="#c8321f"/><text x="290" y="87" text-anchor="middle" fill="#fff">feature</text>
+    </g>
+  </svg>`;
+}
+function animateHero(pct){
+  const num=$('#pctNum');
+  if(!A()){ num.textContent=pct; return; }
+  const o={v:0}; anime({targets:o,v:pct,round:1,duration:900,easing:'easeOutQuart',update:()=>num.textContent=o.v});
+  anime.timeline({easing:'easeInOutQuart'})
+    .add({targets:'.hg-l',strokeDashoffset:[anime.setDashoffset,0],duration:1100,delay:anime.stagger(250)})
+    .add({targets:'.hg-n circle',scale:[0,1],duration:420,delay:anime.stagger(70),easing:'easeOutBack'},'-=900')
+    .add({targets:'.hg-t',opacity:[0,1],translateY:[8,0],duration:400},'-=200');
+  $$('.hg-n circle').forEach(c=>{c.style.transformBox='fill-box';c.style.transformOrigin='center';});
+  anime({targets:'.prog-cells span',opacity:[0,1],scaleY:[0,1],delay:anime.stagger(40,{start:200}),duration:400,easing:'easeOutQuad'});
+  anime({targets:'.toc-row',opacity:[0,1],translateX:[-10,0],delay:anime.stagger(30,{start:300}),duration:400,easing:'easeOutQuad'});
+}
+
+/* =========================================================
+   CHAPTER
+   ========================================================= */
+function renderChapter(id,pg){
+  const c=CH[id];
+  if(!c.pages) return renderSoon(id);
+  const n=c.pages.length; pg=Math.min(Math.max(1,pg),n);
+  const P=c.pages[pg-1];
+  store.last=`${id}/${pg}`; save();
+  const idx=CHAPTERS.indexOf(c);
+  const prevCh=CHAPTERS[idx-1], nextCh=CHAPTERS[idx+1];
+  const pad=x=>String(x).padStart(2,'0');
+  const partName=c.part===0?'INTRODUCTION':c.part===1?'PART 1 — ひとりで使う':'PART 2 — チームで使う';
+  let prev='';
+  if(pg>1) prev=`<a href="#/${id}/${pg-1}"><small>← PREV</small><b>${c.pages[pg-2].t}</b></a>`;
+  else if(prevCh&&prevCh.pages) prev=`<a href="#/${prevCh.id}/${prevCh.pages.length}"><small>← CHAPTER ${prevCh.no}</small><b>${prevCh.title}</b></a>`;
+  let next;
+  if(pg<n) next=`<a class="next" href="#/${id}/${pg+1}"><small>NEXT →</small><b>${c.pages[pg].t}</b></a>`;
+  else next=`<button class="next finish" id="finish"><small>${store.done[id]?'COMPLETED ■':'CHAPTER '+c.no+' COMPLETE'}</small><b>${nextCh&&nextCh.pages?'完了して 第'+nextCh.no+'章へ →':'この章を完了する ■'}</b></button>`;
+
+  app.innerHTML=`
+  <div class="wrap chapter">
+    <aside class="ch-side">
+      <p class="ch-part">${partName}</p>
+      <p class="ch-no">${c.no}</p>
+      <h1 class="ch-title">${c.title}</h1>
+      <ol class="ch-pages">${c.pages.map((p,i)=>`<li><a href="#/${id}/${i+1}" class="${i+1===pg?'cur':''}"><span>${pad(i+1)}</span>${p.t}</a></li>`).join('')}</ol>
+    </aside>
+    <article class="ch-body">
+      <div class="pg-steps">${c.pages.map((p,i)=>`<a href="#/${id}/${i+1}" class="${i+1===pg?'cur':i+1<pg?'past':''}" aria-label="${p.t}"></a>`).join('')}</div>
+      <p class="pg-count">CHAPTER ${c.no} — ${pad(pg)} / ${pad(n)}</p>
+      <h2 class="pg-title">${P.t}</h2>
+      <div class="pg-content">${P.h}</div>
+      <nav class="pager">${prev}${next}</nav>
+    </article>
+  </div>`;
+  const content=$('.pg-content');
+  enhanceTerms(content);
+  enhanceStx(content);
+  enhanceGraphs(content);
+  prepViews(content);
+  const fin=$('#finish');
+  if(fin) fin.onclick=()=>{
+    store.done[id]=true; save(); toast(`第${c.no}章 完了`);
+    location.hash = nextCh&&nextCh.pages ? `#/${nextCh.id}/1` : '#/';
+  };
+  if(P.sim) Simulator($('#sim'));
+  if(P.bsim) BranchSim($('#bsim'));
+  if(A()) anime({targets:content.children,opacity:[0,1],translateY:[14,0],delay:anime.stagger(45),duration:480,easing:'easeOutQuad'});
+  if(P.anim && ANIMS[P.anim]) ANIMS[P.anim](content);
+}
+
+/* 状態遷移図（BEFORE → コマンド → AFTER） */
+const S_AREAS=[['wt','ワークツリー'],['ix','ステージ'],['lc','ローカル'],['rc','リモート']];
+function chipHTML(s){
+  const [name,k='k']=s.split('|');
+  if(k==='c'){ const sp=name.indexOf(' '); return `<span class="schip c"><code>${esc(name.slice(0,sp))}</code> ${esc(name.slice(sp+1))}</span>`; }
+  const tag={u:'U',m:'M',n:'新規',s:'変更'}[k];
+  return `<span class="schip ${k}">${esc(name)}${tag?`<i>${tag}</i>`:''}</span>`;
+}
+function stateRow(st,prev){
+  return `<div class="srow ${prev?'after':''}">${S_AREAS.map(([k,l],i)=>{
+    const items=st[k]||[], chg=prev&&JSON.stringify(items)!==JSON.stringify(prev[k]||[]);
+    return `<div class="scell ${k==='rc'?'rc':''} ${chg?'chg':''}"><p class="sl"><b>0${i+1}</b>${l}</p>${items.map(chipHTML).join('')||'<span class="snone">—</span>'}</div>`;
+  }).join('')}</div>`;
+}
+function enhanceStx(root){
+  $$('.stx',root).forEach(el=>{
+    const b=JSON.parse(el.dataset.before), a=JSON.parse(el.dataset.after);
+    el.innerHTML=`<p class="stl">BEFORE</p>${stateRow(b)}<div class="scmd"><span>↓</span><code>$ ${esc(el.dataset.cmd)}</code></div><p class="stl ac">AFTER</p>${stateRow(a,b)}`;
+  });
+}
+
+/* 画面に入ったときに一度だけ動かす */
+function onView(el,fn){
+  if(!('IntersectionObserver' in window)) return fn();
+  const io=new IntersectionObserver(es=>{ if(es.some(e=>e.isIntersecting)){ io.disconnect(); fn(); } },{threshold:.3});
+  io.observe(el);
+}
+function prepViews(root){
+  if(!A()) return;
+  $$('.route',root).forEach(r=>{
+    const nodes=$$('.node',r), edges=$$('.edge i',r);
+    nodes.concat(edges).forEach(n=>n.style.opacity=0);
+    onView(r,()=>{
+      const mobile=matchMedia('(max-width:620px)').matches;
+      anime.timeline({easing:'easeOutQuart'})
+        .add({targets:nodes,opacity:[0,1],translateY:[10,0],duration:450,delay:anime.stagger(380)})
+        .add({targets:edges,opacity:[1,1],[mobile?'scaleY':'scaleX']:[0,1],duration:420,delay:anime.stagger(380)},150);
+    });
+  });
+  $$('.gfig',root).forEach(f=>{
+    const draws=$$('.draw',f), pops=$$('.pop',f);
+    draws.forEach(p=>{ const L=p.getTotalLength(); p.style.strokeDasharray=L; p.style.strokeDashoffset=L; });
+    pops.forEach(p=>p.style.opacity=0);
+    onView(f,()=>anime.timeline({easing:'easeInOutQuad'})
+      .add({targets:draws,strokeDashoffset:0,duration:800,delay:anime.stagger(300)})
+      .add({targets:pops,opacity:[0,1],duration:350,delay:anime.stagger(220)},400));
+  });
+  $$('.stx',root).forEach(el=>{
+    const cmd=$('.scmd',el), cells=$$('.srow.after .scell.chg',el);
+    const chips=cells.flatMap(c=>$$('.schip,.snone',c));
+    cmd.style.opacity=0; chips.forEach(c=>c.style.opacity=0);
+    onView(el,()=>anime.timeline({easing:'easeOutQuart'})
+      .add({targets:cmd,opacity:[0,1],translateY:[-6,0],duration:400})
+      .add({targets:chips,opacity:[0,1],translateY:[-10,0],duration:450,delay:anime.stagger(90)})
+      .add({targets:cells,backgroundColor:['#f2e1dc','#fbfaf7'],duration:900},'-=300'));
+  });
+  $$('.gfx',root).forEach(el=>{
+    const ns=$$('.gn',el), es=$$('.ge',el), ts=$$('.gtag',el);
+    es.forEach(p=>{ const L=p.getTotalLength(); p.style.strokeDasharray=L; p.style.strokeDashoffset=L; });
+    ns.concat(ts).forEach(n=>n.style.opacity=0);
+    onView(el,()=>anime.timeline({easing:'easeOutQuart'})
+      .add({targets:ns,opacity:[0,1],scale:[.4,1],duration:380,delay:anime.stagger(110)})
+      .add({targets:es,strokeDashoffset:0,duration:500,delay:anime.stagger(80)},120)
+      .add({targets:ts,opacity:[0,1],translateY:[-8,0],duration:400,delay:anime.stagger(80)},'-=200'));
+  });
+  $$('.gstx',root).forEach(el=>{
+    const cmd=$('.scmd',el), ns=$$('.gwrap:last-of-type .gn.new',el), ts=$$('.gwrap:last-of-type .gtag.moved',el);
+    cmd.style.opacity=0; ns.concat(ts).forEach(n=>n.style.opacity=0);
+    onView(el,()=>anime.timeline({easing:'easeOutQuart'})
+      .add({targets:cmd,opacity:[0,1],translateY:[-6,0],duration:400})
+      .add({targets:ns,opacity:[0,1],scale:[.3,1],duration:450,easing:'easeOutBack'})
+      .add({targets:ts,opacity:[0,1],translateY:[-12,0],duration:450,delay:anime.stagger(120)},'-=200'));
+  });
+  $$('.seq',root).forEach(el=>{
+    const ms=$$('.msg',el); ms.forEach(m=>m.style.opacity=0);
+    onView(el,()=>anime({targets:ms,opacity:[0,1],translateY:[8,0],delay:anime.stagger(450),duration:500,easing:'easeOutQuart'}));
+  });
+}
+
+/* =========================================================
+   COMMIT GRAPH
+   頂点 = コミット、名札 = ブランチ、HEAD = 今いるブランチ
+   ops 文字列: c:メッセージ / b:名前 / s:名前 / sc:名前 / m:名前 / M:名前(GitHub の Merge) / d:名前
+   ========================================================= */
+const GID=['3f2a1b9','5a7b9f3','c91e4d0','8d4e2a0','e41c0d2','9b7a3f1','a2f05c8','71cd9e4','b5e3a17','04fa6b2','6e2d8c1','d3b84f0','1c57e9a','f8a92d3','29e6b0c','7b0c4e5','5d19fa2','e07b3c6'];
+class GitGraph{
+  constructor(){ this.commits=[]; this.branches={main:null}; this.head='main'; this.lanes={main:0}; }
+  copy(){ const g=new GitGraph(); g.commits=this.commits.map(c=>({...c,parents:[...c.parents]})); g.branches={...this.branches}; g.head=this.head; g.lanes={...this.lanes}; return g; }
+  nid(){ return GID[this.commits.length]||Math.random().toString(16).slice(2,9).padEnd(7,'0'); }
+  get(id){ return this.commits.find(c=>c.id===id); }
+  isAnc(a,b){ // a が b の祖先（または同じ）か
+    if(!a||!b) return false;
+    const st=[b], seen=new Set();
+    while(st.length){ const x=st.pop(); if(x===a) return true; if(seen.has(x)) continue; seen.add(x); st.push(...this.get(x).parents); }
+    return false;
+  }
+  freeLane(){ const used=new Set(Object.keys(this.branches).map(b=>this.lanes[b])); let l=0; while(used.has(l)) l++; return l; }
+  commit(msg){
+    const p=this.branches[this.head], id=this.nid();
+    msg=msg||`コミット${this.commits.length+1}`;
+    this.commits.push({id,msg,parents:p?[p]:[],lane:this.lanes[this.head],x:this.commits.length});
+    this.branches[this.head]=id;
+    return {ok:true,out:[`[${this.head}${p?'':' (root-commit)'} ${id}] ${msg}`],note:`新しい頂点 ${id.slice(0,4)} ができ、HEAD が付いている ${this.head} の名札だけがそこへ進みました。`};
+  }
+  branch(name){
+    if(!/^[A-Za-z0-9._\/-]+$/.test(name)) return {out:[`fatal: '${name}' is not a valid branch name`],note:'ブランチ名には英数字と - _ . / が使えます（空白は使えません）。'};
+    if(name in this.branches) return {out:[`fatal: a branch named '${name}' already exists`],note:'同じ名前のブランチがすでにあります。'};
+    this.lanes[name]=this.freeLane(); this.branches[name]=this.branches[this.head];
+    return {ok:true,out:[],note:''};
+  }
+  sw(name){
+    if(!(name in this.branches)) return {out:[`fatal: invalid reference: ${name}`]};
+    if(name===this.head) return {out:[`Already on '${name}'`],note:`すでに ${name} にいます。`};
+    this.head=name;
+    return {ok:true,out:[`Switched to branch '${name}'`],note:`HEAD が ${name} に移りました。ワークツリーの中身は、${name} が指す頂点の状態に入れ替わります。`};
+  }
+  sc(name){
+    const r=this.branch(name); if(!r.ok) return r;
+    this.head=name;
+    return {ok:true,out:[`Switched to a new branch '${name}'`],note:`今いる頂点に ${name} という名札を付けて、HEAD をそこへ移しました。頂点はまだ増えていません。`};
+  }
+  merge(name,noff=false){
+    if(!(name in this.branches)) return {out:[`merge: ${name} - not something we can merge`]};
+    const t=this.branches[name], h=this.branches[this.head];
+    if(this.isAnc(t,h)) return {out:['Already up to date.'],note:`${name} の頂点は、すでに ${this.head} からたどれます。取り込むものはありません。`};
+    if(!noff && this.isAnc(h,t)){
+      this.branches[this.head]=t;
+      return {ok:true,ff:true,out:[`Updating ${h}..${t}`,'Fast-forward'],note:`${this.head} は進んでいなかったので、名札を ${name} の位置まで進めるだけで合流できました（早送り）。頂点は増えていません。`};
+    }
+    const id=this.nid();
+    this.commits.push({id,msg:noff?`Merge pull request from ${name}`:`Merge branch '${name}'`,parents:[h,t],lane:this.lanes[this.head],x:this.commits.length});
+    this.branches[this.head]=id;
+    return {ok:true,mc:true,out:["Merge made by the 'ort' strategy."],note:`両方のブランチが進んでいたので、親を2つ持つ新しい頂点（マージコミット）ができました。`};
+  }
+  del(name){
+    if(!(name in this.branches)) return {out:[`error: branch '${name}' not found`]};
+    if(name===this.head) return {out:[`error: cannot delete branch '${name}' used by worktree at '/home/taro/mysite'`],note:'今いるブランチは削除できません。先に別のブランチへ switch しましょう。'};
+    const t=this.branches[name];
+    if(!this.isAnc(t,this.branches[this.head])) return {out:[`error: the branch '${name}' is not fully merged.`],note:`${name} には、まだ ${this.head} に合流していない頂点があります。名札を外すとそこへたどり着けなくなるので、Git が止めました。`};
+    delete this.branches[name];
+    return {ok:true,del:true,out:[`Deleted branch ${name} (was ${t}).`],note:'名札を外しました。頂点（コミット）はそのまま残っています。'};
+  }
+  run(script){
+    const OPS={c:a=>this.commit(a),b:a=>this.branch(a),s:a=>this.sw(a),sc:a=>this.sc(a),m:a=>this.merge(a),M:a=>this.merge(a,true),d:a=>this.del(a)};
+    script.split(';').map(x=>x.trim()).filter(Boolean).forEach(tok=>{ const i=tok.indexOf(':'); OPS[i<0?tok:tok.slice(0,i)](i<0?'':tok.slice(i+1)); });
+    return this;
+  }
+}
+function graphHTML(g,{hl=new Set(),moved=new Set()}={}){
+  const DX=58,X0=40,Y0=74,DY=80;
+  const lanes=g.commits.map(c=>c.lane);
+  const maxLane=Math.max(0,...lanes);
+  const W=X0*2+Math.max(0,g.commits.length-1)*DX+30, H=Y0+maxLane*DY+34;
+  const P=c=>({x:X0+c.x*DX,y:Y0+c.lane*DY});
+  let edges='',nodes='',tags='';
+  g.commits.forEach(c=>{ const a=P(c); c.parents.forEach(pid=>{ const b=P(g.get(pid));
+    const d=a.y===b.y?`M${b.x} ${b.y}L${a.x} ${a.y}`:`M${b.x} ${b.y}C${b.x+DX*.7} ${b.y} ${a.x-DX*.7} ${a.y} ${a.x} ${a.y}`;
+    edges+=`<path d="${d}" class="ge ${hl.has(c.id)?'new':''}"/>`; }); });
+  const headId=g.branches[g.head];
+  g.commits.forEach(c=>{ const a=P(c);
+    nodes+=`<g class="gn ${hl.has(c.id)?'new':''} ${c.id===headId?'cur':''}"><circle cx="${a.x}" cy="${a.y}" r="9"/><text x="${a.x}" y="${a.y+26}">${c.id.slice(0,4)}</text><title>${esc(c.msg)}</title></g>`; });
+  const byC={};
+  Object.keys(g.branches).forEach(b=>{ const id=g.branches[b]; if(id) (byC[id]=byC[id]||[]).push(b); });
+  Object.entries(byC).forEach(([id,bs])=>{
+    bs.sort((x,y)=>(y===g.head)-(x===g.head)||(y==='main')-(x==='main'));
+    const a=P(g.get(id));
+    bs.forEach((b,k)=>{ const head=b===g.head;
+      tags+=`<span class="gtag ${head?'head':''} ${moved.has(b)?'moved':''}" data-b="${esc(b)}" style="left:${a.x}px;top:${a.y-34-k*22}px">${head?'<i>HEAD→</i>':''}${esc(b)}</span>`; });
+  });
+  return `<div class="gcanvas" style="width:${W}px;height:${H}px"><svg width="${W}" height="${H}" aria-hidden="true">${edges}${nodes}</svg>${tags}</div>`;
+}
+function enhanceGraphs(root){
+  $$('.gfx',root).forEach(el=>{ el.innerHTML=`<div class="gwrap">${graphHTML(new GitGraph().run(el.dataset.ops))}</div>`; });
+  $$('.gstx',root).forEach(el=>{
+    const b=new GitGraph().run(el.dataset.before), a=b.copy().run(el.dataset.op);
+    const hl=new Set(a.commits.filter(c=>!b.get(c.id)).map(c=>c.id));
+    const moved=new Set(Object.keys(a.branches).filter(k=>!(k in b.branches)||a.branches[k]!==b.branches[k]||(k===a.head&&a.head!==b.head)));
+    el.innerHTML=`<p class="stl">BEFORE</p><div class="gwrap">${graphHTML(b)}</div><div class="scmd"><span>↓</span><code>${esc(el.dataset.cmd)}</code></div><p class="stl ac">AFTER</p><div class="gwrap">${graphHTML(a,{hl,moved})}</div>`;
+  });
+}
+
+/* ブランチシミュレーター */
+function BranchSim(el){
+  let g, term, note, flags, featCommits;
+  function reset(){
+    g=new GitGraph(); g.commit('最初のコミット');
+    term=[]; flags={}; featCommits=0;
+    note='まずは名前欄を feature のまま「git switch -c」を押してみましょう。';
+  }
+  reset();
+  const NAMES=['feature','fix-header','add-photo','topic'];
+  function suggest(){ return NAMES.find(n=>!(n in g.branches))||''; }
+  function render(prev){
+    const wrap=$('.gwrap',el);
+    wrap.innerHTML=graphHTML(g,{hl:prev?new Set(g.commits.filter(c=>!prev.get(c.id)).map(c=>c.id)):new Set()});
+    wrap.scrollLeft=wrap.scrollWidth;
+    const sel=$('select',el), cur=sel.value;
+    const others=Object.keys(g.branches);
+    sel.innerHTML=others.map(b=>`<option ${b===cur?'selected':''}>${esc(b)}</option>`).join('');
+    if(!others.includes(cur)) sel.value=others.find(b=>b!==g.head)||g.head;
+    $('.bhead',el).innerHTML=`<span>HEAD → <b>${esc(g.head)}</b></span><span>頂点 ${g.commits.length}</span><span>名札 ${others.length}</span>`;
+    $('.sim-note',el).textContent=note;
+    const tb=$('.term-b',el);
+    tb.innerHTML=term.length?termHTML(term):'<span class="ln out">ここに git の出力が表示されます</span>';
+    tb.scrollTop=tb.scrollHeight;
+    $('[data-op=sc]',el).disabled=Object.keys(g.branches).length>=4;
+    $('[data-op=commit]',el).disabled=g.commits.length>=16;
+    const m=$('#bmission');
+    if(m) $$('li',m).forEach(li=>li.classList.toggle('ok',!!flags[li.dataset.m]));
+  }
+  function act(op){
+    const prev=g.copy();
+    const before={}; $$('.gtag',el).forEach(t=>before[t.dataset.b]={l:parseFloat(t.style.left),t:parseFloat(t.style.top)});
+    const name=$('select',el).value, input=$('.sim-commit input',el);
+    let r, cmd;
+    if(op==='commit'){ cmd=`git commit -m "コミット${g.commits.length+1}"`; r=g.commit(); if(g.head!=='main'){ featCommits++; if(featCommits>=2) flags[2]=true; } }
+    if(op==='sc'){ const n=input.value.trim(); cmd=`git switch -c ${n}`; r=g.sc(n); if(r.ok){ flags[1]=true; featCommits=0; input.value=suggest(); } }
+    if(op==='sw'){ cmd=`git switch ${name}`; r=g.sw(name); }
+    if(op==='merge'){ cmd=`git merge ${name}`; r=g.merge(name); if(r.ff) flags[3]=true; if(r.mc) flags[4]=true; }
+    if(op==='del'){ cmd=`git branch -d ${name}`; r=g.del(name); if(r.del) flags[5]=true; }
+    term.push('$ '+cmd, ...r.out); term=term.slice(-60);
+    note=r.note||(r.ok?'':'このコマンドは実行できませんでした。出力を読んでみましょう。');
+    render(prev);
+    if(!A()) return;
+    $$('.gtag',el).forEach(t=>{ const b=before[t.dataset.b], l=parseFloat(t.style.left), tp=parseFloat(t.style.top);
+      if(!b) anime({targets:t,opacity:[0,1],translateY:[-10,0],duration:400,easing:'easeOutQuart'});
+      else if(b.l!==l||b.t!==tp) anime({targets:t,left:[b.l,l],top:[b.t,tp],duration:600,easing:'easeInOutQuart'}); });
+    const nn=$$('.gn.new',el); if(nn.length) anime({targets:nn,scale:[.2,1],opacity:[0,1],duration:500,easing:'easeOutBack'});
+  }
+  el.className='bsim';
+  el.innerHTML=`
+    <div class="sim-bar">
+      <button data-op="commit">git commit</button>
+      <span class="sim-commit"><input type="text" value="feature" maxlength="20" aria-label="新しいブランチ名" spellcheck="false"><button data-op="sc">git switch -c</button></span>
+      <span class="bsel"><select aria-label="対象のブランチ"></select><button data-op="sw">git switch</button><button data-op="merge">git merge</button><button data-op="del">git branch -d</button></span>
+      <button class="reset" data-op="reset">リセット</button>
+    </div>
+    <div class="bhead"></div>
+    <div class="gwrap"></div>
+    <div class="sim-note"></div>
+    <div class="term"><div class="term-h"><span>SIMULATED TERMINAL</span></div><div class="term-b"></div></div>`;
+  el.addEventListener('click',e=>{
+    const b=e.target.closest('button[data-op]'); if(!b||b.disabled) return;
+    if(b.dataset.op==='reset'){ reset(); $('.sim-commit input',el).value='feature'; render(); return; }
+    act(b.dataset.op);
+  });
+  $('.sim-commit input',el).addEventListener('keydown',e=>{ if(e.key==='Enter'&&!e.isComposing) act('sc'); });
+  render();
+}
+
+/* ページごとの図のアニメーション */
+const ANIMS={
+  route(){},
+  overwrite(root){
+    if(!A()) return;
+    $$('svg g[class^=ow]',root).forEach(g=>g.style.opacity=0);
+    anime.timeline({easing:'easeInOutQuad'})
+      .add({targets:'.ow-1',opacity:[0,1],duration:400})
+      .add({targets:['.ow-l1','.ow-l2'],strokeDashoffset:[anime.setDashoffset,0],duration:500})
+      .add({targets:['.ow-a','.ow-b'],opacity:[0,1],duration:400,delay:anime.stagger(150)})
+      .add({targets:['.ow-l3','.ow-l4'],strokeDashoffset:[anime.setDashoffset,0],duration:500,delay:anime.stagger(400)})
+      .add({targets:'.ow-f',opacity:[0,1],duration:400})
+      .add({targets:'.ow-x',opacity:[0,1],duration:300})
+      .add({targets:'.ow-x line',strokeWidth:[8,3],duration:400},'-=300');
+  },
+  areas(root){
+    const areas=$$('.area',root), arrows=$$('.aarrow',root);
+    let i=0;
+    function step(){
+      if(!root.isConnected) return;
+      areas.forEach((a,k)=>a.classList.toggle('lit',k===i));
+      arrows.forEach((a,k)=>a.classList.toggle('lit',k===i));
+      i=(i+1)%areas.length;
+      setTimeout(step,1300);
+    }
+    step();
+  },
+  chain(root){
+    if(!A()) return;
+    $$('.ch-n circle',root).forEach(c=>{c.style.transformBox='fill-box';c.style.transformOrigin='center';});
+    $$('.ch-ah,.ch-tag',root).forEach(e=>e.style.opacity=0);
+    anime.timeline({easing:'easeOutQuart'})
+      .add({targets:$$('.ch-n',root),opacity:[0,1],duration:400,delay:anime.stagger(450)})
+      .add({targets:$$('.ch-e',root),strokeDashoffset:[anime.setDashoffset,0],duration:500,delay:anime.stagger(200)},400)
+      .add({targets:$$('.ch-ah',root),opacity:[0,1],duration:200})
+      .add({targets:$$('.ch-tag',root),opacity:[0,1],translateY:[-12,0],duration:500});
+  },
+  keys(root){
+    if(!A()) return;
+    const pub=$('.kchip.pub2',root);
+    anime.timeline({easing:'easeOutQuart'})
+      .add({targets:$$('.kchip.sec,.kchip.pub',root),opacity:[0,1],translateX:[-10,0],duration:400,delay:anime.stagger(200)})
+      .add({targets:$('.keys .mid i',root),opacity:[0,1],duration:300})
+      .add({targets:pub,opacity:[0,1],translateX:[-30,0],duration:600});
+  },
+  loop(root){
+    if(!A()) return;
+    $$('.loop',root).forEach(l=>anime({targets:l.children,backgroundColor:['#1a1a1a','#fbfaf7'],color:['#f4f2ec','#1a1a1a'],duration:700,delay:anime.stagger(300,{start:300}),easing:'easeOutQuad'}));
+  }
+};
+
+/* =========================================================
+   PRACTICE
+   type:'input' → ans（正解の正規表現）/ a（模範解答）/ alt（よくある別解とコメント）/ hint
+   type:'choice' → choices / correct / kind（SELECT or PREDICT）
+   ========================================================= */
+const PRACTICE=[
+{id:'p01',cat:1,type:'input',q:'今いるフォルダで、Git の記録を始めたい。',a:'git init',ans:[/^git init$/],hint:'「初期化する」は英語で initialize です。',exp:'<code>git init</code> でフォルダの中に <code>.git</code> が作られ、リポジトリになります。1つのプロジェクトにつき最初の1回だけ使います。',ref:'ch03/3'},
+{id:'p02',cat:1,type:'input',q:'どのファイルが変更されていて、どれがステージに乗っているかを確かめたい。',a:'git status',ans:[/^git status$/],hint:'「状態」は英語で status です。',exp:'迷ったらまず <code>git status</code>。何も変えずに、今の状態を表示するだけのコマンドです。',ref:'ch03/4'},
+{id:'p03',cat:1,type:'input',q:'<code>index.html</code> だけをステージに乗せたい。',a:'git add index.html',ans:[/^git add (\.\/)?index\.html$/],alt:[[/^git add (\.|-A|--all)$/,'それだと、ほかのファイルの変更もすべて乗ってしまいます。ファイル名を指定しましょう。']],hint:'git add のあとにファイル名を書きます。',exp:'<code>git add ファイル名</code> で、そのファイルの変更だけがステージに乗ります。',ref:'ch03/5'},
+{id:'p04',cat:1,type:'input',q:'このフォルダの変更を、まとめて全部ステージに乗せたい。',a:'git add .',ans:[/^git add (\.|-A|--all)$/],hint:'「このフォルダ全体」を表す1文字の記号があります。',exp:'<code>git add .</code> の <code>.</code> は「今いるフォルダ全体」という意味です。',ref:'ch03/5'},
+{id:'p05',cat:1,type:'input',q:'ステージに乗っている変更を、「トップを作成」というメッセージで記録したい。',a:'git commit -m "トップを作成"',ans:[/^git commit -m (["'])トップを作成\1$/],alt:[[/^git commit$/,'それだと、メッセージを書くためのエディタが開きます。-m でメッセージを付けましょう。'],[/^git commit -m トップを作成$/,'動く場合もありますが、メッセージは " " で囲む習慣をつけましょう。']],hint:'git commit -m "メッセージ" の形です。',exp:'<code>-m</code> の後ろにメッセージを書きます。空白を含んでも大丈夫なように <code>" "</code> で囲みます。',ref:'ch03/6'},
+{id:'p06',cat:1,type:'input',q:'これまでのコミットの一覧を、1つ1行で短く表示したい。',a:'git log --oneline',ans:[/^git log --oneline$/],alt:[[/^git log$/,'それでも表示できますが、1コミット1行にするオプションを付けましょう。']],hint:'git log に「1行」を意味するオプションを付けます。',exp:'<code>git log --oneline</code> で、ID とメッセージが1行ずつ表示されます。',ref:'ch03/7'},
+{id:'p07',cat:1,type:'input',q:'うっかりステージに乗せた <code>style.css</code> を、ステージから降ろしたい（ファイルの中身はそのまま）。',a:'git restore --staged style.css',ans:[/^git restore --staged (\.\/)?style\.css$/],alt:[[/^git restore (\.\/)?style\.css$/,'注意！ --staged を付けないと、ファイルの編集内容そのものが元に戻ってしまいます。']],hint:'git restore に「ステージから」を意味するオプションを付けます。',exp:'<code>git restore --staged ファイル名</code> は、ステージから降ろすだけです。ワークツリーの編集内容は消えません。',ref:'ch03/5'},
+{id:'p08',cat:1,type:'input',q:'origin に main ブランチをはじめて push する。次からは <code>git push</code> だけで送れるようにしたい。',a:'git push -u origin main',ans:[/^git push (-u|--set-upstream) origin main$/],alt:[[/^git push origin main$/,'送れますが、-u を付けないと、次回も origin main を書く必要があります。']],hint:'「この組み合わせを覚えておく」オプションは -u です。',exp:'<code>-u</code> を付けると「origin の main」という組み合わせが記録され、2回目からは <code>git push</code> だけで済みます。',ref:'ch05/4'},
+{id:'p09',cat:1,type:'choice',kind:'SELECT',q:'まだ add していない変更の<b>中身</b>（どの行をどう変えたか）を見たい。',choices:['git status','git diff','git log','git remote -v'],correct:1,exp:'<code>git diff</code> は、ワークツリーの変更を行ごとに表示します。<code>git status</code> では「どのファイルが変わったか」までしかわかりません。',ref:'ch03/7'},
+{id:'p10',cat:1,type:'choice',kind:'PREDICT',q:'<code>index.html</code> が Untracked files に表示されている。<code>git add index.html</code> のあと、もう一度 status を見ると？',ctx:'$ git add index.html\n$ git status',choices:['Untracked files のまま','Changes to be committed に移る','何も表示されなくなる（working tree clean）'],correct:1,exp:'add するとステージに乗るので、「次の commit で記録されるもの」＝ <b>Changes to be committed</b> に表示されます。まだ記録はされていないので、clean にはなりません。',ref:'ch03/5'},
+{id:'p11',cat:1,type:'choice',kind:'PREDICT',q:'ファイルを編集して <code>git add .</code> した。commit を忘れて <code>git push</code> すると？',ctx:'$ git add .\n$ git push',choices:['編集した内容が GitHub に届く','Everything up-to-date と表示され、何も届かない','エラーになり、ステージの内容が消える'],correct:1,exp:'push が送るのは<b>コミット（記録）</b>です。add しただけではコミットが増えていないので、送るものがありません。先に commit しましょう。',ref:'ch02/2'},
+{id:'p12',cat:1,type:'choice',kind:'SELECT',q:'GitHub に公開鍵を登録した。正しくつながるかを確かめたい。',choices:['ssh-keygen -t ed25519','cat ~/.ssh/id_ed25519.pub','ssh -T git@github.com','git remote -v'],correct:2,exp:'<code>ssh -T git@github.com</code> で「Hi ユーザー名!」と出れば成功です。ssh-keygen は鍵を作るコマンド、cat はファイルの中身を表示するコマンドです。',ref:'ch04/4'},
+{id:'p13',cat:2,type:'input',q:'<code>feature</code> というブランチを作って、すぐにそこへ移動したい。',a:'git switch -c feature',ans:[/^git switch (-c|--create) feature$/],alt:[[/^git checkout -b feature$/,'それでも動きますが、この教材では git switch -c を使います。'],[/^git branch feature$/,'それだと名札を作るだけで、移動はしません。']],hint:'switch に「作る（create）」オプションを付けます。',exp:'<code>git switch -c 名前</code> は「名札を作って、HEAD をそこへ移す」コマンドです。',ref:'ch06/3'},
+{id:'p14',cat:2,type:'input',q:'今いるブランチから、<code>main</code> ブランチに戻りたい。',a:'git switch main',ans:[/^git switch main$/],alt:[[/^git checkout main$/,'それでも動きますが、この教材では git switch を使います。']],hint:'switch のあとにブランチ名を書きます。',exp:'<code>git switch main</code> で HEAD が main に移り、ワークツリーも main の状態に入れ替わります。',ref:'ch06/3'},
+{id:'p15',cat:2,type:'input',q:'今いる main に、<code>feature</code> ブランチの変更を取り込みたい。',a:'git merge feature',ans:[/^git merge feature$/],hint:'「合流させる」は英語で merge です。',exp:'<code>git merge 名前</code> は、<b>今いるブランチに</b>指定したブランチを取り込みます。向きに注意しましょう。',ref:'ch06/4'},
+{id:'p16',cat:2,type:'input',q:'GitHub の最新の記録を、手元の main に取り込みたい（今 main にいる）。',a:'git pull',ans:[/^git pull( origin main)?$/],hint:'push の反対向きです。',exp:'<code>git pull</code> は GitHub から記録を取ってきて（fetch）、今のブランチに合わせます（merge）。',ref:'ch07/7'},
+{id:'p17',cat:2,type:'input',q:'合流が終わった <code>add-sato</code> ブランチを、手元から削除したい。',a:'git branch -d add-sato',ans:[/^git branch (-d|--delete) add-sato$/],alt:[[/^git branch -D add-sato$/,'-D は合流していなくても強制的に消します。合流済みなら -d を使いましょう。']],hint:'git branch に「削除（delete）」オプションを付けます。',exp:'<code>-d</code> は、合流済みのときだけ削除します。まだ合流していない頂点があると止めてくれるので安全です。',ref:'ch06/5'},
+{id:'p18',cat:2,type:'choice',kind:'SELECT',q:'チームの代表者が作った GitHub のリポジトリを、はじめて自分の PC にコピーしたい。',choices:['git init','git pull','git clone','git fetch'],correct:2,exp:'<code>git clone</code> は、フォルダ作成・履歴のダウンロード・origin の登録を一度にやってくれます。pull と fetch は、clone したあとで使います。',ref:'ch07/2'},
+{id:'p19',cat:2,type:'choice',kind:'PREDICT',q:'<code>git switch -c feature</code> を実行した直後、コミット（頂点）の数はどうなる？',choices:['1つ増える','変わらない','2倍になる'],correct:1,exp:'ブランチを作っても、今いる頂点に名札が1枚増えるだけです。頂点が増えるのは commit したときです。',ref:'ch06/2'},
+{id:'p20',cat:2,type:'choice',kind:'PREDICT',q:'feature で2回 commit した。main はその間まったく進んでいない。main で <code>git merge feature</code> すると？',choices:['マージコミット（親が2つの頂点）ができる','main の名札が feature の位置まで進むだけ（Fast-forward）','コンフリクトが起きる'],correct:1,exp:'main が進んでいないので、名札を進めるだけで合流できます。これが早送り（fast-forward）です。新しい頂点はできません。',ref:'ch06/4'},
+{id:'p21',cat:2,type:'choice',kind:'PREDICT',q:'Aさんと Bさんが、別々のブランチで <code>index.html</code> の<b>同じ行</b>を別の内容に変えた。2つを merge すると？',choices:['あとから merge した方の内容で上書きされる','両方の行が自動で並べて残される','CONFLICT と表示され、どちらにするか人間が決める'],correct:2,exp:'同じ行が別々に変わっていると、Git はどちらを残すべきか決められません。マーカー付きで両方をファイルに書き込み、止まります。',ref:'ch08/1'},
+{id:'p22',cat:2,type:'choice',kind:'SELECT',q:'コンフリクト中に、いったん merge をやめて元の状態に戻りたい。',choices:['git merge --abort','git branch -d main','git restore --staged .','git push'],correct:0,exp:'<code>git merge --abort</code> で、merge を始める前の状態に戻ります。落ち着いてから、もう一度やり直せます。',ref:'ch08/3'},
+{id:'p23',cat:2,type:'choice',kind:'PREDICT',q:'新しく作った <code>.env</code> を <code>.gitignore</code> に書いた。そのあと <code>git status</code> を見ると、<code>.env</code> は？',choices:['Untracked files に表示される','表示されなくなる','ファイルごと削除される'],correct:1,exp:'.gitignore に書いたファイルは、Git から見えないものとして扱われます。ファイル自体は消えません。',ref:'ch09/1'}
+];
+
+let PQ={filter:0,i:0,wrong:0};
+const pad2=n=>String(n).padStart(2,'0');
+const refLink=r=>r?`<p class="pq-ref"><a href="#/${r}">→ 第${r.slice(2,4)}章で復習する</a></p>`:'';
+function renderPractice(){
+  store.practice=store.practice||{};
+  const res=store.practice;
+  const list=PRACTICE.filter(q=>!PQ.filter||q.cat===PQ.filter);
+  PQ.i=Math.max(0,Math.min(PQ.i,list.length-1)); PQ.wrong=0;
+  const q=list[PQ.i];
+  const solved=()=>PRACTICE.filter(x=>res[x.id]==='ok').length;
+  const kind=q.type==='input'?'INPUT — コマンドを入力':q.kind==='PREDICT'?'PREDICT — 結果を予想':'SELECT — 正しいものを選ぶ';
+  const isCmd=c=>/^(git|ssh|cat) /.test(c);
+  app.innerHTML=`
+  <div class="wrap chapter">
+    <aside class="ch-side">
+      <p class="ch-part">EXTRA</p><p class="ch-no">+</p><h1 class="ch-title">コマンド練習</h1>
+      <p class="pq-score"><b id="pqs">${solved()}</b>/ ${PRACTICE.length} 正解</p>
+      <p class="pq-help">コマンドを暗記する練習ではありません。<b>「今どういう状態で、何をしたいか」</b>から、使うコマンドを考えましょう。わからなければ、問題の下のリンクから章に戻って OK です。</p>
+    </aside>
+    <article class="ch-body">
+      <div class="chips" id="pqf">${['すべて','第1部','第2部'].map((t,i)=>`<button class="${PQ.filter===i?'on':''}" data-f="${i}">${t}</button>`).join('')}</div>
+      <div class="pq-map" id="pqmap">${list.map((x,i)=>`<button class="${res[x.id]||''} ${i===PQ.i?'cur':''}" data-i="${i}" aria-label="問題${i+1}">${pad2(i+1)}</button>`).join('')}</div>
+      <p class="pg-count">QUESTION ${pad2(PQ.i+1)} / ${pad2(list.length)}</p>
+      <p class="pq-kind">${kind}</p>
+      <h2 class="pq-q">${q.q}</h2>
+      <div class="pg-content" id="pqc">
+        ${q.ctx?`<pre class="term" data-t="この順に実行した">${esc(q.ctx)}</pre>`:''}
+        ${q.type==='input'
+          ?`<form class="pq-form" id="pqform"><label class="pq-input"><span>$</span><input id="pqin" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="ここにコマンドを入力" aria-label="コマンド"></label><button class="btn" type="submit">答え合わせ <span class="arr">→</span></button></form>`
+          :`<div class="pq-choices">${q.choices.map((c,i)=>`<button data-c="${i}"><span>${'ABCD'[i]}</span><span>${isCmd(c)?`<code>${esc(c)}</code>`:esc(c)}</span></button>`).join('')}</div>`}
+        <div id="pqfb"></div>
+      </div>
+      <nav class="pager">
+        ${PQ.i>0?`<button data-nav="-1"><small>← PREV</small><b>前の問題</b></button>`:'<span></span>'}
+        ${PQ.i<list.length-1?`<button class="next" data-nav="1"><small>NEXT →</small><b>次の問題</b></button>`:`<a class="next" href="#/errors"><small>NEXT →</small><b>エラー解決集へ</b></a>`}
+      </nav>
+    </article>
+  </div>`;
+  const content=$('#pqc'); enhanceTerms(content);
+  if(A()) anime({targets:['.pq-kind','.pq-q',...content.children],opacity:[0,1],translateY:[10,0],delay:anime.stagger(50),duration:420,easing:'easeOutQuad'});
+
+  const mark=(ok)=>{
+    if(ok) res[q.id]='ok'; else if(res[q.id]!=='ok') res[q.id]='ng';
+    save();
+    const b=$(`#pqmap [data-i="${PQ.i}"]`); b.classList.remove('ok','ng'); b.classList.add(res[q.id]);
+    $('#pqs').textContent=solved();
+  };
+  const fb=(cls,head,body)=>{
+    const f=$('#pqfb'); f.innerHTML=`<div class="pq-fb ${cls}"><p class="pq-fbh">${head}</p>${body}</div>`;
+    if(A()) anime({targets:f.firstChild,opacity:[0,1],translateY:[8,0],duration:350,easing:'easeOutQuad'});
+  };
+  if(q.type==='input'){
+    const inp=$('#pqin');
+    if(matchMedia('(min-width:900px)').matches) inp.focus();
+    $('#pqform').onsubmit=e=>{
+      e.preventDefault();
+      const v=inp.value.replace(/[　\s]+/g,' ').replace(/[“”＂]/g,'"').replace(/[‘’＇]/g,"'").replace(/^\$\s*/,'').trim();
+      if(!v) return;
+      if(q.ans.some(r=>r.test(v))){ mark(true); fb('ok','○ 正解',`<p>${q.exp}</p>`); return; }
+      PQ.wrong++; mark(false);
+      const alt=(q.alt||[]).find(([r])=>r.test(v));
+      const msg=alt?alt[1]:PQ.wrong===1?`ヒント：${q.hint}`:'もう一度考えてみましょう。';
+      fb('ng','× ちがいます',`<p>${esc(msg)}</p><button class="btn ghost" type="button" id="pqshow">答えを見る</button>${refLink(q.ref)}`);
+      $('#pqshow').onclick=()=>fb('ans','答え',`<p><code>${esc(q.a)}</code></p><p>${q.exp}</p><p style="font-size:13px;color:var(--sub)">入力欄に打ち込んで、正解にしてから次へ進みましょう。</p>${refLink(q.ref)}`);
+    };
+  }else{
+    $$('.pq-choices button').forEach(b=>b.onclick=()=>{
+      const i=+b.dataset.c, ok=i===q.correct;
+      $$('.pq-choices button').forEach((x,k)=>{ x.disabled=true; if(k===q.correct) x.classList.add('ok'); else if(k===i) x.classList.add('ng'); else x.classList.add('dim'); });
+      mark(ok);
+      fb(ok?'ok':'ng',ok?'○ 正解':`× 正解は ${'ABCD'[q.correct]}`,`<p>${q.exp}</p>${ok?'':refLink(q.ref)}`);
+    });
+  }
+  $('#pqf').onclick=e=>{ const b=e.target.closest('[data-f]'); if(!b) return; PQ.filter=+b.dataset.f; PQ.i=0; renderPractice(); };
+  $('#pqmap').onclick=e=>{ const b=e.target.closest('[data-i]'); if(!b) return; PQ.i=+b.dataset.i; renderPractice(); };
+  $$('.pager [data-nav]').forEach(b=>b.onclick=()=>{ PQ.i+= +b.dataset.nav; renderPractice(); window.scrollTo({top:0,behavior:'instant'}); });
+}
+
+/* =========================================================
+   ERRORS
+   ========================================================= */
+const ECATS=[['all','すべて'],['setup','準備・設定'],['commit','add・commit'],['remote','push・pull・clone'],['ssh','SSH・接続'],['branch','ブランチ・マージ']];
+const ERRORS=[
+{cat:'setup',t:'リポジトリではない場所で git コマンドを実行した',m:`fatal: not a git repository (or any of the parent directories): .git`,
+ mean:'今いるフォルダ（とその親フォルダ）に <code>.git</code> がありません。Git の管理対象ではない場所です。',
+ cause:'<ul><li>別のフォルダにいる（<code>cd</code> し忘れ）</li><li>まだ <code>git init</code> も <code>git clone</code> もしていない</li></ul>',
+ fix:`<p>今いる場所を確かめて、プロジェクトのフォルダへ移動します。</p>
+<pre class="term">
+$ pwd
+$ cd ~/{{mysite}}
+</pre><p>まだ一度も記録を始めていないなら、そのフォルダで <code>git init</code> します。</p>`,ref:'ch03/3'},
+{cat:'setup',t:'Git が入っていない',m:`git: command not found`,
+ mean:'git というコマンドが見つかりません。',cause:'WSL の Ubuntu に Git がインストールされていません。',
+ fix:`<pre class="term">
+$ sudo apt update
+$ sudo apt install git
+</pre><p>パスワードは Ubuntu のパスワードです（入力しても画面には表示されません）。</p>`,ref:'ch00/2'},
+{cat:'setup',t:'名前とメールアドレスが登録されていない',m:`Author identity unknown
+
+*** Please tell me who you are.`,
+ mean:'コミットに記録する「誰が」が決まっていないので、commit できません。',cause:'<code>git config</code> で名前とメールアドレスを登録していません（PC を変えた場合も同じ）。',
+ fix:`<pre class="term">
+$ git config --global user.name "{{GitHubのユーザー名}}"
+$ git config --global user.email "{{GitHubに登録したメールアドレス}}"
+</pre><p>登録したら、もう一度 commit します。</p>`,ref:'ch03/2'},
+{cat:'commit',t:'記録する変更がない',m:`nothing to commit, working tree clean`,
+ mean:'エラーではありません。前回の commit から何も変わっていない、という意味です。',
+ cause:'<ul><li>すでに commit 済み</li><li>エディタでファイルを<b>保存していない</b></li><li>別のフォルダにある同じ名前のファイルを編集している</li></ul>',
+ fix:`<p>VS Code でファイルを保存（<code>Ctrl</code> + <code>S</code>）してから、<code>git status</code> で変更が出ているか確かめます。</p>`,ref:'ch03/4'},
+{cat:'commit',t:'add せずに commit しようとした',m:`nothing added to commit but untracked files present (use "git add" to track)`,
+ mean:'新しいファイルはあるけれど、ステージに何も乗っていません。',cause:'<code>git add</code> を忘れています。',
+ fix:`<pre class="term">
+$ git add .
+$ git commit -m "{{メッセージ}}"
+</pre>`,ref:'ch03/5'},
+{cat:'commit',t:'見慣れない画面（エディタ）が開いて戻れない',m:`（画面の下に ^X Exit などが表示される／左端に ~ が並ぶ）`,
+ mean:'コミットメッセージなどを書くためのエディタが開いています。',cause:'<code>git commit</code> で <code>-m</code> を付け忘れた、または <code>git merge</code> でマージコミットができた。',
+ fix:`<ul><li><b>nano</b>（下に ^X Exit と表示）→ <code>Ctrl</code> + <code>X</code></li><li><b>vim</b>（左端に ~ が並ぶ）→ <code>Esc</code> を押してから、中止なら <code>:q!</code>、そのまま続けるなら <code>:wq</code> と入力して <code>Enter</code></li></ul><p>commit の途中なら、何も書かずに閉じると commit は中止されます。merge の途中なら、最初から入っているメッセージのまま閉じれば合流が完了します。</p>`,ref:'ch03/6'},
+{cat:'remote',t:'送る main ブランチがない',m:`error: src refspec main does not match any
+error: failed to push some refs to 'github.com:…'`,
+ mean:'push しようとした <code>main</code> ブランチが、手元にありません。',cause:'<ul><li>まだ1回も commit していない</li><li>ブランチ名が <code>master</code> になっている</li></ul>',
+ fix:`<p>コミットとブランチ名を確かめます。</p>
+<pre class="term">
+$ git log --oneline
+$ git branch
+</pre><p>コミットがなければ先に commit します。ブランチ名が <code>master</code> なら、名前を変えてから push します。</p>
+<pre class="term">
+$ git branch -M main
+$ git push -u origin main
+</pre>`,ref:'ch05/4'},
+{cat:'remote',t:'origin がすでに登録されている',m:`error: remote origin already exists.`,
+ mean:'<code>origin</code> という名前の送り先は、もう登録されています。',cause:'<code>git remote add</code> を2回実行した。',
+ fix:`<p>登録されている住所を確認し、間違っていれば上書きします。</p>
+<pre class="term">
+$ git remote -v
+$ git remote set-url origin git@github.com:{{ユーザー名}}/{{リポジトリ名}}.git
+</pre>`,ref:'ch05/3'},
+{cat:'remote',t:'GitHub に、手元にない記録がある（push が拒否された）',m:`! [rejected]        main -> main (fetch first)
+error: failed to push some refs to 'github.com:…'
+hint: Updates were rejected because the remote contains work that you do not have locally.`,
+ mean:'GitHub 側の main が、あなたの知らない記録を持っています。そのまま送ると上書きになるので、Git が止めました。',
+ cause:'<ul><li>ほかのメンバーが先に push した／PR を Merge した</li><li>GitHub の画面上で README などを直接編集した</li></ul>',
+ fix:`<p>先に GitHub の記録を取り込んでから、もう一度 push します。</p>
+<pre class="term">
+$ git pull
+$ git push
+</pre><p>pull でコンフリクトが起きたら、第08章の方法で解決してから push します。</p>`,ref:'ch07/7'},
+{cat:'remote',t:'手元のブランチが GitHub より遅れている（non-fast-forward）',m:`! [rejected]        main -> main (non-fast-forward)
+hint: Updates were rejected because the tip of your current branch is behind`,
+ mean:'手元のブランチが、GitHub のブランチより古い（または分かれている）状態です。',cause:'GitHub 側が先に進んでいるのに、取り込まずに push した。',
+ fix:`<pre class="term">
+$ git pull
+$ git push
+</pre><p>チーム開発では、作業を始める前に <code>git switch main</code> → <code>git pull</code> で最新にするのを習慣にしましょう。</p>`,ref:'ch07/7'},
+{cat:'remote',t:'pull での合わせ方が決まっていない',m:`hint: You have divergent branches and need to specify how to reconcile them.
+fatal: Need to specify how to reconcile divergent branches.`,
+ mean:'手元と GitHub の両方が進んでいて、どうやって合わせるかの設定がないため、pull が止まりました。',cause:'<code>pull.rebase</code> を設定していない。',
+ fix:`<p>合わせ方を「マージ」に決めてから、もう一度 pull します（設定は最初の1回だけ）。</p>
+<pre class="term">
+$ git config --global pull.rebase false
+$ git pull
+</pre>`,ref:'ch07/1'},
+{cat:'remote',t:'まったく別々に始まった履歴を合わせようとした',m:`fatal: refusing to merge unrelated histories`,
+ mean:'手元と GitHub の履歴に、共通の祖先（頂点）がありません。',cause:'GitHub で README 付きで作ったリポジトリに、手元で <code>git init</code> したリポジトリを pull した。',
+ fix:`<p>別々の履歴だとわかったうえで合わせるオプションを付けます。</p>
+<pre class="term">
+$ git pull origin main --allow-unrelated-histories
+$ git push -u origin main
+</pre><p>コンフリクトが起きたら、解決して commit してから push します。</p>`,ref:'ch05/4'},
+{cat:'remote',t:'clone 先に同じ名前のフォルダがある',m:`fatal: destination path 'team-page' already exists and is not an empty directory.`,
+ mean:'同じ名前のフォルダがすでにあるので、clone できません。',cause:'前に一度 clone している。',
+ fix:`<p>前に clone したものを使うなら、そのフォルダへ移動して最新にします。</p>
+<pre class="term">
+$ cd team-page
+$ git pull
+</pre>`,ref:'ch07/2'},
+{cat:'remote',t:'GitHub Pages が 404 になる',m:`404
+There isn't a GitHub Pages site here.`,
+ mean:'その URL には、まだ公開されたサイトがありません。',
+ cause:'<ul><li>公開処理がまだ終わっていない（数分かかる）</li><li>Settings › Pages の設定がされていない</li><li>リポジトリのいちばん上に <code>index.html</code> がない</li><li>URL のつづり（ユーザー名・リポジトリ名）が違う</li></ul>',
+ fix:`<p>Actions タブで「pages build and deployment」が緑のチェックになっているか確認し、Settings › Pages で Branch が main / (root) になっているか見直します。画像や CSS だけが読み込まれない場合は、ファイル名の大文字・小文字を確かめましょう。</p>`,ref:'ch05/5'},
+{cat:'ssh',t:'SSH の鍵で本人確認できない',m:`git@github.com: Permission denied (publickey).
+fatal: Could not read from remote repository.`,
+ mean:'GitHub が、あなたの PC の鍵を「登録済みの鍵」として確認できませんでした。',
+ cause:'<ul><li>公開鍵を GitHub に登録していない</li><li><code>.pub</code> の中身を一部だけ貼った／別の鍵を貼った</li><li>別の PC（または WSL を入れ直した後）の鍵を使っている</li></ul>',
+ fix:`<p>まず接続を確認します。</p>
+<pre class="term">
+$ ssh -T git@github.com
+</pre><p>失敗したら、公開鍵を表示して、1行すべてを GitHub の Settings › SSH and GPG keys に登録し直します。</p>
+<pre class="term">
+$ cat ~/.ssh/id_ed25519.pub
+</pre>`,ref:'ch04/3'},
+{cat:'ssh',t:'リポジトリが見つからない',m:`ERROR: Repository not found.
+fatal: Could not read from remote repository.`,
+ mean:'その住所のリポジトリが見つからないか、あなたにアクセスする権限がありません。',
+ cause:'<ul><li>URL のユーザー名やリポジトリ名のつづり間違い</li><li>チームのリポジトリへの招待を、まだ承認していない</li></ul>',
+ fix:`<pre class="term">
+$ git remote -v
+</pre><p>住所が違っていれば <code>git remote set-url origin 正しい住所</code> で直します。チームのリポジトリなら、GitHub からの招待を Accept しているか確認します。</p>`,ref:'ch07/2'},
+{cat:'ssh',t:'ユーザー名とパスワードを聞かれる',m:`Username for 'https://github.com':
+remote: Support for password authentication was removed on August 13, 2021.`,
+ mean:'送り先の住所が <code>https://</code> になっています。GitHub への push では、アカウントのパスワードは使えません。',cause:'リポジトリの住所をコピーするとき、SSH ではなく HTTPS を選んだ。',
+ fix:`<p><code>Ctrl</code> + <code>C</code> で中断し、住所を SSH のものに変えます。</p>
+<pre class="term">
+$ git remote set-url origin git@github.com:{{ユーザー名}}/{{リポジトリ名}}.git
+$ git push
+</pre>`,ref:'ch05/2'},
+{cat:'branch',t:'まだ commit していない変更があって switch できない',m:`error: Your local changes to the following files would be overwritten by checkout:
+	index.html
+Please commit your changes or stash them before you switch branches.
+Aborting`,
+ mean:'切り替えると、まだ記録していない変更が消えてしまうので、Git が止めてくれました。',cause:'編集したまま、add と commit をせずに <code>git switch</code> した。',
+ fix:`<pre class="term">
+$ git add .
+$ git commit -m "{{メッセージ}}"
+$ git switch {{ブランチ名}}
+</pre>`,ref:'ch06/3'},
+{cat:'branch',t:'まだ合流していないブランチを消そうとした',m:`error: the branch 'feature' is not fully merged.`,
+ mean:'そのブランチには、今のブランチに合流していない頂点（コミット）があります。',cause:'merge する前に <code>git branch -d</code> した。',
+ fix:`<p>必要な変更なら、先に merge してから削除します。</p>
+<pre class="term">
+$ git merge feature
+$ git branch -d feature
+</pre><p>本当にいらない変更だと確信できるときだけ、<code>-D</code>（大文字）で強制的に削除できます。</p>`,ref:'ch06/5'},
+{cat:'branch',t:'コンフリクトが起きた',m:`CONFLICT (content): Merge conflict in index.html
+Automatic merge failed; fix conflicts and then commit the result.`,
+ mean:'2つのブランチで同じ行が別々に変わっていて、Git がどちらを残すか決められません。',cause:'あなたとほかのメンバーが、同じ場所を編集した。',
+ fix:`<ol class="flow"><li><div><b>ファイルを開いてマーカーを探す</b><small>&lt;&lt;&lt;&lt;&lt;&lt;&lt; と ======= と &gt;&gt;&gt;&gt;&gt;&gt;&gt; の間が両方の内容</small></div></li><li><div><b>残したい形に書き直し、マーカーを全部消す</b></div></li><li><div><b>add して commit する</b></div></li></ol>
+<pre class="term">
+$ git add {{ファイル名}}
+$ git commit -m "コンフリクトを解決"
+</pre><p>いったんやめたいときは <code>git merge --abort</code>。</p>`,ref:'ch08/4'},
+{cat:'branch',t:'コンフリクトの解決が途中のまま',m:`You have unmerged paths.
+  (fix conflicts and run "git commit")
+  (use "git merge --abort" to abort the merge)`,
+ mean:'merge の途中で止まっています。<code>both modified</code> と表示されたファイルが、まだ解決されていません。',cause:'コンフリクトを直したあと、add と commit をしていない。',
+ fix:`<p>マーカーが残っていないか確かめてから、add と commit で解決を記録します。</p>
+<pre class="term">
+$ git status
+$ git add {{ファイル名}}
+$ git commit -m "コンフリクトを解決"
+</pre>`,ref:'ch08/5'}
+];
+
+let EQ={cat:'all',q:''};
+function renderErrors(){
+  app.innerHTML=`
+  <div class="wrap chapter">
+    <aside class="ch-side">
+      <p class="ch-part">EXTRA</p><p class="ch-no">!</p><h1 class="ch-title">エラー解決集</h1>
+      <p class="pq-help">エラーが出ても、何かが壊れたわけではありません。Git は多くの場合、<b>危ないことをする前に止めてくれています</b>。</p>
+    </aside>
+    <article class="ch-body">
+      <p class="pg-count">TROUBLESHOOTING — ${ERRORS.length} ERRORS</p>
+      <h2 class="pg-title">エラーが出たら</h2>
+      <ol class="flow">
+        <li><div><b>最初の行を読む</b><small><code>fatal:</code> や <code>error:</code> の後ろが原因、<code>hint:</code> の後ろが対処のヒントです</small></div></li>
+        <li><div><b>git status で今の状態を確かめる</b><small>どのブランチにいて、どのファイルがどこにあるか</small></div></li>
+        <li><div><b>下の一覧で探す</b><small>英語のメッセージの一部を、そのまま検索欄に貼り付けられます</small></div></li>
+      </ol>
+      <label class="esearch" style="margin-top:32px"><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><circle cx="7.5" cy="7.5" r="5.5" fill="none" stroke="#1a1a1a" stroke-width="2"/><path d="M12 12l5 5" stroke="#1a1a1a" stroke-width="2"/></svg><input id="eq" placeholder="例：rejected / Permission denied / CONFLICT" aria-label="エラーを検索"></label>
+      <div class="chips" id="ecat">${ECATS.map(([k,t])=>`<button class="${EQ.cat===k?'on':''}" data-c="${k}">${t}</button>`).join('')}</div>
+      <div class="elist" id="elist"></div>
+    </article>
+  </div>`;
+  const inp=$('#eq'); inp.value=EQ.q;
+  const catName=k=>ECATS.find(c=>c[0]===k)[1];
+  function draw(){
+    const q=EQ.q.trim().toLowerCase();
+    const hit=ERRORS.filter(e=>(EQ.cat==='all'||e.cat===EQ.cat)&&(!q||(e.m+' '+e.t+' '+e.mean).toLowerCase().includes(q)));
+    const L=$('#elist');
+    L.innerHTML=hit.length?hit.map(e=>`
+      <details class="err"${hit.length===1?' open':''}>
+        <summary><span class="err-cat">${catName(e.cat)}</span><span class="err-t">${e.t}</span><code class="err-m1">${esc(e.m.split('\n')[0])}</code></summary>
+        <div class="err-b">
+          <div class="err-msg">${esc(e.m)}</div>
+          <dl class="spec"><dt>意味</dt><dd>${e.mean}</dd><dt>よくある原因</dt><dd>${e.cause}</dd></dl>
+          <h4 class="err-h">直し方</h4>
+          <div class="err-fix">${e.fix}</div>
+          ${e.ref?`<p class="pq-ref"><a href="#/${e.ref}">→ 第${e.ref.slice(2,4)}章で詳しく見る</a></p>`:''}
+        </div>
+      </details>`).join(''):'<p class="enone">見つかりませんでした。メッセージの別の部分（英単語1〜2語）で探してみましょう。</p>';
+    enhanceTerms(L);
+  }
+  inp.oninput=()=>{ EQ.q=inp.value; draw(); };
+  $('#ecat').onclick=e=>{ const b=e.target.closest('[data-c]'); if(!b) return; EQ.cat=b.dataset.c; $$('#ecat button').forEach(x=>x.classList.toggle('on',x===b)); draw(); };
+  draw();
+  if(A()) anime({targets:'.err',opacity:[0,1],translateY:[8,0],delay:anime.stagger(25),duration:350,easing:'easeOutQuad'});
+}
+
+/* =========================================================
+   SOON
+   ========================================================= */
+function renderSoon(id){
+  const c=CH[id];
+  const title=c?`${c.no} ${c.title}`:id==='practice'?'コマンド練習':'エラー解決集';
+  app.innerHTML=`<div class="wrap soon-page"><p class="kicker">Coming soon</p><h1>${esc(title)}</h1><p>このページは準備中です。第1部を先に進めましょう。</p><a class="btn" href="#/">目次へ <span class="arr">→</span></a></div>`;
+}
+
+/* =========================================================
+   GIT SIMULATOR
+   4つの場所（ワークツリー / ステージ / ローカル / リモート）の状態を
+   ふつうのオブジェクトで持ち、操作ごとに描き直す。
+   ========================================================= */
+function Simulator(el){
+  const FILES=['index.html','style.css','about.html'];
+  const REMOTE='github.com:you/you.github.io.git';
+  let s, firstPushDone, pushedAfterEdit;
+  const hex=()=>Math.random().toString(16).slice(2,9).padEnd(7,'0');
+  const same=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
+
+  function reset(){
+    s={wt:{},idx:{},head:{},commits:[],remote:[],term:[],note:'まずは「ファイルを作る」を押してみましょう。'};
+    firstPushDone=false; pushedAfterEdit=false; s.edited=false;
+  }
+  reset();
+
+  // 状態の分類
+  const untracked=()=>Object.keys(s.wt).filter(f=>!(f in s.idx));
+  const modified=()=>Object.keys(s.wt).filter(f=>f in s.idx && s.wt[f]!==s.idx[f]);
+  const staged=()=>Object.keys(s.idx).filter(f=>s.idx[f]!==s.head[f]);
+  const headTreeSame=()=>same(s.idx,s.head);
+
+  function out(cmd,lines){ s.term.push('$ '+cmd); (lines||[]).forEach(l=>s.term.push(l)); s.term=s.term.slice(-80); }
+
+  function statusLines(){
+    const L=['On branch main'];
+    if(s.remote.length){
+      const ahead=s.commits.length-s.remote.length;
+      L.push(ahead>0?`Your branch is ahead of 'origin/main' by ${ahead} commit${ahead>1?'s':''}.`:"Your branch is up to date with 'origin/main'.");
+    }
+    if(!s.commits.length){ L.push('','No commits yet'); }
+    const st=staged(), mo=modified(), un=untracked();
+    if(st.length){ L.push('','Changes to be committed:'); st.forEach(f=>L.push(`\t${f in s.head?'modified:':'new file:'}   ${f}`)); }
+    if(mo.length){ L.push('','Changes not staged for commit:'); mo.forEach(f=>L.push(`\tmodified:   ${f}`)); }
+    if(un.length){ L.push('','Untracked files:'); un.forEach(f=>L.push(`\t${f}`)); }
+    if(!st.length&&!mo.length&&!un.length) L.push('',s.commits.length?'nothing to commit, working tree clean':'nothing to commit (create/copy files and use "git add" to track)');
+    else if(!st.length) L.push('',un.length&&!mo.length?'nothing added to commit but untracked files present (use "git add" to track)':'no changes added to commit (use "git add" and/or "git commit -a")');
+    return L;
+  }
+
+  // ---- 操作 ----
+  const ops={
+    create(){
+      const f=FILES.find(x=>!(x in s.wt)); if(!f) return;
+      s.wt[f]=1; s.note=`ワークツリーに ${f} ができました。まだ Git は記録していません（Untracked）。`;
+      return [];
+    },
+    edit(f){
+      s.wt[f]++; if(s.remote.length) s.edited=true;
+      s.note=`${f} を編集しました。ワークツリーの中身だけが変わり、ステージや記録はそのままです。`;
+      return [];
+    },
+    add(f){
+      const targets=f?[f]:[...untracked(),...modified()];
+      out(f?`git add ${f}`:'git add .');
+      if(!targets.length){ s.note='ステージに乗せる変更がありません（add は成功しても何も表示しません）。'; return []; }
+      targets.forEach(x=>s.idx[x]=s.wt[x]);
+      s.note=`${targets.join(', ')} をステージに乗せました。次の commit に入ります。`;
+      return targets.map(x=>['wt:'+x,'ix:'+x,x]);
+    },
+    commit(msg){
+      msg=(msg||'').trim();
+      if(!msg){ s.note='コミットメッセージを入力してください。'; return []; }
+      out(`git commit -m "${msg}"`);
+      if(headTreeSame()){
+        s.term.push(...statusLines().filter(l=>!/^(On branch|Your branch)/.test(l)||true));
+        s.note='ステージに何も乗っていないので、記録するものがありません。先に add しましょう。';
+        return [];
+      }
+      const st=staged(), id=hex(), root=!s.commits.length;
+      s.commits.push({id,msg,tree:{...s.idx}}); s.head={...s.idx};
+      s.term.push(`[main${root?' (root-commit)':''} ${id}] ${msg}`, ` ${st.length} file${st.length>1?'s':''} changed`);
+      s.note=`ステージの内容を「${msg}」として記録しました。ステージに並べた変更が記録に入り、ローカルリポジトリにコミットが1つ増えました。`;
+      $('.sim-commit input',el).value='';
+      return st.map(x=>['ix:'+x,'lc:'+id,x]);
+    },
+    push(){
+      out('git push');
+      if(!s.commits.length){
+        s.term.push('error: src refspec main does not match any',`error: failed to push some refs to '${REMOTE}'`);
+        s.note='まだコミットが1つもないので、送るものがありません。先に commit しましょう。';
+        return [];
+      }
+      const newOnes=s.commits.slice(s.remote.length);
+      if(!newOnes.length){ s.term.push('Everything up-to-date'); s.note='GitHub はすでに最新です。編集 → add → commit してから push しましょう。'; return []; }
+      const from=s.remote.length?s.remote[s.remote.length-1].id:null;
+      s.term.push(`To ${REMOTE}`, from?`   ${from}..${newOnes[newOnes.length-1].id}  main -> main`:' * [new branch]      main -> main');
+      s.remote=s.commits.map(c=>({...c}));
+      if(firstPushDone && s.edited) pushedAfterEdit=true;
+      firstPushDone=true;
+      s.note=`${newOnes.length} 個のコミットを GitHub に送りました。ワークツリーやステージは変わりません。`;
+      return newOnes.map(c=>['lc:'+c.id,'rc:'+c.id,c.id]);
+    },
+    status(){ out('git status',statusLines()); s.note='status は状態を表示するだけで、何も動かしません。迷ったらまず status。'; return []; }
+  };
+
+  // ---- 描画 ----
+  function render(){
+    const un=untracked(), mo=modified(), st=staged();
+    const wtCards=Object.keys(s.wt).map(f=>{
+      const tag=un.includes(f)?'<span class="tag u">U 未追跡</span>':mo.includes(f)?'<span class="tag m">M 変更</span>':'<span class="tag c">変更なし</span>';
+      const canAdd=un.includes(f)||mo.includes(f);
+      return `<div class="fcard" data-key="wt:${f}"><div class="fn">${f}${tag}</div><div class="ver">v${s.wt[f]}</div>
+        <div class="acts"><button data-op="edit" data-f="${f}">編集</button><button data-op="add" data-f="${f}" ${canAdd?'':'disabled'}>add</button></div></div>`;
+    }).join('');
+    const ixCards=st.map(f=>`<div class="fcard" data-key="ix:${f}"><div class="fn">${f}<span class="tag ${f in s.head?'m':'u'}">${f in s.head?'変更':'新規'}</span></div><div class="ver">v${s.idx[f]}</div></div>`).join('');
+    const commits=(arr,pre,ref)=>arr.slice().reverse().map((c,i)=>`<div class="ccard" data-key="${pre}:${c.id}"><span class="id">${c.id}</span>${i===0?`<span class="ref">${ref}</span>`:''}<span class="msg">${esc(c.msg)}</span></div>`).join('');
+    const empty=t=>`<p class="sim-empty">${t}</p>`;
+    $('.sim-grid',el).innerHTML=`
+      <div class="sim-col"><h5><span>01</span><div>ワークツリー<small>編集中のファイル</small></div></h5>${wtCards||empty('ファイルなし')}</div>
+      <div class="sim-col"><h5><span>02</span><div>ステージ<small>次の記録に入るもの</small></div></h5>${ixCards||empty('空')}</div>
+      <div class="sim-col"><h5><span>03</span><div>ローカル<small>あなたの PC の記録</small></div></h5>${commits(s.commits,'lc','main')||empty('コミットなし')}</div>
+      <div class="sim-col"><h5><span>04</span><div>リモート<small>GitHub 上の記録</small></div></h5>${commits(s.remote,'rc','origin/main')||empty('まだ何もない')}</div>`;
+    $('.sim-note',el).textContent=s.note;
+    const tb=$('.term-b',el);
+    tb.innerHTML=s.term.length?termHTML(s.term):'<span class="ln out">ここに git の出力が表示されます</span>';
+    tb.scrollTop=tb.scrollHeight;
+    $('[data-op=create]',el).disabled=FILES.every(f=>f in s.wt);
+    missions();
+  }
+  function missions(){
+    const m=$('#mission'); if(!m) return;
+    const ok={
+      1:Object.keys(s.wt).length>=2,
+      2:s.commits.some(c=>Object.keys(c.tree).length===1&&'index.html' in c.tree),
+      3:s.commits.length>=2&&Object.keys(s.wt).every(f=>f in s.head),
+      4:s.remote.length>0,
+      5:pushedAfterEdit
+    };
+    $$('li',m).forEach(li=>li.classList.toggle('ok',!!ok[li.dataset.m]));
+  }
+
+  // ---- 移動アニメーション ----
+  function run(op,arg){
+    const before={};
+    $$('[data-key]',el).forEach(n=>before[n.dataset.key]=n.getBoundingClientRect());
+    const moves=ops[op](arg)||[];
+    render();
+    if(!A()) return;
+    moves.forEach(([from,to,label],i)=>{
+      const r1=before[from], target=$(`[data-key="${CSS.escape(to)}"]`,el);
+      if(!r1||!target) return;
+      const r2=target.getBoundingClientRect();
+      const chip=document.createElement('div'); chip.className='fly'; chip.textContent=label;
+      Object.assign(chip.style,{left:r1.left+'px',top:r1.top+'px',width:Math.min(r1.width,180)+'px'});
+      document.body.appendChild(chip); target.style.opacity=0;
+      anime({targets:chip,left:r2.left,top:r2.top,width:r2.width,duration:650,delay:i*90,easing:'easeInOutQuart',
+        complete(){ chip.remove(); target.style.opacity=1; anime({targets:target,backgroundColor:['#f2e1dc','#fbfaf7'],duration:600,easing:'linear'}); }});
+    });
+    const newCards=$$('.sim-col:first-child .fcard',el).filter(n=>!before[n.dataset.key]);
+    if(newCards.length) anime({targets:newCards,opacity:[0,1],translateY:[-8,0],duration:400,easing:'easeOutQuad'});
+  }
+
+  el.className='sim';
+  el.innerHTML=`
+    <div class="sim-bar">
+      <button class="jp" data-op="create">＋ ファイルを作る</button>
+      <button data-op="add">git add .</button>
+      <span class="sim-commit"><input type="text" placeholder="コミットメッセージ" maxlength="40" aria-label="コミットメッセージ"><button data-op="commit">git commit</button></span>
+      <button data-op="push">git push</button>
+      <button data-op="status">git status</button>
+      <button class="reset" data-op="reset">リセット</button>
+    </div>
+    <div class="sim-grid"></div>
+    <div class="sim-note"></div>
+    <div class="term"><div class="term-h"><span>SIMULATED TERMINAL</span></div><div class="term-b"></div></div>`;
+  el.addEventListener('click',e=>{
+    const b=e.target.closest('button[data-op]'); if(!b||b.disabled) return;
+    const op=b.dataset.op;
+    if(op==='reset'){ reset(); render(); return; }
+    if(op==='commit') return run('commit',$('.sim-commit input',el).value);
+    run(op,b.dataset.f);
+  });
+  $('.sim-commit input',el).addEventListener('keydown',e=>{ if(e.key==='Enter'&&!e.isComposing) run('commit',e.target.value); });
+  render();
+}
+
+/* =========================================================
+   BOOT
+   ========================================================= */
+const totop=$('#totop');
+window.addEventListener('scroll',()=>totop.classList.toggle('on',scrollY>600),{passive:true});
+totop.onclick=()=>window.scrollTo({top:0,behavior:'smooth'});
+route();
+</script>
+</body>
 </html>
